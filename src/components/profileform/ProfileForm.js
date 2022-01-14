@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import UploadImage from '../../assets/images/plus.png'
+import { ethers } from 'ethers'
 
 const ProfileForm = () => {
     const [profileImgUrl, setProfileImgUrl] = useState("");
@@ -15,10 +16,9 @@ const ProfileForm = () => {
     };
 
     useEffect( ()=> {
-        axios.get(`http://localhost:8080/api/profile/${localStorage.getItem('account')}`)
+        axios.get(`http://localhost:8080/api/profile/${ethers.utils.getAddress(localStorage.getItem('account'))}`)
         .then( res => {
-            console.log(res);
-            if(res.error) return
+            if(res.status != 200) return
 
             setProfileImgUrl(res.data[0].profileImg);
             setName(res.data[0].name);
@@ -34,7 +34,7 @@ const ProfileForm = () => {
             formData.append("name", name);
             formData.append("profileUrl", profileUrl);
 
-            axios.put(`http://localhost:8080/api/profile/${localStorage.getItem('account')}`, formData, {'Accept':'multipart/form-data'})
+            axios.put(`http://localhost:8080/api/profile/${ethers.utils.getAddress(localStorage.getItem('account'))}`, formData, {'Accept':'multipart/form-data'})
             .then(res => {
         console.log("ok_  ",res)
 

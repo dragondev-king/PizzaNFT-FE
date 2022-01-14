@@ -139,6 +139,7 @@ h2 {
   vertical-align: top;
   max-width: 35px;
   height: auto;
+  border-radius: 50%;
 }
 
 .items-main-cont h2 {

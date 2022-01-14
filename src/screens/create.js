@@ -11,6 +11,7 @@ const Create = () => {
                 <div id="stars"></div>
                 <div id="stars2"></div>
                 <div id="stars3"></div>
+                <p style={{textAlign: 'center', 'color':'white'}}>After creation, it takes up to 10 minutes for the server to recognize it.</p>
                 <div id="title">
                     <div className="container">
                         <div className="row">
