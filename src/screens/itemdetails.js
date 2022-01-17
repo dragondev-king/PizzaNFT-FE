@@ -65,9 +65,7 @@ const ItemDetails = () => {
                 let buynowPay = await FTcontract.approve(NFT_ADDRESS, buynowprice);
                 await buynowPay.wait();
                 let buynow = await NFTcontract.buynow(state?.tid, FT_ADDRESS, TEAMWALLET_ADDRESS, TEAM_ROYALTY);
-                console.log(buynow);
                 await buynow.wait();
-                console.log("ok");
             } else {
                 alert("Please connect MataMask!")
             }
@@ -157,7 +155,9 @@ const ItemDetails = () => {
                 if(res.status != 200 ) return
                 setMintHash(res.data.result[0].transaction_hash)
             })
-    
+        } catch (err) {}
+
+        try {
             let auction_info = await AUCTIONcontract.nftContractAuctions(NFT_ADDRESS, state?.tid);
             if(auction_info?.nftSeller !== '0x0000000000000000000000000000000000000000') {
                 setAcutionCreate(true);
@@ -168,7 +168,7 @@ const ItemDetails = () => {
             let buyNowPrice = await NFTcontract.price(state?.tid);
             setUpdatePrice( ethers.utils.formatEther(buyNowPrice) );
             setBuyNowPrice( buyNowPrice );
-        } catch (err) {}
+        } catch(err) {}
     }, [])
 
 
@@ -192,8 +192,13 @@ const ItemDetails = () => {
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="items-main-cont">
-                                    <h2>{state?.nft?.name}</h2>
-                                    <h3>Highest Bid: <span>{ nftHighestBid }  $PIZZA</span></h3>
+                                    <h2>{state?.nft?.name}</h2> 
+                                    {
+                                        auctionCreate ?
+                                        <h3>Highest Bid: <span>{ nftHighestBid }  $PIZZA</span></h3> :
+                                        ""
+                                    }
+                                    <h3>Buy Now Price: <span>{ state?.buyprice }  $PIZZA</span></h3>
                                     <div className="item-description">
                                         <p>
                                             {state?.nft?.description}

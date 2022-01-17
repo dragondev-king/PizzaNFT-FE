@@ -179,6 +179,7 @@ h2 {
   vertical-align: top;
   max-width: 35px;
   height: auto;
+  border-radius: 50%;
 }
 
 .items-main-cont h2 {
@@ -1404,6 +1405,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   padding-top: 20px;
+  list-style-type: none;
 }
 
 .slick-prev {

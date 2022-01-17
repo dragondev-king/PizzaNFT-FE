@@ -17,7 +17,7 @@ const CreateForm = () => {
     const [itemfile, setItemFile] = useState("");
     const [itemname, setItemName] = useState("");
     const [itemdesc, setItemDesc] = useState("");
-    const [itemprice, setItemPrice] = useState("");
+    const [itemprice, setItemPrice] = useState(0);
     const [itempending, setItemPending] = useState(false);
 
     const provider = new ethers.providers.Web3Provider(window?.ethereum);
@@ -83,7 +83,7 @@ const CreateForm = () => {
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="itemprice">Item Price</label>
-                        <input className="form-control" type="text" id='itemprice' onChange={ (e) => setItemPrice( ethers.utils.parseEther((e.target.value).toString())) } />
+                        <input className="form-control" type="number" id='itemprice' onChange={ (e) => { try {setItemPrice( ethers.utils.parseEther((e.target.value).toString()))} catch(err){} }} />
                     </div>
                 </div>
                 <div className="col-md-6">
