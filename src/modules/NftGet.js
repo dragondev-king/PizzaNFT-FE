@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import {ethers} from 'ethers'
@@ -10,21 +10,21 @@ import { AUCTIONcontract, NFTcontract } from "../config/contractConnect"
 import { useNft } from "use-nft"
 import ExploreImage from '../components/exploreimage/ExploreImage'
 
-function Nft({tokenId}) {
+function Nft({ tokenId }) {
     const [nftavatar, setNftAvatar] = useState();
     const [ownername, setOwnerName] = useState();
     const [owner, setOwner] = useState("");
     const [buynowprice, setBuyNowPrice] = useState(0);
 
-    const {loading, error, nft} = useNft(
-      NFT_ADDRESS,
-      tokenId
+    const { loading, error, nft } = useNft(
+        NFT_ADDRESS,
+        tokenId
     )
 
-    useEffect( async()=> {
+    useEffect(async () => {
         try {
             setOwner(await AUCTIONcontract.ownerOfNFT(NFT_ADDRESS, tokenId));
-        } catch (err) {}
+        } catch (err) { }
     }, [])
 
     // nft.loading is true during load.
@@ -45,7 +45,7 @@ function Nft({tokenId}) {
         })
     } catch (err){}
 
-    if( nft?.owner === AUCTION_ADDRESS) {
+    if (nft?.owner === AUCTION_ADDRESS) {
         nft.owner = owner;
     }
 
