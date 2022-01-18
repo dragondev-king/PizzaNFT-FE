@@ -201,14 +201,14 @@ h2 {
 .items-main-cont button {
   margin-top: 10px;
   margin-right: 10px;
-  padding: 8px 25px;
+  padding: 8px 18px;
   border-radius: 0;
   /* background-image: linear-gradient( 
 102deg, #f61eff 3%, #76c5e0 100%); */
   font-family: Akira-Super;
   color: #000;
   letter-spacing: 0.18px;
-  font-size: 14px;
+  font-size: 13px;
   text-decoration: none !important;
   border: none;
   border-radius: 0;

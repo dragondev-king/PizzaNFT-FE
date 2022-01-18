@@ -1,49 +1,39 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react'
+import { useDispatch } from "react-redux";
 import UploadImage from '../../assets/images/plus.png'
-import { ethers } from 'ethers'
+import { Common } from '../../redux/common'
+import { updateUserInfo } from '../../redux/actions'
 
 const ProfileForm = () => {
+    const dispatch = useDispatch();
+    const { profileImg, name, profileUrl, account, status } = Common();
     const [profileImgUrl, setProfileImgUrl] = useState("");
-    const [profileImg, setProfileImg] = useState();
-    const [name, setName] = useState();
-    const [profileUrl, setProfileUrl] = useState();
+    const [updateName, setUpdateName] = useState("");
+    const [updateProfileImg, setUpdateProfileImg] = useState("");
+    const [updateProfileUrl, setUpdateProfileUrl] = useState("");
+
+    useEffect( ()=> {
+        if( status === "disconnected") {
+            setProfileImgUrl("");
+            setUpdateName("");
+            setUpdateProfileUrl("");
+        } else {
+            setProfileImgUrl(profileImg ? profileImg : "");
+            setUpdateName(name ? name : "");
+            setUpdateProfileUrl(profileUrl ? profileUrl : "");
+        }
+    }, [profileImg, name, profileUrl, status])
 
     const handleChange = (e) => {
         const [file] = e.target.files;
-        setProfileImg(file);
+        setUpdateProfileImg(file);
         setProfileImgUrl(URL.createObjectURL(file));
     };
-
-    useEffect( ()=> {
-        axios.get(`http://localhost:8080/api/profile/${ethers.utils.getAddress(localStorage.getItem('account'))}`)
-        .then( res => {
-            if(res.status != 200) return
-
-            setProfileImgUrl(res.data[0].profileImg);
-            setName(res.data[0].name);
-            setProfileUrl(res.data[0].profileUrl);
-        })
-    }, [])
-
+    
     const update = (e)=> {
         e.preventDefault();
-        if(localStorage.getItem("connectStatus") === "connected") {
-            const formData = new FormData();
-            formData.append('profileImg', profileImg);
-            formData.append("name", name);
-            formData.append("profileUrl", profileUrl);
-
-            axios.put(`http://localhost:8080/api/profile/${ethers.utils.getAddress(localStorage.getItem('account'))}`, formData, {'Accept':'multipart/form-data'})
-            .then(res => {
-        console.log("ok_  ",res)
-
-                if(res.status == 200) {
-                    alert("Success!");
-                } else {
-                    alert("Failed!");
-                }
-            })
+        if(status === "connected") {
+            dispatch( updateUserInfo( account, updateName, updateProfileImg, updateProfileUrl) )
         } else {
             alert("please MetaMask connect!");
         }
@@ -55,7 +45,7 @@ const ProfileForm = () => {
                 <div className="row">
                     <div className="col-md-12">
                         <div className="form-group">
-                            <label for="fileupload">Upload Profile Picture</label>
+                            <label htmlFor="fileupload">Upload Profile Picture</label>
                             <div className="picture-container">
                                 <div className="picture">
                                     <img src={profileImgUrl === "" ? UploadImage : profileImgUrl} className="picture-src" id="wizardPicturePreview" title="" />
@@ -68,15 +58,15 @@ const ProfileForm = () => {
                     </div>
                     <div className="col-md-12">
                         <div className="form-group">
-                            <label for="itemname">Display name</label>
-                            <input className="form-control" type="text" id='displayname' onChange={ (e)=> setName(e.target.value)} value={name} />
+                            <label htmlFor="itemname">Display name</label>
+                            <input className="form-control" type="text" id='displayname' onChange={ (e)=> setUpdateName(e.target.value) } value={updateName} />
                         </div>
                     </div>
 
                     <div className="col-md-12">
                         <div className="form-group">
-                            <label for="itemname">Custom URL</label>
-                            <input className="form-control" type="text" id='displayname' onChange={ (e)=> setProfileUrl(e.target.value)} value={profileUrl}/>
+                            <label htmlFor="itemname">Custom URL</label>
+                            <input className="form-control" type="text" id='displayname' onChange={ (e)=> setUpdateProfileUrl(e.target.value) } value={updateProfileUrl}/>
                         </div>
                     </div>
                     <div className="col-md-12">

@@ -1,23 +1,29 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { ethers } from 'ethers'
+import { useDispatch } from "react-redux"
 import { AUCTIONcontract, NFTcontract } from '../../config/contractConnect'
-import { NFT_ADDRESS, FT_ADDRESS, AUCTION_ADDRESS } from '../../config/contract'
-const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
+import { NFT_ADDRESS, FT_ADDRESS, AUCTION_ADDRESS, TEAMWALLET_ADDRESS, TEAM_ROYALTY } from '../../config/contract'
+import { Common } from '../../redux/common'
+import { createAuction } from '../../redux/actions'
 
-    const [minprice, setMinPrice] = useState(0);
-    const [buyprice, setBuyPrice] = useState(0);
-    const [walletconnect, setWalletConnect] = useState(localStorage.getItem('connectStatus'));
+const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
+    const dispatch = useDispatch();
+    const { status, account } = Common();
+    const [minprice, setMinPrice] = useState(10);
+    const [buyprice, setBuyPrice] = useState(100000000);
     const [pending, setPending] = useState(false);
 
+
     const create_auction = async ()=> {
-        if (walletconnect === 'connected') {
+        if (status === 'connected') {
            const nft_send = await NFTcontract.approve(AUCTION_ADDRESS, state?.tid);
            setPending(true);
            await nft_send.wait();
-           const creat_auction =  await AUCTIONcontract.createDefaultNftAuction( NFT_ADDRESS, state?.tid, FT_ADDRESS , ethers.utils.parseEther(minprice.toString()), ethers.utils.parseEther(buyprice.toString()),["0xB63D493d2F28a76296C63Bb4F10F1E818F97f9A6"], [250])
+           const creat_auction =  await AUCTIONcontract.createDefaultNftAuction( NFT_ADDRESS, state?.tid, FT_ADDRESS , ethers.utils.parseEther(minprice.toString()), ethers.utils.parseEther(buyprice.toString()),[TEAMWALLET_ADDRESS], [TEAM_ROYALTY])
            await creat_auction.wait();
            setPending(false);
            setAcutionCreate(true);
+           dispatch(createAuction(account, state?.tid))
         } else {
             alert("Please connect MetaMask!")
         }
@@ -31,23 +37,17 @@ const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
             <div className="row" style={{'width':'350px'}}>
                 <div className="col-md-12">
                     <div className="form-group">
-                        <label>Min Price</label>
+                        <label>Bid Start Price ($PIZZA)</label>
                         <input className="form-control" type="number" id='itemname'  onChange={ (e) => setMinPrice(e.target.value)} value={minprice}/>
                     </div>
                 </div>
-                <div className="col-md-12">
-                    <div className="form-group">
-                        <label>Buy Now Price</label>
-                        <input className="form-control" type="number" id='itemprice' onChange={ (e) => setBuyPrice(e.target.value)} value={buyprice}/>
-                    </div>
-                </div>
-                <div className="col-md-6">
+                <div className="col-md-6 col-sm-6">
                 {   
                     pending ? <button className="btn btn-default" disabled >Creating</button> :
                     <button className="btn btn-default" onClick={ create_auction} >Create</button>
                 }
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-6 col-sm-6">
                     <button className="btn btn-default" onClick={closeModal} style={{'float': 'right'}} >Close</button>
                 </div>
             </div>

@@ -4,26 +4,22 @@ import { ethers } from "ethers";
 import {
   NFT_ADDRESS,
   FT_ADDRESS,
-  NFT_ABI,
-  FT_ABI,
   TEAM_ROYALTY,
   MINT_PRICE,
   TEAMWALLET_ADDRESS
 } from "../../config/contract";
+import { NFTcontract, FTcontract } from "../../config/contractConnect";
+import { Common } from '../../redux/common';
 
 const client = create('https://ipfs.infura.io:5001/api/v0');
 
 const CreateForm = () => {
+    const { status } = Common();
     const [itemfile, setItemFile] = useState("");
     const [itemname, setItemName] = useState("");
     const [itemdesc, setItemDesc] = useState("");
     const [itemprice, setItemPrice] = useState(0);
     const [itempending, setItemPending] = useState(false);
-
-    const provider = new ethers.providers.Web3Provider(window?.ethereum);
-    const signer = provider.getSigner();
-    const NFTcontract = new ethers.Contract(NFT_ADDRESS, NFT_ABI, signer);
-    const FTcontract = new ethers.Contract(FT_ADDRESS, FT_ABI, signer);
 
     const handleChange = (e) => {
         const [file] = e.target.files;
@@ -31,7 +27,7 @@ const CreateForm = () => {
     };
 
     const createItem = async ()=> {
-        if (localStorage.getItem("connectStatus") === "connected") {
+        if (status === "connected") {
             setItemPending(true);
             const item = await client.add(itemfile);
             const url = `https://ipfs.infura.io/ipfs/${item.path}`;

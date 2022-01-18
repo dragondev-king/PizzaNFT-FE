@@ -1,5 +1,9 @@
 node_modules/
 package-lock.json
 .env
+<<<<<<< HEAD
+yarn.lock
+=======
 build/
 yarn.lock
+>>>>>>> eed48e19c43c1e8e9200ee2dce067968216e7c6e

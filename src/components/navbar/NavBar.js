@@ -1,40 +1,28 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
-import Logo from '../../assets/images/logo.png'
-import NavitemLogin from '../navItemlogin/NavitemLogin'
-import NavitemsLogout from '../navitemslogout/NavitemsLogout'
+import React, {useState, useEffect} from 'react';
+import { useDispatch } from "react-redux";
+import { ethers } from 'ethers';
+import Logo from '../../assets/images/logo.png';
+import NavitemLogin from '../navItemlogin/NavitemLogin';
+import NavitemsLogout from '../navitemslogout/NavitemsLogout';
 import { useWallet, UseWalletProvider  } from 'use-wallet';
+import { walletConnect, userInfo } from "../../redux/actions";
 
 const App = () => {
     const wallet = useWallet();
+    const dispatch = useDispatch();
     const [flag, setFlag] = useState(false);
-    const [avatar, setAvatar] = useState("");
-
-    const create = ()=> {
-        axios.post(`http://localhost:8080/api/profile/create`, {account: wallet?.account})
-            .then( (res) => {
-                if(res.error) return;
-            })
-    }
     
     useEffect (()=> { 
+        dispatch( walletConnect(wallet) );
         if(flag) {
             localStorage.setItem('connectStatus', wallet?.status);
         } else {
             localStorage.getItem('connectStatus') === 'connected' ? wallet?.connect() : wallet?.reset();
         }
         setFlag(true);
-        
+
         if(wallet?.status === "connected") {
-            localStorage.setItem("account", wallet?.account);
-            axios.get(`http://localhost:8080/api/profile/${wallet?.account}`)
-            .then( (res) => {
-                if(res.data.length === 0) {
-                    create();
-                } else {
-                    setAvatar(res.data[0].profileImg);
-                }
-            })
+            dispatch( userInfo( ethers.utils.getAddress( wallet?.account )) );
         }
     }, [wallet?.status])
 
@@ -48,7 +36,7 @@ const App = () => {
                     <div className="nav-bar-items">
                         {
                             wallet?.status === "connected" ? 
-                            <NavitemsLogout wallet={wallet} avatar={avatar} /> : 
+                            <NavitemsLogout wallet={wallet} /> : 
                             <NavitemLogin wallet={wallet} />
                         }
                     </div>
