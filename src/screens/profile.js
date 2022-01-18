@@ -7,9 +7,9 @@ import FilterButton from '../components/filterbutton/FilterButton'
 import Breadcrumb from '../components/breadcrumb/Breadcrumb'
 import ProfileHeader from '../components/profileheader/ProfileHeader'
 import Nft from '../modules/NftGet'
+import { rpc_provider } from "../config/contractConnect"
 
-const provider = new ethers.providers.Web3Provider(window?.ethereum);
-const fetcher = ["ethers", { ethers, provider: provider }]
+const fetcher = ["ethers", { ethers, provider: rpc_provider }]
 
 const Profile = () => {
     const { state } = useLocation();

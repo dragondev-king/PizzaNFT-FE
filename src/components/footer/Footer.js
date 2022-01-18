@@ -27,7 +27,7 @@ const Footer = () => {
                         </div>
                         <div className="col-md-3">
                             <h3>LANGUAGE</h3>
-                            <div class="google-translate-div ">
+                            <div className="google-translate-div ">
                                 <div id="google_translate_element"></div>
                             </div>
                         </div>

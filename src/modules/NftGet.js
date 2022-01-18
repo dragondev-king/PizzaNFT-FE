@@ -6,7 +6,7 @@ import {
     NFT_ADDRESS,
     AUCTION_ADDRESS,
   } from "../config/contract"
-import { AUCTIONcontract, NFTcontract } from "../config/contractConnect"
+import { AUCTIONcontractRead, NFTcontractRead } from "../config/contractConnect"
 import { useNft } from "use-nft"
 import ExploreImage from '../components/exploreimage/ExploreImage'
 
@@ -23,7 +23,7 @@ function Nft({ tokenId }) {
 
     useEffect(async () => {
         try {
-            setOwner(await AUCTIONcontract.ownerOfNFT(NFT_ADDRESS, tokenId));
+            setOwner(await AUCTIONcontractRead.ownerOfNFT(NFT_ADDRESS, tokenId));
         } catch (err) { }
     }, [])
 
@@ -35,10 +35,10 @@ function Nft({ tokenId }) {
 
     try {
         (async ()=> {
-            setBuyNowPrice( ethers.utils.formatEther(await NFTcontract.price(tokenId), {from: nft.owner}) );
+            setBuyNowPrice( ethers.utils.formatEther(await NFTcontractRead.price(tokenId)) );
         })()
 
-        axios.get(`http://localhost:8080/api/profile/${ethers.utils.getAddress(nft.owner)}`)
+        axios.get(`${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(nft.owner)}`)
         .then( (res) => {
             setNftAvatar(res.data[0]?.profileImg)
             setOwnerName(res.data[0]?.name)

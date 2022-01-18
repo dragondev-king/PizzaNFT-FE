@@ -1,17 +1,21 @@
 import React from 'react'
-import AvatarImage from '../avatarimage/AvatarImage'
+import dateFormat from "dateformat"
+import AvatarImages from '../../assets/images/artist-avatar.jpg'
 
-const Bidder = () => {
+const Bidder = ({item}) => {
+    let date = new Date(item.createdAt)
     return (
         <>
             <div className="main-bid-container">
                 <div className="bid-avatar-image">
-                    <AvatarImage />
+                    <div className="avatarimage">
+                        <img src={item.bidder_info[0]?.profileImg ? item.bidder_info[0]?.profileImg : AvatarImages} alt="" style={{'width':'100px', 'maxHeight':'100px'}}/>
+                    </div>
                 </div>
                 <div className="bid-description">
-                    <h4>0x3ee3d5Be2e8A7b29D395Ca8E5F380B2d277A6900</h4>
-                    <h5>Bid <span>0.022 BNB</span></h5>
-                    <h6>30 Dec, 1:47:56 pm</h6>
+                    <h4>{item.bidder}</h4>
+                    <h5>Bid <span>{item.amount} $pizza</span></h5>
+                    <h6>{ dateFormat(date, "d  mmm  hh:MM:ss tt") }</h6>
                 </div>
             </div>
         </>
