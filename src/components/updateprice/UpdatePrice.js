@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
+import { useDispatch } from "react-redux"
 import { NFTcontract } from '../../config/contractConnect'
+import { nftUpdatePrice } from '../../redux/actions'
 
 const UpdatePrice = ({setIsOpen, state, setBuyNowPrice, buynowprice }) => {
+    const dispatch = useDispatch();
     const [pending, setPending] = useState(false);
     const [updatePrice, setUpdatePrice] = useState(ethers.utils.formatEther(buynowprice));
 
@@ -15,6 +18,7 @@ const UpdatePrice = ({setIsOpen, state, setBuyNowPrice, buynowprice }) => {
             let update = await NFTcontract.updatePrice(state?.tid, ethers.utils.parseEther(updatePrice.toString()));
             setPending(true);
             await update.wait();
+            dispatch( nftUpdatePrice(state?.tid, state?.nft?.owner, ethers.utils.formatEther(buynowprice), updatePrice ) );
             setBuyNowPrice( ethers.utils.parseEther(updatePrice) );
             setPending(false);
             closeModal();
