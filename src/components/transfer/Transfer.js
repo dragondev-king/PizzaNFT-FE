@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
+import { useDispatch } from "react-redux"
 import { NFTcontract } from '../../config/contractConnect'
+import { nftTransfer } from "../../redux/actions"
+
 
 const UpdatePrice = ({setIsOpen, state}) => {
     const [pending, setPending] = useState(false);
+    const dispatch = useDispatch();
     const [toAddress, setToAddress] = useState("");
     function closeModal() {
         setIsOpen(false);
@@ -15,6 +19,7 @@ const UpdatePrice = ({setIsOpen, state}) => {
             await send.wait();
             setPending(false);
             closeModal();
+            dispatch( nftTransfer(state?.tid, state?.nft?.owner, state?.nft?.owner,  toAddress) );
         } catch (err) {console.log(err)}
     }
     return (
