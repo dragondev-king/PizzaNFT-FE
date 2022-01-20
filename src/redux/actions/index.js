@@ -10,11 +10,11 @@ import {
   UPDATE_PRICE, 
   UPDATE_USERINFO, 
   HISTORY_FIND_ALL,
-  BID_FILD_ALL,
-  MINT,
-  AUCTION_CREATED,
+  BID_FIND_ALL,
+  HOT_AUCTION_GET,
+  AUCTION_SETTLE,
   TRANSFER,
-  PRICE_UPDATED
+  BID_FIND_ONE
 } from "../types";
 
 const BACKEND_API = `${process.env.REACT_APP_BACKEND_API}/api`; 
@@ -143,14 +143,6 @@ export const selectedUserInfo = ( account ) => ( dispatch, getState ) => {
   }
 }
 
-export const updatePrice = ( tid, price ) => ( dispatch, getState ) => {
-   try {
-
-   } catch (error) {
-     console.log("Update Price ", error)
-   }
-}
-
 export const updateUserInfo = (account, name, profileImg, profileUrl) => (dispatch, getState) => {
   try {
     const formData = new FormData();
@@ -239,49 +231,9 @@ export const updateBid = (tokenId, nftOwner, bidder, amount, status) => (dispatc
   }
 }
 
-export const createHistory = (tokenId, event, from, to, prevAmount, currAmount) => (dispatch, getState) => {
-  try {
-    let newHistory = { tokenId: tokenId, event: event };
-    switch (event) {
-      case MINT:
-        {
-          newHistory.currAmount = currAmount;
-          break;
-        }
-      case AUCTION_CREATED:
-        {
-          newHistory.from = from;
-          break;
-        }
-      case TRANSFER:
-        {
-          newHistory.from = from;
-          newHistory.to = to;
-          break;
-        }
-      case PRICE_UPDATED:
-        {
-          newHistory.from = from;
-          newHistory.prevAmount = prevAmount;
-          newHistory.currAmount = currAmount;
-        }
-    }
-    axios.post(`${BACKEND_API}/history/create`, newHistory)
-    .then(res => {
-      if(res.status == 200) {
-        alert("Success!");
-      } else {
-        alert("Failed!");
-      }
-    })
-  } catch (error) {
-    console.log("create history ", error)
-  }
-}
-
 export const historyFindAll = (tokenId) => (dispatch, getState) => {
   try {
-    axios.get(`${BACKEND_API}/history/all`, {tokenId: tokenId})
+    axios.post(`${BACKEND_API}/history/all`, {tokenId: tokenId})
     .then( (res) => {
       if(res.status != 200) return
       dispatch({
@@ -296,15 +248,96 @@ export const historyFindAll = (tokenId) => (dispatch, getState) => {
 
 export const bidFindAll = (tokenId, owner, status="create") => (dispatch, getState) => {
   try {
-    axios.get(`${BACKEND_API}/bid/all`, {tokenId: tokenId, owner:owner, status: status})
+    axios.post(`${BACKEND_API}/bid/all`, {tokenId: tokenId, owner:owner, status: status})
     .then( (res) => {
       if(res.status != 200) return
       dispatch({
-        type: BID_FILD_ALL,
+        type: BID_FIND_ALL,
         payload: res.data
       })
     })
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const bidFindOne = (tokenId, nftOwner, bidder) => (dispatch, getState) => {
+  try {
+    axios.post(`${BACKEND_API}/bid/findone`, {tokenId: tokenId, nftOwner:nftOwner, bidder: bidder})
+    .then( (res) => {
+      if(res.status != 200) return
+      dispatch({
+        type: BID_FIND_ONE,
+        payload: {bidstatus: res.data}
+      })
+    })
+  } catch (error) {
+    console.log("Bid FindOne ", error);
+  }
+}
+
+export const nftMint = (tokenId, owner) => (dispatch, getState) => {
+  try {
+    axios.post(`${BACKEND_API}/mint`, {tokenId: tokenId, owner:owner})
+    .then( (res) => {
+      if(res.status != 200) return
+    })
+  } catch (error) {
+    console.log("MINT ", error)
+  }
+}
+
+export const nftUpdatePrice = (tokenId, owner, prevPrice, currPrice) => (dispatch, getState) => {
+  try {
+    axios.post(`${BACKEND_API}/updateprice`, {tokenId: tokenId, owner:owner, prevPrice:prevPrice, currPrice: currPrice})
+    .then( (res) => {
+      if(res.status != 200) return
+      dispatch({
+        type: UPDATE_PRICE,
+        payload: {price: currPrice}
+      })
+    })
+  } catch (error) {
+    console.log("Update Price ", error);
+  }
+}
+
+export const hotAuctionGet = () => (dispatch, getState) => {
+  try {
+    axios.get(`${BACKEND_API}/hotauction`)
+    .then( (res) => {
+      if(res.status != 200) return
+      dispatch({
+        type: HOT_AUCTION_GET,
+        payload: res.data
+      })
+    })
+  } catch (error) {
+    console.log("Hot Auction ", error);
+  }
+}
+
+export const settleAuction = (tokenId, owner, from, to) => (dispatch, getState) => {
+  try {
+    axios.post(`${BACKEND_API}/settleauction`, {tokenId: tokenId, owner:owner, from:from, to: to})
+    .then( (res) => {
+    })
+  } catch (error) {
+    console.log("Settle Auction ", error);
+  }
+}
+
+export const nftTransfer = (tokenId, owner, from, to) => (dispatch, getState) => {
+  try {
+    axios.post(`${BACKEND_API}/transfer`, {tokenId: tokenId, owner:owner, from:from, to: to})
+    .then( (res) => {
+      if(res.status != 200) return
+      dispatch({
+        type: UPDATE_PRICE,
+        payload: {price: currPrice}
+      })
+    })
+  } catch (error) {
+    console.log("Transfer ", error);
   }
 }

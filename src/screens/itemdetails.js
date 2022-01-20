@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { useDispatch } from "react-redux"
 import Modal from 'react-modal'
 import axios from 'axios'
+import Countdown from 'react-countdown'
 import Breadcrumb from '../components/breadcrumb/Breadcrumb'
 
 import MainImage from '../components/mainimage/MainImage'
@@ -23,7 +24,7 @@ import {
     TEAMWALLET_ADDRESS,
     TEAM_ROYALTY
 } from "../config/contract";
-import { updateAuction, makeBid, bidFindAll, historyFindAll } from "../redux/actions"
+import { updateAuction, makeBid, bidFindAll, historyFindAll, bidFindOne, settleAuction } from "../redux/actions"
 
 import { NFTcontract, NFTcontractRead, AUCTIONcontract, AUCTIONcontractRead, FTcontract } from '../config/contractConnect'
 
@@ -45,10 +46,11 @@ Modal.setAppElement("#root")
 const ItemDetails = () => {
     const dispatch = useDispatch();
     const { state } = useLocation();
-    const { account, status, bids } = Common();
+    const { account, status, bids, historys, bidstatus } = Common();
     const [minthash, setMintHash] = useState();
     const [auctionCreate, setAcutionCreate] = useState(false);
     const [nftHighestBid, setNftHighestBid] = useState();
+    const [nftHighestBider, setNftHighestBider] = useState();
 
     const [auctionModalIsOpen, setAuctionCreateSetIsOpen] = useState(false);
     const [bidModalIsOpen, setBidModalIsOpen] = useState(false);
@@ -131,6 +133,16 @@ const ItemDetails = () => {
         }
     }
 
+    const settle_auction = async ()=> {
+        try {
+            let settle = await AUCTIONcontract.settleAuction(NFT_ADDRESS, state?.tid);
+            await settle.wait();
+            dispatch( settleAuction(state?.tid, account, state?.nft?.owner, account) );
+        } catch (error) {
+            console.log("Settle Auction ", error)
+        }
+    }
+
     function AuctionCreateOpenModal() {
         setAuctionCreateSetIsOpen(true);
     }
@@ -165,8 +177,9 @@ const ItemDetails = () => {
             if (auction_info?.nftSeller !== '0x0000000000000000000000000000000000000000') {
                 setNftOwner(auction_info?.nftSeller);
                 setAcutionCreate(true);
-                setNftHighestBid(ethers.utils.formatEther(auction_info?.nftHighestBid));
-                setBidMinPrice(ethers.utils.formatEther(auction_info?.minPrice))
+                setNftHighestBid( ethers.utils.formatEther(auction_info?.nftHighestBid) );
+                setNftHighestBider( auction_info?.nftHighestBidder);
+                setBidMinPrice( ethers.utils.formatEther(auction_info?.minPrice) )
                 setAuctionEnd(Number(ethers.utils.formatUnits(auction_info?.auctionEnd, 0)));
                 dispatch(bidFindAll(state?.id, auction_info?.nftSeller));
             }
@@ -174,8 +187,10 @@ const ItemDetails = () => {
             let buyNowPrice = await NFTcontractRead.price(state?.tid);
             setBuyNowPrice(buyNowPrice);
 
+    
+        } catch(err) {}
 
-        } catch (err) { }
+        dispatch( historyFindAll(state?.tid) )
     }, [])
 
     useEffect(() => {
@@ -184,8 +199,23 @@ const ItemDetails = () => {
         } else {
             setOwner(false);
         }
+        dispatch( bidFindOne(state?.tid, state?.nft?.owner, account))
     }, [account])
 
+    const renderer = ({ days, hours, minutes, seconds, completed }) => {
+        if (completed) {
+            return (
+               nftHighestBider == account ?
+                    <button className='buy-it-button' onClick={ settle_auction }>Settle Auction</button> :
+                    bidstatus.length && nftHighestBider != account ? <button className='buy-it-button' onClick={ settle_auction }>Withdraw Bid</button> : ""
+            );
+        } else {
+            return <>
+                <span>{days} Days, {hours} Hours, {minutes} Minutes, {seconds}s</span>
+            </>
+        }
+    };
+    
     return (
         <>
             <Breadcrumb name="Item Details" />
@@ -209,6 +239,9 @@ const ItemDetails = () => {
                                         <p>
                                             {state?.nft?.description}
                                         </p>
+                                        {
+                                            auctionEnd ? <Countdown  date={ new Date(Number(auctionEnd)) }  renderer={renderer}/> : ""
+                                        }
                                     </div>
                                     <div className="bidbutton">
                                         {
@@ -218,8 +251,8 @@ const ItemDetails = () => {
                                         }
                                         {
                                             <> {
-                                                auctionCreate && !owner ?
-                                                    <button className='place-a-bid-button' onClick={BidOpenModal}  >Place a Bid</button> :
+                                                auctionCreate && !owner && !bidstatus.length ?
+                                                    <button className='place-a-bid-button' onClick={ BidOpenModal }  >Place a Bid</button> :
                                                     ""
                                             }
                                                 <Modal
@@ -251,15 +284,15 @@ const ItemDetails = () => {
                                         }
                                         {
                                             owner && !auctionCreate ?
-                                                <>
-                                                    {/* <button className='buy-it-button' onClick={TransferOpenModal}>Transfer</button> */}
-                                                    <Modal
-                                                        isOpen={transferIsOpen}
-                                                        style={customStyles}
-                                                        contentLabel="Create Auction"
-                                                    >
-                                                        <Transfer setIsOpen={setTransferIsOpen} state={state} AUCTIONcontract={AUCTIONcontract} setAcutionCreate={setAcutionCreate} />
-                                                    </Modal>
+                                            <>
+                                                <button className='buy-it-button' onClick={TransferOpenModal}>Transfer</button>
+                                                <Modal
+                                                    isOpen={transferIsOpen}
+                                                    style={customStyles}
+                                                    contentLabel="Create Auction"
+                                                >
+                                                    <Transfer setIsOpen={setTransferIsOpen} state={state} AUCTIONcontract={AUCTIONcontract} setAcutionCreate={setAcutionCreate}/>
+                                                </Modal>
 
                                                     <button className='place-a-bid-button' onClick={UpdatePriceOpenModal}  >Update Price</button>
                                                     <Modal
@@ -270,16 +303,16 @@ const ItemDetails = () => {
                                                         <UpdatePrice setIsOpen={setUpdatePriceIsOpen} state={state} AUCTIONcontract={AUCTIONcontract} setAcutionCreate={setAcutionCreate} setBuyNowPrice={setBuyNowPrice} buynowprice={buynowprice} />
                                                     </Modal>
 
-                                                    {/* <button className='create-auction-button' onClick={ AuctionCreateOpenModal }  >Create Auction</button> */}
-                                                    <Modal
-                                                        isOpen={auctionModalIsOpen}
-                                                        style={customStyles}
-                                                        contentLabel="Create Auction"
-                                                    >
-                                                        <CreateAuction setIsOpen={setAuctionCreateSetIsOpen} state={state} AUCTIONcontract={AUCTIONcontract} setAcutionCreate={setAcutionCreate} />
-                                                    </Modal>
-                                                </> :
-                                                ""
+                                                <button className='create-auction-button' onClick={ AuctionCreateOpenModal }  >Create Auction</button>
+                                                <Modal
+                                                    isOpen={auctionModalIsOpen}
+                                                    style={customStyles}
+                                                    contentLabel="Create Auction"
+                                                >
+                                                    <CreateAuction setIsOpen={setAuctionCreateSetIsOpen} state={state} AUCTIONcontract={AUCTIONcontract} setAcutionCreate={setAcutionCreate}/>
+                                                </Modal>
+                                            </> :
+                                            ""
                                         }
                                         {
                                             owner && auctionCreate && !auctionEnd ?
@@ -315,7 +348,11 @@ const ItemDetails = () => {
                                             </div>
                                             <div id="menu2" className="tab-pane fade">
                                                 <div className="bidders-div">
-                                                    <History />
+                                                    {
+                                                        historys?.map( (item, index) => 
+                                                            <History key={index} item={item}/>
+                                                        )
+                                                    }
                                                 </div>
                                             </div>
                                             <div id="menu3" className="tab-pane fade">
