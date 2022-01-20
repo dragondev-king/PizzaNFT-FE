@@ -12,17 +12,20 @@ const Footer = () => {
                             <a href="#"><img src={Logo} alt="Logo" /></a>
                             <h3>FOLLOW US ON</h3>
                             <div className="footer-social-icons">
-                                <a href="#"><i className="fab fa-facebook-f"></i></a>
-                                <a href="#"><i className="fab fa-twitter"></i></a>
-                                <a href="#"><i className="fab fa-instagram"></i></a>
-                                <a href="#"><i className="fab fa-discord"></i></a>
+                                <a target="_blank" href="https://www.facebook.com/PizzaNFT/" className="social-icon"><i className="fab fa-facebook-f"></i></a>
+                                <a target="_blank" href="https://t.me/pizzanft" className="social-icon"><i class="fab fa-telegram-plane"></i></a>
+                                <a target="_blank" href="https://twitter.com/pizzaNFT2E" className="social-icon"><i className="fab fa-twitter"></i></a>
+                                <a target="_blank" href="https://www.instagram.com/pizzanftofficial/" className="social-icon"><i className="fab fa-instagram"></i></a>
+                                <a target="_blank" href="https://www.tiktok.com/@pizzanftofficial?" className="social-icon"><i class="fab fa-tiktok"></i></a>
+                                <a target="_blank" href="https://discord.com/invite/jTvcs5xPQE" className="social-icon"><i className="fab fa-discord"></i></a>
+                                <a target="_blank" href="https://www.youtube.com/channel/UCDlGQA5bzWvL994MdGLTu_g" className="social-icon"><i class="fab fa-youtube"></i></a>
                             </div>
                         </div>
 
                         <div className="col-md-5">
                             <h3>INFORMATION</h3>
                             <a href="https://pizza-nft.com/home/#contactus" target="_blank">Contact Us</a>
-                            <a href="#">Newsletter</a>
+                            <a href="https://medium.com/PIZZANFTOFFICIAL" target="_blank">Newsletter</a>
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSc7F6Xt4TL151brnUyW6cUjKwP0TDiAeW3iUQllrVnwQQ6Y2Q/viewform" target="_blank">Subscriptions</a>
                         </div>
                         <div className="col-md-3">
