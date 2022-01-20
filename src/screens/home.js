@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import  { ethers }  from "ethers"
+import { ethers } from "ethers"
 import { useDispatch } from "react-redux"
 import { NftProvider } from "use-nft"
 
@@ -64,7 +64,7 @@ const Home = () => {
                         <h2>Top Artists</h2>
                         <ul>
                             {
-                                top_owners?.map( (item, index) => 
+                                top_owners?.map((item, index) =>
                                     <ArtistAvatar info={item} key={index} />
                                 )
                             }
@@ -110,7 +110,7 @@ const Home = () => {
                 </div>
             </div>
 
-            <div className="exclusive-drops">
+            <div className="exclusive-drops" id="exlpore-more">
                 <div className="container">
                     <div className="exclusive-drops-list">
                         <h2>Explore</h2>
@@ -122,12 +122,12 @@ const Home = () => {
                             <FilterButton name="Filter-iv" />
                         </div>
                         <div className="main-explore-image-container">
-                            <div style={{"display":'grid', 'gridTemplateColumns':'auto auto auto auto', 'gridGap':'20px'}}>
+                            <div style={{ "display": 'grid', 'gridTemplateColumns': 'auto auto auto auto', 'gridGap': '20px' }}>
                                 <NftProvider fetcher={fetcher}>
-                                    {   
-                                        token_ids?.map( (item, index) => 
+                                    {
+                                        token_ids?.map((item, index) =>
                                             <Nft tokenId={item} key={index} />
-                                        ) 
+                                        )
                                     }
                                 </NftProvider>
                             </div>
