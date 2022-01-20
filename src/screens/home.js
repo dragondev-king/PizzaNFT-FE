@@ -11,11 +11,11 @@ import ArtistAvatar from '../components/artistavatar/ArtistAvatar'
 import Slider from "react-slick"
 
 import ExclusiveDrops from '../components/exclusivedrops/ExclusiveDrops'
-import HotAuction from '../components/hotauction/HotAuction'
 import FilterButton from '../components/filterbutton/FilterButton'
 import Nft from '../modules/NftGet'
+import HotNft from '../modules/HotNft'
 import FaqDetails from '../components/faqdetails/FaqDetails'
-import { NftTokenID, topOwner } from '../redux/actions'
+import { NftTokenID, topOwner, hotAuctionGet } from '../redux/actions'
 import { Common } from "../redux/common"
 import { rpc_provider } from "../config/contractConnect"
 
@@ -23,12 +23,14 @@ const fetcher = ["ethers", { ethers, provider: rpc_provider }]
 
 const Home = () => {
     const dispatch = useDispatch();
-    const { token_ids, top_owners } = Common();
 
     useEffect( ()=> {
         dispatch ( NftTokenID() );
         dispatch ( topOwner() );
+        dispatch ( hotAuctionGet() );
     }, [])
+
+    const { token_ids, top_owners, hots } = Common();
 
     var settings = {
         centerMode: true,
@@ -94,13 +96,15 @@ const Home = () => {
                     <div className="exclusive-drops-list">
                         <h2>Hot Auctions</h2>
                         <div className="exclusive-carousal">
-                            <Slider {...settings}>
-                                <HotAuction />
-                                <HotAuction />
-                                <HotAuction />
-                                <HotAuction />
-                                <HotAuction />
-                            </Slider>
+                            <NftProvider fetcher={fetcher}>
+                                <Slider {...settings}>
+                                    {
+                                        hots?.map( (item, index) => 
+                                            <HotNft key={index} tokenId={item?.tokenId}/>
+                                        )
+                                    }
+                                </Slider>
+                            </NftProvider>
                         </div>
                     </div>
                 </div>

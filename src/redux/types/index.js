@@ -6,10 +6,8 @@ export const GET_SELECTED_USER_INFO = "GET_SELECTED_USER_INFO";
 export const UPDATE_PRICE = "UPDATE_PRICE";
 export const UPDATE_USERINFO = "UPDATE_USERINFO";
 export const HISTORY_FIND_ALL ="HISTORY_FIND_ALL";
-export const BID_FILD_ALL = "BID_FILD_ALL";
-
-// ***** Event type *****
-export const MINT = "Mint";
-export const AUCTION_CREATED = "Auction Created";
-export const TRANSFER = "Transfer";
-export const PRICE_UPDATED = "Price Updated";
+export const BID_FIND_ALL = "BID_FIND_ALL";
+export const HOT_AUCTION_GET = 'HOT_AUCTION_GET';
+export const AUCTION_SETTLE = 'AUCTION_SETTLE';
+export const TRANSFER = 'TRANSFER';
+export const BID_FIND_ONE = 'BID_FIND_ONE';
