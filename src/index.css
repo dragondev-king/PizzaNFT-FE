@@ -1512,6 +1512,11 @@ color: #000 !important;
 
 @media (max-width:768px){
 
+  .wallet-connect a{
+    padding: 10px 5px;
+    font-size: 8px;
+  }
+
   .item-details-main-row{
     display: flex;
     flex-direction: column-reverse;
@@ -1700,7 +1705,7 @@ color: #000 !important;
     }
   .logo-container{
     display: block;
-    width: 60%;
+    width: 55%;
     vertical-align: top;
   }
 
@@ -1708,6 +1713,7 @@ color: #000 !important;
     padding: 4px 5px;
     display: inline-table;
     margin-top: 5px;
+    font-size: 10px;
   }
 
   #myNavbar{
