@@ -25,7 +25,7 @@ const Footer = () => {
                         <div className="col-md-5">
                             <h3>INFORMATION</h3>
                             <a href="https://pizza-nft.com/home/#contactus" target="_blank">Contact Us</a>
-                            <a href="https://medium.com/PIZZANFTOFFICIAL" target="_blank">Newsletter</a>
+                            <a href="https://medium.com/@PIZZANFTOFFICIAL" target="_blank">Newsletter</a>
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSc7F6Xt4TL151brnUyW6cUjKwP0TDiAeW3iUQllrVnwQQ6Y2Q/viewform" target="_blank">Subscriptions</a>
                         </div>
                         <div className="col-md-3">
