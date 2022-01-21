@@ -7,7 +7,9 @@ import {
   UPDATE_PRICE, 
   UPDATE_USERINFO,
   HISTORY_FIND_ALL,
-  BID_FILD_ALL
+  BID_FIND_ALL,
+  HOT_AUCTION_GET,
+  BID_FIND_ONE
 } from "../types";
 
 export default (state, action) => {
@@ -47,7 +49,22 @@ export default (state, action) => {
         ...state,
         ...action.payload
       }
-    case BID_FILD_ALL:
+    case BID_FIND_ALL:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case UPDATE_PRICE:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case HOT_AUCTION_GET:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case BID_FIND_ONE:
       return {
         ...state,
         ...action.payload
