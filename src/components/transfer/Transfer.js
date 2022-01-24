@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch } from "react-redux"
-import { NFTcontract } from '../../config/contractConnect'
+import { Common } from '../../redux/common'
 import { nftTransfer } from "../../redux/actions"
 
 
@@ -11,6 +11,8 @@ const UpdatePrice = ({setIsOpen, state}) => {
     function closeModal() {
         setIsOpen(false);
     }
+
+    const { NFTcontract } = Common();
 
     const transfer = async () => {
         try {

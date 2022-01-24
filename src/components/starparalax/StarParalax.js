@@ -6,7 +6,6 @@ import Buy from '../../assets/images/buy.png'
 import Bid from '../../assets/images/bid.png'
 import Transfer from '../../assets/images/transfer.png'
 
-
 const StarParalax = () => {
 
     return (

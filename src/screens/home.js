@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { ethers } from "ethers"
+import  { ethers }  from "ethers"
 import { useDispatch } from "react-redux"
 import { NftProvider } from "use-nft"
 
@@ -19,19 +19,19 @@ import { NftTokenID, topOwner, hotAuctionGet } from '../redux/actions'
 import { Common } from "../redux/common"
 import { rpc_provider } from "../config/contractConnect"
 
-const fetcher = ["ethers", { ethers, provider: rpc_provider }]
-
 const Home = () => {
     const dispatch = useDispatch();
-
+    
     useEffect( ()=> {
         dispatch ( NftTokenID() );
         dispatch ( topOwner() );
         dispatch ( hotAuctionGet() );
     }, [])
-
+    
     const { token_ids, top_owners, hots } = Common();
-
+    
+    const fetcher = ["ethers", { ethers, provider: rpc_provider }]
+    
     var settings = {
         centerMode: true,
         centerPadding: '5px',
@@ -64,7 +64,7 @@ const Home = () => {
                         <h2>Top Artists</h2>
                         <ul>
                             {
-                                top_owners?.map((item, index) =>
+                                top_owners?.map( (item, index) => 
                                     <ArtistAvatar info={item} key={index} />
                                 )
                             }
@@ -72,7 +72,6 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-
 
             <div className="exclusive-drops">
                 <div className="container">
@@ -110,7 +109,7 @@ const Home = () => {
                 </div>
             </div>
 
-            <div className="exclusive-drops" id="exlpore-more">
+            <div className="exclusive-drops">
                 <div className="container">
                     <div className="exclusive-drops-list">
                         <h2>Explore</h2>
@@ -122,12 +121,12 @@ const Home = () => {
                             <FilterButton name="Filter-iv" />
                         </div>
                         <div className="main-explore-image-container">
-                            <div style={{ "display": 'grid', 'gridTemplateColumns': 'auto auto auto auto', 'gridGap': '20px' }}>
+                            <div style={{"display":'grid', 'gridTemplateColumns':'auto auto auto auto', 'gridGap':'20px'}}>
                                 <NftProvider fetcher={fetcher}>
-                                    {
-                                        token_ids?.map((item, index) =>
+                                    {   
+                                        token_ids?.map( (item, index) => 
                                             <Nft tokenId={item} key={index} />
-                                        )
+                                        ) 
                                     }
                                 </NftProvider>
                             </div>

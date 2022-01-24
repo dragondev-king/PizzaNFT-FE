@@ -1,8 +1,18 @@
 import axios  from 'axios'
 import { ethers } from 'ethers'
-import { NFTcontractRead } from "../../config/contractConnect"
+import Web3Modal from "web3modal"
+import WalletConnectProvider from "@walletconnect/web3-provider"
+import metaMask from "../../assets/images/metamask.png"
+import { NFTcontractRead } from '../../config/contractConnect'
+import {
+  NFT_ADDRESS,
+  NFT_ABI,
+  FT_ADDRESS,
+  FT_ABI,
+  AUCTION_ADDRESS,
+  AUCTION_ABI,
+} from "../../config/contract";
 import { 
-  METAMASK_CONNECT, 
   GET_USER_INFO, 
   GET_TOP_OWNER, 
   GET_NFT_ID, 
@@ -12,25 +22,13 @@ import {
   HISTORY_FIND_ALL,
   BID_FIND_ALL,
   HOT_AUCTION_GET,
-  AUCTION_SETTLE,
-  TRANSFER,
-  BID_FIND_ONE
+  BID_FIND_ONE,
+  WALLET_CONNECT,
+  WALLET_DISCONNECT
 } from "../types";
 
+let web3Modal = null;
 const BACKEND_API = `${process.env.REACT_APP_BACKEND_API}/api`; 
-
-export const walletConnect = ( wallet_info ) => ( dispatch, getState ) => {
-  try {
-    dispatch({
-      type: METAMASK_CONNECT,
-      payload: {
-        wallet_info
-      }
-    })
-  } catch (error) {
-    console.log("MetaMask Error ", error);
-  }
-}
 
 export const userInfo = ( account ) => ( dispatch, getState ) => {
   try {
@@ -71,58 +69,59 @@ export const NftTokenID = () => ( dispatch, getState ) => {
 
 export const topOwner = () => ( dispatch, getState ) => {
   try {
-    axios.get(`https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}/owners?chain=bsc%20testnet&format=decimal`, {headers:{'accept':'application/json', 'X-API-Key': process.env.REACT_APP_MORALIS_KEY }})
-    .then(async (res) => {
-        if(res.status != 200 ) return
-        let owner_info = []
-
-        for(let i = 0; i < res.data.result.length; i++) {
-            const item = res.data.result[i]
-            
-            if (ethers.utils.getAddress(item.token_address) === ethers.utils.getAddress(process.env.REACT_APP_NFT_ADDRESS)) {
-                
-                let price = await NFTcontractRead.price(item.token_id);
-                
-                if( owner_info[item.owner_of] === undefined ) {
-                    let profileImg = ""
-                    let name = ""
-
-                    try {
-                        await axios.get(`${BACKEND_API}/profile/${ethers.utils.getAddress(item.owner_of)}`)
-                        .then( (res) => {
-                            if(res.status != 200) return
-                            profileImg = res.data[0]?.profileImg
-                            name = res.data[0]?.name
-                        })
-                    } catch (err){}
-
-                    owner_info[item.owner_of] = {
-                        count: 1,
-                        tokens: [item.token_id],
-                        price: +ethers.utils.formatEther(price),
-                        profileImg: profileImg, 
-                        name: name
-                    }
-                } else {
-                    owner_info[item.owner_of].count ++
-                    owner_info[item.owner_of].tokens.push( item.token_id )
-                    owner_info[item.owner_of].price += +ethers.utils.formatEther(price)
-                }
-            }
-        }
-
-        let owner_info_sort = Object.entries(owner_info)
-        owner_info_sort.sort((a, b) => 
-            b[1].price - a[1].price
-        )
-
-        dispatch({
-          type: GET_TOP_OWNER,
-          payload: {
-            top_owners: owner_info_sort.slice(0, 6)
+      axios.get(`https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}/owners?chain=bsc%20testnet&format=decimal`, {headers:{'accept':'application/json', 'X-API-Key': process.env.REACT_APP_MORALIS_KEY }})
+      .then(async (res) => {
+          if(res.status != 200 ) return
+          let owner_info = []
+  
+          for(let i = 0; i < res.data.result.length; i++) {
+              const item = res.data.result[i]
+              
+              if (ethers.utils.getAddress(item.token_address) === ethers.utils.getAddress(process.env.REACT_APP_NFT_ADDRESS)) {
+                  
+                  let price = await NFTcontractRead.price(item.token_id);
+                  
+                  if( owner_info[item.owner_of] === undefined ) {
+                      let profileImg = ""
+                      let name = ""
+  
+                      try {
+                          await axios.get(`${BACKEND_API}/profile/${ethers.utils.getAddress(item.owner_of)}`)
+                          .then( (res) => {
+                              if(res.status != 200) return
+                              profileImg = res.data[0]?.profileImg
+                              name = res.data[0]?.name
+                          })
+                      } catch (err){}
+  
+                      owner_info[item.owner_of] = {
+                          count: 1,
+                          tokens: [item.token_id],
+                          price: +ethers.utils.formatEther(price),
+                          profileImg: profileImg, 
+                          name: name
+                      }
+                  } else {
+                      owner_info[item.owner_of].count ++
+                      owner_info[item.owner_of].tokens.push( item.token_id )
+                      owner_info[item.owner_of].price += +ethers.utils.formatEther(price)
+                  }
+              }
           }
-        })
-    })
+  
+          let owner_info_sort = Object.entries(owner_info)
+          owner_info_sort.sort((a, b) => 
+              b[1].price - a[1].price
+          )
+  
+          dispatch({
+            type: GET_TOP_OWNER,
+            payload: {
+              top_owners: owner_info_sort.slice(0, 6)
+            }
+          })
+      })
+
   } catch (error) {
     console.log("Get Top Owner ", error);
   }
@@ -339,5 +338,90 @@ export const nftTransfer = (tokenId, owner, from, to) => (dispatch, getState) =>
     })
   } catch (error) {
     console.log("Transfer ", error);
+  }
+}
+
+export const walletConnect = () => async (dispatch, getState) => {
+  try {
+    const providerOptions = {
+      injected: {
+          display: {
+              name: "Metamask",
+              description: "For desktop web wallets",
+              logo: metaMask
+          }
+      },
+      walletconnect: {
+          display: {
+              name: "WalletConnect",
+              description: "For mobile app wallets",
+          },
+          package: WalletConnectProvider,
+          options: {
+              rpc: {
+                  56: "https://speedy-nodes-nyc.moralis.io/e4584f130b226b97f5b49b8c/bsc/mainnet",
+                  97: "https://speedy-nodes-nyc.moralis.io/e4584f130b226b97f5b49b8c/bsc/testnet/"
+              }
+          }
+      }
+    };
+    
+    web3Modal = new Web3Modal({
+        cacheProvider: true,
+        providerOptions,
+        disableInjectedProvider: false,
+        theme: {
+            background: "rgb(39, 49, 56)",
+            main: "rgb(199, 199, 199)",
+            secondary: "rgb(136, 136, 136)",
+            border: "rgba(195, 195, 195, 0.14)",
+            hover: "rgb(16, 26, 32)",
+        },
+    });
+
+    const instance = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(instance);
+    const signer = provider.getSigner();
+
+    provider.on("disconnect", () => {
+      dispatch( walletDisconnect() )
+    });
+
+    const NFTcontract = new ethers.Contract( NFT_ADDRESS, NFT_ABI, signer);
+    const FTcontract = new ethers.Contract(FT_ADDRESS, FT_ABI, signer);
+    const AUCTIONcontract = new ethers.Contract(AUCTION_ADDRESS, AUCTION_ABI, signer);
+    const account = await signer.getAddress();
+    localStorage.setItem('account', account);
+    dispatch( userInfo(ethers.utils.getAddress(account)) )
+    dispatch({
+      type: WALLET_CONNECT,
+      payload: {
+        account: account,
+        NFTcontract: NFTcontract,
+        FTcontract: FTcontract,
+        AUCTIONcontract: AUCTIONcontract
+      }
+    })
+
+  } catch(error) {
+    console.log("Wallet Connect ", error)
+  }
+}
+
+export const walletDisconnect = () => async (dispatch, getState) => {
+  try {
+    localStorage.setItem('account', "");
+    await web3Modal.clearCachedProvider();
+    dispatch({
+      type: WALLET_DISCONNECT,
+      payload: {
+        account: null,
+        NFTcontract: null,
+        FTcontract: null,
+        AUCTIONcontract: null
+      }
+    })
+  } catch (error) {
+    console.log("Wallet Disconnect ", error)
   }
 }

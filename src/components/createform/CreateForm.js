@@ -8,13 +8,12 @@ import {
   MINT_PRICE,
   TEAMWALLET_ADDRESS
 } from "../../config/contract";
-import { NFTcontract, FTcontract } from "../../config/contractConnect";
 import { Common } from '../../redux/common';
 
 const client = create('https://ipfs.infura.io:5001/api/v0');
 
 const CreateForm = () => {
-    const { status } = Common();
+    const { account, NFTcontract, FTcontract } = Common();
     const [itemfile, setItemFile] = useState("");
     const [itemname, setItemName] = useState("");
     const [itemdesc, setItemDesc] = useState("");
@@ -27,7 +26,7 @@ const CreateForm = () => {
     };
 
     const createItem = async ()=> {
-        if (status === "connected") {
+        if (account) {
             setItemPending(true);
             const item = await client.add(itemfile);
             const url = `https://ipfs.infura.io/ipfs/${item.path}`;

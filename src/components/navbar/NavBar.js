@@ -1,30 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from "react-redux";
-import { ethers } from 'ethers';
+import React from 'react';
 import Logo from '../../assets/images/logo.png';
 import NavitemLogin from '../navItemlogin/NavitemLogin';
 import NavitemsLogout from '../navitemslogout/NavitemsLogout';
-import { useWallet, UseWalletProvider } from 'use-wallet';
-import { walletConnect, userInfo } from "../../redux/actions";
+import { Common } from "../../redux/common";
 
-const App = () => {
-    const wallet = useWallet();
-    const dispatch = useDispatch();
-    const [flag, setFlag] = useState(false);
+const NavBar = () => {
 
-    useEffect(() => {
-        dispatch(walletConnect(wallet));
-        if (flag) {
-            localStorage.setItem('connectStatus', wallet?.status);
-        } else {
-            localStorage.getItem('connectStatus') === 'connected' ? wallet?.connect() : wallet?.reset();
-        }
-        setFlag(true);
-
-        if (wallet?.status === "connected") {
-            dispatch(userInfo(ethers.utils.getAddress(wallet?.account)));
-        }
-    }, [wallet?.status])
+    const { account } = Common();
 
     return (
         <div className="main-nav-bar">
@@ -32,15 +14,12 @@ const App = () => {
                 <div className="nav-container">
                     <div className="logo-container">
                         <a href="/"><img src={Logo} alt="Logo" /></a>
-                        <a className="buy-pizza-button" href="https://pancakeswap.finance/swap?outputCurrency=0xb07905396A419B121213efe1d17cfD0ff20aE597" target="_blank">
-                            BUY $PIZZA
-                        </a>
                     </div>
                     <div className="nav-bar-items">
                         {
-                            wallet?.status === "connected" ?
-                                <NavitemsLogout wallet={wallet} /> :
-                                <NavitemLogin wallet={wallet} />
+                            account ? 
+                            <NavitemsLogout /> : 
+                            <NavitemLogin />
                         }
                     </div>
 
@@ -74,11 +53,5 @@ const App = () => {
         </div>
     )
 }
-const NavBar = () => {
-    return (
-        <UseWalletProvider chainId={process.env.REACT_APP_CHAIN_ID}>
-            <App />
-        </UseWalletProvider>
-    )
-}
+
 export default NavBar

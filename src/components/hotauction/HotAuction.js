@@ -19,7 +19,7 @@ const HotAuction = ({profileImg, ownername, nft, buyprice, hightbid, downtime}) 
                 <img src={nft?.image} alt="" className="img-responsive" />
                 <div className="auction-bar">
                     {
-                        Number(hightbid) ? <Countdown  date={ new Date(Number(downtime)) }  renderer={renderer}/> : <span>No Bid</span>
+                        Number(hightbid) ? <Countdown  date={ new Date(Number(downtime) * 1000) }  renderer={renderer}/> : <span>No Bid</span>
                     }
                 </div>
                 <div className="details-container">
