@@ -6,7 +6,7 @@ import {
     NFT_ADDRESS,
     AUCTION_ADDRESS,
   } from "../config/contract"
-import { AUCTIONcontractRead, NFTcontractRead } from "../config/contractConnect"
+import {AUCTIONcontractRead, NFTcontractRead} from "../config/contractConnect"
 import { useNft } from "use-nft"
 import ExploreImage from '../components/exploreimage/ExploreImage'
 

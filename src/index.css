@@ -1800,3 +1800,7 @@ color: #000 !important;
   inset: 0px;
   background-color: rgb(34 32 32 / 56%) !important;
 }
+
+.web3modal-modal-lightbox {
+  z-index: 1001 !important;
+}

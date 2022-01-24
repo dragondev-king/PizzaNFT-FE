@@ -1,21 +1,19 @@
 import React, { useState } from 'react'
 import { ethers } from 'ethers'
 import { useDispatch } from "react-redux"
-import { AUCTIONcontract, NFTcontract } from '../../config/contractConnect'
 import { NFT_ADDRESS, FT_ADDRESS, AUCTION_ADDRESS, TEAMWALLET_ADDRESS, TEAM_ROYALTY } from '../../config/contract'
 import { Common } from '../../redux/common'
 import { createAuction } from '../../redux/actions'
 
 const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
     const dispatch = useDispatch();
-    const { status, account } = Common();
+    const { account, AUCTIONcontract, NFTcontract } = Common();
     const [minprice, setMinPrice] = useState(10);
     const [buyprice, setBuyPrice] = useState(100000000);
     const [pending, setPending] = useState(false);
 
-
     const create_auction = async ()=> {
-        if (status === 'connected') {
+        if (account) {
            const nft_send = await NFTcontract.approve(AUCTION_ADDRESS, state?.tid);
            setPending(true);
            await nft_send.wait();

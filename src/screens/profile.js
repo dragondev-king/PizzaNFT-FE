@@ -7,14 +7,12 @@ import FilterButton from '../components/filterbutton/FilterButton'
 import Breadcrumb from '../components/breadcrumb/Breadcrumb'
 import ProfileHeader from '../components/profileheader/ProfileHeader'
 import Nft from '../modules/NftGet'
-import { rpc_provider } from "../config/contractConnect"
-
-const fetcher = ["ethers", { ethers, provider: rpc_provider }]
+import {rpc_provider} from "../config/contractConnect"
 
 const Profile = () => {
     const { state } = useLocation();
     const [ids, setIds] = useState([]);
-
+    const fetcher = ["ethers", { ethers, provider: rpc_provider }]
     useEffect( ()=> {
         let midArr = [];
         try {

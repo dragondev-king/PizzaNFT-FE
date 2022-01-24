@@ -9,7 +9,9 @@ import {
   HISTORY_FIND_ALL,
   BID_FIND_ALL,
   HOT_AUCTION_GET,
-  BID_FIND_ONE
+  BID_FIND_ONE,
+  WALLET_CONNECT,
+  WALLET_DISCONNECT
 } from "../types";
 
 export default (state, action) => {
@@ -65,6 +67,16 @@ export default (state, action) => {
         ...action.payload
       }
     case BID_FIND_ONE:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case WALLET_CONNECT:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case WALLET_DISCONNECT:
       return {
         ...state,
         ...action.payload
