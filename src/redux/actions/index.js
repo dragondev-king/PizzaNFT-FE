@@ -11,6 +11,8 @@ import {
   FT_ABI,
   AUCTION_ADDRESS,
   AUCTION_ABI,
+  USDT_ADDRESS,
+  USDT_TOKEN_ABI
 } from "../../config/contract";
 import { 
   GET_USER_INFO, 
@@ -333,7 +335,7 @@ export const nftTransfer = (tokenId, owner, from, to) => (dispatch, getState) =>
       if(res.status != 200) return
       dispatch({
         type: UPDATE_PRICE,
-        payload: {price: currPrice}
+        payload: res.data
       })
     })
   } catch (error) {
@@ -390,6 +392,7 @@ export const walletConnect = () => async (dispatch, getState) => {
     const NFTcontract = new ethers.Contract( NFT_ADDRESS, NFT_ABI, signer);
     const FTcontract = new ethers.Contract(FT_ADDRESS, FT_ABI, signer);
     const AUCTIONcontract = new ethers.Contract(AUCTION_ADDRESS, AUCTION_ABI, signer);
+    const USDTcontract = new ethers.Contract(USDT_ADDRESS, USDT_TOKEN_ABI, signer);
     const account = await signer.getAddress();
     localStorage.setItem('account', account);
     dispatch( userInfo(ethers.utils.getAddress(account)) )
@@ -399,7 +402,8 @@ export const walletConnect = () => async (dispatch, getState) => {
         account: account,
         NFTcontract: NFTcontract,
         FTcontract: FTcontract,
-        AUCTIONcontract: AUCTIONcontract
+        AUCTIONcontract: AUCTIONcontract,
+        USDTcontract: USDTcontract
       }
     })
 
@@ -418,7 +422,8 @@ export const walletDisconnect = () => async (dispatch, getState) => {
         account: null,
         NFTcontract: null,
         FTcontract: null,
-        AUCTIONcontract: null
+        AUCTIONcontract: null,
+        USDTcontract: null
       }
     })
   } catch (error) {

@@ -21,9 +21,7 @@ import { AUCTIONcontractRead, NFTcontractRead } from "../config/contractConnect"
 import {
   NFT_ADDRESS,
   FT_ADDRESS,
-  AUCTION_ADDRESS,
-  TEAMWALLET_ADDRESS,
-  TEAM_ROYALTY
+  AUCTION_ADDRESS
 } from "../config/contract";
 import { updateAuction, makeBid, bidFindAll, historyFindAll, bidFindOne, settleAuction } from "../redux/actions"
 
@@ -40,7 +38,7 @@ const customStyles = {
     },
   };
 
-  Modal.setAppElement("#root")
+Modal.setAppElement("#root")
 
 const ItemDetails = () => {
     const dispatch = useDispatch();
@@ -51,6 +49,7 @@ const ItemDetails = () => {
     const [nftHighestBid, setNftHighestBid] = useState();
     const [nftHighestBider, setNftHighestBider] = useState();
     const [auctionFinish, setAuctionFinish] = useState(false);
+    const [regetflag, setRegetFlag] = useState(false);
 
     const [auctionModalIsOpen, setAuctionCreateSetIsOpen] = useState(false);
     const [bidModalIsOpen, setBidModalIsOpen] = useState(false);
@@ -73,7 +72,7 @@ const ItemDetails = () => {
             if(account) {
                 let buynowPay = await FTcontract.approve(NFT_ADDRESS, buynowprice);
                 await buynowPay.wait();
-                let buynow = await NFTcontract.buynow(state?.tid, FT_ADDRESS, TEAMWALLET_ADDRESS, TEAM_ROYALTY);
+                let buynow = await NFTcontract.buynow(state?.tid, FT_ADDRESS );
                 await buynow.wait();
             } else {
                 alert("Please connect MataMask!")
@@ -100,6 +99,7 @@ const ItemDetails = () => {
         state.nft.owner = addr;
         state.profileImg = nftavatar;
         state.ownername = ownername;
+        setRegetFlag(!regetflag);
     }
 
     const make_bid = async ()=> {
@@ -143,6 +143,14 @@ const ItemDetails = () => {
         }
     }
 
+    const burn = async ()=> {
+        try {
+            let burn = await NFTcontract.burn(state?.tid);
+            await burn.wait();
+            alert("Burn Success!");
+        } catch(error){ }
+    }
+
     function AuctionCreateOpenModal() {
         setAuctionCreateSetIsOpen(true);
     }
@@ -161,8 +169,8 @@ const ItemDetails = () => {
     function TransferOpenModal() {
         setTransferIsOpen(true)
     }
-    
-    useEffect( async ()=> {
+
+    useEffect ( async ()=> {
         try {
             axios.get(`https://deep-index.moralis.io/api/v2/nft/${NFT_ADDRESS}/${state?.tid}/transfers?chain=bsc%20testnet&format=decimal&offset=0&limit=1`, {headers:{'accept':'application/json', 'X-API-Key': process.env.REACT_APP_MORALIS_KEY }})
             .then( res => {
@@ -188,25 +196,36 @@ const ItemDetails = () => {
             setBuyNowPrice( buyNowPrice );
         } catch(err) {}
 
-        dispatch( historyFindAll(state?.tid) )
-    }, [])
+        try {
+            let nft_owner = await NFTcontractRead.ownerOf(state.tid);
+            if(nft_owner === AUCTION_ADDRESS) {
+                nft_owner = await AUCTIONcontractRead.nftContractAuctions(NFT_ADDRESS, state.tid);
+                nft_owner = nft_owner.nftSeller;
+            }
+            state.nft.owner = nft_owner;
+            await axios.get(`${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(nft_owner)}`)
+            .then( (res) => {
+                state.profileImg = res.data[0]?.profileImg;
+                state.ownername = res.data[0]?.name;
+            })
+        } catch(err){}
 
-    useEffect ( ()=> {
         if( state?.nft?.owner === account ) {
             setOwner(true);
         } else {
             setOwner(false);
         }
+        dispatch( historyFindAll(state?.tid) )
         dispatch( bidFindOne(state?.tid, state?.nft?.owner, account))
-    }, [account])
+    }, [account, regetflag])
 
     const renderer = ({ days, hours, minutes, seconds, completed }) => {
         if (completed) {
             setAuctionFinish(completed)
             return (
                nftHighestBider == account ?
-                    <button className='buy-it-button' onClick={ settle_auction }>Settle Auction</button> :
-                    bidstatus?.length && nftHighestBider != account ? <button className='buy-it-button' onClick={ settle_auction }>Withdraw Bid</button> : ""
+                    <button className='buy-it-button' onClick={ settle_auction }>Settle Auction</button> : ""
+                    /*bidstatus?.length && nftHighestBider != account ? <button className='buy-it-button' onClick={ settle_auction }>Withdraw Bid</button> : "" */
             );
         } else {
             return <>
@@ -290,7 +309,7 @@ const ItemDetails = () => {
                                                     style={customStyles}
                                                     contentLabel="Create Auction"
                                                 >
-                                                    <Transfer setIsOpen={setTransferIsOpen} state={state} AUCTIONcontract={AUCTIONcontract} setAcutionCreate={setAcutionCreate}/>
+                                                    <Transfer setIsOpen={setTransferIsOpen} state={state} regetflag={regetflag} setRegetFlag={setRegetFlag}/>
                                                 </Modal>
 
                                                 <button className='place-a-bid-button' onClick={ UpdatePriceOpenModal }  >Update Price</button>
@@ -310,6 +329,7 @@ const ItemDetails = () => {
                                                 >
                                                     <CreateAuction setIsOpen={setAuctionCreateSetIsOpen} state={state} AUCTIONcontract={AUCTIONcontract} setAcutionCreate={setAcutionCreate}/>
                                                 </Modal>
+                                                <button className='burn-it-button' onClick={ burn }>Burn</button>
                                             </> :
                                             ""
                                         }
