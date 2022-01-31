@@ -3,17 +3,15 @@ import { create } from 'ipfs-http-client';
 import { ethers } from "ethers";
 import {
   NFT_ADDRESS,
-  FT_ADDRESS,
-  TEAM_ROYALTY,
-  MINT_PRICE,
-  TEAMWALLET_ADDRESS
+  USDT_ADDRESS,
+  MINT_PRICE
 } from "../../config/contract";
 import { Common } from '../../redux/common';
 
 const client = create('https://ipfs.infura.io:5001/api/v0');
 
 const CreateForm = () => {
-    const { account, NFTcontract, FTcontract } = Common();
+    const { account, NFTcontract, USDTcontract } = Common();
     const [itemfile, setItemFile] = useState("");
     const [itemname, setItemName] = useState("");
     const [itemdesc, setItemDesc] = useState("");
@@ -42,10 +40,9 @@ const CreateForm = () => {
             const metadataAdd = await client.add(blob);
             const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
             try {
-                let cost_pay = await FTcontract.approve(NFT_ADDRESS, ethers.utils.parseEther(MINT_PRICE.toString()));
-                console.log("MetaData_ ",ipfsMeta);
+                let cost_pay = await USDTcontract.approve(NFT_ADDRESS, ethers.utils.parseEther(MINT_PRICE.toString()));
                 await cost_pay.wait();
-                let pizzaNFT = await NFTcontract.mint(ipfsMeta,FT_ADDRESS, itemprice, TEAMWALLET_ADDRESS, TEAM_ROYALTY, ethers.utils.parseEther(MINT_PRICE.toString()));
+                let pizzaNFT = await NFTcontract.mint(ipfsMeta, USDT_ADDRESS, itemprice, ethers.utils.parseEther(MINT_PRICE.toString()));
                 await pizzaNFT.wait();
                 setItemPending(false);
             } catch (err) {setItemPending(false)}

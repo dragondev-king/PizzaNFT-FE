@@ -9,7 +9,7 @@ export function Common() {
     const { historys } = useSelector( (state) => state.data);
     const { hots } = useSelector( (state) => state.data);
     const { bidstatus } = useSelector( (state) => state.data);
-    const { NFTcontract, FTcontract, AUCTIONcontract, account } = useSelector( (state) => state.data);
+    const { NFTcontract, FTcontract, AUCTIONcontract, USDTcontract, account } = useSelector( (state) => state.data);
 
-    return { account, profileImg, name, profileUrl, top_owners, token_ids, bids, historys, hots, bidstatus, NFTcontract, FTcontract, AUCTIONcontract }
+    return { account, profileImg, name, profileUrl, top_owners, token_ids, bids, historys, hots, bidstatus, NFTcontract, FTcontract, AUCTIONcontract, USDTcontract }
 }

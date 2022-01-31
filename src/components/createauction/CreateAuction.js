@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ethers } from 'ethers'
 import { useDispatch } from "react-redux"
-import { NFT_ADDRESS, FT_ADDRESS, AUCTION_ADDRESS, TEAMWALLET_ADDRESS, TEAM_ROYALTY } from '../../config/contract'
+import { NFT_ADDRESS, FT_ADDRESS, AUCTION_ADDRESS } from '../../config/contract'
 import { Common } from '../../redux/common'
 import { createAuction } from '../../redux/actions'
 
@@ -17,7 +17,7 @@ const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
            const nft_send = await NFTcontract.approve(AUCTION_ADDRESS, state?.tid);
            setPending(true);
            await nft_send.wait();
-           const creat_auction =  await AUCTIONcontract.createDefaultNftAuction( NFT_ADDRESS, state?.tid, FT_ADDRESS , ethers.utils.parseEther(minprice.toString()), ethers.utils.parseEther(buyprice.toString()),[TEAMWALLET_ADDRESS], [TEAM_ROYALTY])
+           const creat_auction =  await AUCTIONcontract.createDefaultNftAuction( NFT_ADDRESS, state?.tid, FT_ADDRESS , ethers.utils.parseEther(minprice.toString()), ethers.utils.parseEther(buyprice.toString()))
            await creat_auction.wait();
            setPending(false);
            setAcutionCreate(true);
