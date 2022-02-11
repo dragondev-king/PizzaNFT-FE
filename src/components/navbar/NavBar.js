@@ -1,5 +1,6 @@
 import React from 'react';
 import Logo from '../../assets/images/logo.png';
+import BuyButton from '../../assets/images/buy-button.png'
 import NavitemLogin from '../navItemlogin/NavitemLogin';
 import NavitemsLogout from '../navitemslogout/NavitemsLogout';
 import { Common } from "../../redux/common";
@@ -14,12 +15,15 @@ const NavBar = () => {
                 <div className="nav-container">
                     <div className="logo-container">
                         <a href="/"><img src={Logo} alt="Logo" /></a>
+                        <a href="https://pancakeswap.finance/swap?outputCurrency=0xb07905396A419B121213efe1d17cfD0ff20aE597">
+                            <img src={BuyButton} className='nav-buy-button' alt="" />
+                        </a>
                     </div>
                     <div className="nav-bar-items">
                         {
-                            account ? 
-                            <NavitemsLogout /> : 
-                            <NavitemLogin />
+                            account ?
+                                <NavitemsLogout /> :
+                                <NavitemLogin />
                         }
                     </div>
 
