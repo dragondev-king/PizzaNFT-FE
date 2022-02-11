@@ -38,7 +38,7 @@ const Home = () => {
     const { token_ids, top_owners, hots, searchText } = Common();
     
     const fetcher = ["ethers", { ethers, provider: rpc_provider }]
-    
+
     var settings = {
         centerMode: true,
         centerPadding: '5px',
@@ -82,7 +82,7 @@ const Home = () => {
                         <h2>Top Artists</h2>
                         <ul>
                             {
-                                top_owners?.map( (item, index) => 
+                                top_owners?.map((item, index) =>
                                     <ArtistAvatar info={item} key={index} />
                                 )
                             }
@@ -116,8 +116,8 @@ const Home = () => {
                             <NftProvider fetcher={fetcher}>
                                 <Slider {...settings}>
                                     {
-                                        hots?.map( (item, index) => 
-                                            <HotNft key={index} tokenId={item?.tokenId}/>
+                                        hots?.map((item, index) =>
+                                            <HotNft key={index} tokenId={item?.tokenId} />
                                         )
                                     }
                                 </Slider>
@@ -129,7 +129,7 @@ const Home = () => {
 
             <div className="exclusive-drops">
                 <div className="container">
-                    <div className="exclusive-drops-list">
+                    <div className="exclusive-drops-list" id='exlpore-more'>
                         <h2>Explore</h2>
                         <SearchBar />
                         <div className="filter-set">
@@ -140,7 +140,7 @@ const Home = () => {
                             }
                         </div>
                         <div className="main-explore-image-container">
-                            <div style={{"display":'grid', 'gridTemplateColumns':'auto auto auto auto', 'gridGap':'20px'}}>
+                            <div style={{ "display": 'grid', 'gridTemplateColumns': 'auto auto auto auto', 'gridGap': '20px' }}>
                                 <NftProvider fetcher={fetcher}>
                                     {   
                                         token_ids?.map( (item, index) => 

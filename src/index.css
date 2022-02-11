@@ -1357,6 +1357,7 @@ h2 {
   border: 1px solid #f61eff;
   padding: 3px 20px;
   border-radius: 30px;
+  margin-bottom: 10px;
 }
 
 .filter-set .active {
@@ -1535,10 +1536,20 @@ background-color: #fe00ff;
 color: #000 !important;
 }
 
+.nav-buy-button{
+  max-height: 70px !important;
+  margin-left: 25px !important;
+}
+
 @media (min-width: 769px) and (max-width: 1200px) {
 }
 
 @media (max-width:768px){
+
+  .nav-buy-button{
+    max-height: 40px !important;
+    margin-left: 15px !important;
+  }
 
   .wallet-connect a{
     padding: 10px 5px;
