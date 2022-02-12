@@ -1,10 +1,18 @@
 import React, { useState, useRef } from 'react'
 import { create } from 'ipfs-http-client';
 import { ethers } from "ethers";
+<<<<<<< HEAD
 import Size from '../size/Size';
 import VerifiedArtist from '../verifiedArtist/VerifiedArtist';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
+=======
+import {
+    NFT_ADDRESS,
+    USDT_ADDRESS,
+    MINT_PRICE
+} from "../../config/contract";
+>>>>>>> f816b91 (create form edits)
 import { Common } from '../../redux/common';
 import {
     NFT_ADDRESS,
@@ -38,11 +46,15 @@ const CreateForm = () => {
         setItemFile(file);
     };
 
+<<<<<<< HEAD
     const onSelect = (e) => {
         setDefaultOption(e.value);
     }
             
     const createItem = async ()=> {
+=======
+    const createItem = async () => {
+>>>>>>> f816b91 (create form edits)
         if (account) {
             setItemPending(true);
             const item = await client.add(itemfile);
@@ -59,9 +71,9 @@ const CreateForm = () => {
                 verified: verified,
                 type: defaultOption
             }
-            
+
             const metadataJson = JSON.stringify(metadata);
-            const blob = new Blob([metadataJson], {type: "application/json"});
+            const blob = new Blob([metadataJson], { type: "application/json" });
             const metadataAdd = await client.add(blob);
             const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
             try {
@@ -70,7 +82,11 @@ const CreateForm = () => {
                 let pizzaNFT = await NFTcontract.mint(ipfsMeta, itemprice, FT_ADDRESS, mintPrice, royaltyFee, putOnSale, buynowState, viewState);
                 await pizzaNFT.wait();
                 setItemPending(false);
+<<<<<<< HEAD
             } catch (err) {setItemPending(false); console.log(err);}
+=======
+            } catch (err) { setItemPending(false) }
+>>>>>>> f816b91 (create form edits)
         } else {
             alert("please connect MetaMask!");
         }
@@ -88,38 +104,60 @@ const CreateForm = () => {
                 <div className="col-md-12">
                     <div className="form-group">
                         <label htmlFor="fileupload">Upload File</label>
-                        <input type="file" className="form-control-file" id="fileupload" onChange={ handleChange }/>
+                        <input type="file" className="form-control-file" id="fileupload" onChange={handleChange} />
                     </div>
                 </div>
                 <div className="col-md-12">
                     <div className="form-group">
                         <label htmlFor="itemname">Item Name</label>
-                        <input className="form-control" type="text" id='itemname' onChange={ (e) => setItemName(e.target.value) } />
+                        <input className="form-control" type="text" id='itemname' onChange={(e) => setItemName(e.target.value)} />
                     </div>
                 </div>
                 <div className="col-md-12">
                     <div className="form-group">
                         <label htmlFor="description">Description</label>
-                        <textarea className="form-control" id="description" rows="3" onChange={ (e) => setItemDesc(e.target.value) }></textarea>
+                        <textarea className="form-control" id="description" rows="3" onChange={(e) => setItemDesc(e.target.value)}></textarea>
                     </div>
                 </div>
                 <div className="col-md-6">
                     <div className="form-group">
+<<<<<<< HEAD
                         <label htmlFor="itemprice">Item Price ( BNB )</label>
                         <input className="form-control" type="number" id='itemprice' onChange={ (e) => { try {setItemPrice( ethers.utils.parseEther((e.target.value).toString()))} catch(err){} }} />
+=======
+                        <label htmlFor="itemprice">Item Price BNB</label>
+                        <input className="form-control" type="number" id='itemprice' onChange={(e) => { try { setItemPrice(ethers.utils.parseEther((e.target.value).toString())) } catch (err) { } }} />
+>>>>>>> f816b91 (create form edits)
                     </div>
                 </div>
                 <div className="col-md-6">
                     <div className="form-group">
+<<<<<<< HEAD
                         <label htmlFor="royality">Royality ( max 20% )</label>
                         <input className="form-control" type="number" id='royality' onChange={ (e) => { try {setRoyaltyFee(e.target.value)} catch(err){} }} placeholder="100 is 1%"/>
+=======
+                        <label htmlFor="royality">Royalty (max 20%)</label>
+                        <input className="form-control" type="text" id='royality' />
+>>>>>>> f816b91 (create form edits)
                     </div>
                 </div>
                 <div className="col-md-12">
                     <div className="form-group">
+<<<<<<< HEAD
                         <Size setWidth={setWidth} width={width} setHeight={setHeight} height={height} setCapacity={setCapacity} capacity={capacity} />
                         {/* <label htmlFor="itemsize">Size</label>
                         <input className="form-control" type="text" id='itemsize' /> */}
+=======
+                        <label htmlFor="itemsize">Size</label>
+                        <div className="size-inputs">
+                            <div className="input-field-items">
+                                <input className="form-control" type="text" id='itemsize' /><span>px</span>
+                            </div>
+                            <div className="input-field-items">
+                                <input className="form-control" type="text" id='itemsize' /><span>px</span>
+                            </div>
+                        </div>
+>>>>>>> f816b91 (create form edits)
                     </div>
                 </div>
                 <div className="col-md-12">
@@ -137,9 +175,10 @@ const CreateForm = () => {
                 </div>
                 {/* <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="noofcopies">No of Copies</label>
+                        <label htmlFor="noofcopies"># of Copies to Mint/Sell</label>
                         <input className="form-control" type="text" id='noofcopies' />
                     </div>
+<<<<<<< HEAD
                 </div> */}
                 <div className="col-md-12 create-radio-buttons">
                     <div className="standards-container ">
@@ -156,14 +195,64 @@ const CreateForm = () => {
                             <input type="radio" name="saletype" value={viewState} onChange={ () => {setPutOnSale(false); setBuynowState(false); setViewState(true);} } />
                             <span>Mint Only</span>
                         </label>
+=======
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label htmlFor="bidprice">Bid Price</label>
+                        <input className="form-control" type="text" id='bidprice' />
                     </div>
                 </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label htmlFor="sociallink">Artist Social Media Link</label>
+                        <input className="form-control" type="text" id='sociallink' />
+                    </div>
+                </div>
+                <div className="col-md-12 create-radio-buttons">
+                    <div className="standards-container row">
+                        <div className="col-md-6">
+                            <label className="checkbox-button">
+                                <input type="radio" name="saletype" />
+                                <span>Buy Now</span>
+                            </label>
+                        </div>
+
+                        <div className="col-md-6">
+                            <label className="checkbox-button">
+                                <input type="radio" name="saletype" />
+                                <span>Mint Only | Not On Sale</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-md-12 create-radio-buttons">
+                    <label htmlFor="verified-artist">Verified Artist</label>
+                    <div className="standards-container row">
+                        <div className="col-md-6">
+                            <label className="checkbox-button">
+                                <input type="radio" name="artisttype" />
+                                <span>Verified </span>
+                            </label>
+                        </div>
+
+                        <div className="col-md-6">
+                            <label className="checkbox-button">
+                                <input type="radio" name="artisttype" />
+                                <span>Not Verified</span>
+                            </label>
+                        </div>
+>>>>>>> f816b91 (create form edits)
+                    </div>
+                </div>
+
                 <div className="col-md-12">
-                {
-                    !itempending ? <button className="btn btn-default" onClick={ createItem }>Create Item</button>:
-                    <button className="btn btn-default" disabled >Create Item</button>
-                }
-                    
+                    {
+                        !itempending ? <button className="btn btn-default" onClick={createItem}>Create Item</button> :
+                            <button className="btn btn-default" disabled >Create Item</button>
+                    }
+
                 </div>
             </div>
         </>
