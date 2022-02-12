@@ -37,6 +37,12 @@ h2 {
   max-width: 120px;
 }
 
+.hero-text .how-to-video-img{
+  max-width: 100% !important;
+  display: block;
+  margin-bottom: 20px;
+}
+
 .artist-list .avatarimage img{
   border-radius: 100px;
   object-fit: cover;

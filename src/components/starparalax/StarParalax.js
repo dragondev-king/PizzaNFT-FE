@@ -5,6 +5,7 @@ import Mint from '../../assets/images/mint.png'
 import Buy from '../../assets/images/buy.png'
 import Bid from '../../assets/images/bid.png'
 import Transfer from '../../assets/images/transfer.png'
+import HowToVidoes from '../../assets/images/how-to-videos.png'
 
 const StarParalax = () => {
 
@@ -18,7 +19,7 @@ const StarParalax = () => {
                     <div className="row hero-banner">
                         <div className="col-md-8">
                             <div className="hero-text">
-                                <h1>How to Videos </h1>
+                                <img src={HowToVidoes} className='how-to-video-img' alt="" />
                                 <a href="https://www.youtube.com/channel/UCDlGQA5bzWvL994MdGLTu_g/videos" target="_blank"><img src={Mint} alt="" /></a>
                                 <a href="https://www.youtube.com/channel/UCDlGQA5bzWvL994MdGLTu_g/videos" target="_blank"><img src={Buy} alt="" /></a>
                                 <a href="https://www.youtube.com/channel/UCDlGQA5bzWvL994MdGLTu_g/videos" target="_blank"><img src={Bid} alt="" /></a>
