@@ -11,76 +11,34 @@ import {
   HOT_AUCTION_GET,
   BID_FIND_ONE,
   WALLET_CONNECT,
-  WALLET_DISCONNECT
+  WALLET_DISCONNECT,
+  GET_FOLLOW,
+  SEARCH_TEXT,
+  UPDATE_USERINFO_NO_PROFILE
 } from "../types";
 
 export default (state, action) => {
   switch (action.type) {
     case METAMASK_CONNECT:
-      return {
-        ...state,
-        ...action.payload
-      };
     case GET_USER_INFO:
-      return {
-        ...state,
-        ...action.payload
-      };
     case GET_NFT_ID:
-      return {
-        ...state,
-        ...action.payload
-      };
     case GET_TOP_OWNER:
-      return { 
+    case GET_SELECTED_USER_INFO:
+    case UPDATE_USERINFO:
+    case HISTORY_FIND_ALL:
+    case BID_FIND_ALL:
+    case UPDATE_PRICE:
+    case HOT_AUCTION_GET:
+    case BID_FIND_ONE:
+    case WALLET_CONNECT:
+    case WALLET_DISCONNECT:
+    case GET_FOLLOW:
+    case SEARCH_TEXT:
+    case UPDATE_USERINFO_NO_PROFILE:
+      return {
         ...state,
         ...action.payload
       };
-    case GET_SELECTED_USER_INFO:
-      return { 
-        ...state,
-        ...action.payload
-      }
-    case UPDATE_USERINFO:
-      return {
-        ...state,
-        ...action.payload
-      }
-    case HISTORY_FIND_ALL:
-      return {
-        ...state,
-        ...action.payload
-      }
-    case BID_FIND_ALL:
-      return {
-        ...state,
-        ...action.payload
-      }
-    case UPDATE_PRICE:
-      return {
-        ...state,
-        ...action.payload
-      }
-    case HOT_AUCTION_GET:
-      return {
-        ...state,
-        ...action.payload
-      }
-    case BID_FIND_ONE:
-      return {
-        ...state,
-        ...action.payload
-      }
-    case WALLET_CONNECT:
-      return {
-        ...state,
-        ...action.payload
-      }
-    case WALLET_DISCONNECT:
-      return {
-        ...state,
-        ...action.payload
-      }
     default:
       return "";
   }

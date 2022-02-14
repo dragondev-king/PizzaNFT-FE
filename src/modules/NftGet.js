@@ -10,7 +10,7 @@ import {AUCTIONcontractRead, NFTcontractRead} from "../config/contractConnect"
 import { useNft } from "use-nft"
 import ExploreImage from '../components/exploreimage/ExploreImage'
 
-function Nft({ tokenId }) {
+function Nft({ tokenId, category, searchText="" }) {
     const [nftavatar, setNftAvatar] = useState();
     const [ownername, setOwnerName] = useState();
     const [owner, setOwner] = useState("");
@@ -20,7 +20,7 @@ function Nft({ tokenId }) {
         NFT_ADDRESS,
         tokenId
     )
-
+    
     useEffect(async () => {
         try {
             setOwner(await AUCTIONcontractRead.ownerOfNFT(NFT_ADDRESS, tokenId));
@@ -31,7 +31,6 @@ function Nft({ tokenId }) {
     if (loading) return <>Loading…</>
     // nft.error is an Error instance in case of error.
     if (error || !nft) return <>Error.</>
-
 
     try {
         (async ()=> {
@@ -49,10 +48,20 @@ function Nft({ tokenId }) {
         nft.owner = owner;
     }
 
-    // You can now display the NFT metadata.
-    return (
-        <Link to={{pathname:'/details', state:{profileImg:nftavatar, ownername:ownername, tid:tokenId, buyprice: buynowprice, nft}}}><ExploreImage profileImg={nftavatar} ownername={ownername} nft={nft} buyprice={buynowprice}/></Link>
-    )
+    let flag = false;
+    if(String(nft?.name).toLowerCase().includes(searchText) || String(ownername).toLowerCase().includes(searchText) || searchText === tokenId || searchText === "") {
+        flag = true;
+    } 
+
+    if(flag) {
+        if(category === "All" || nft?.rawData?.type === category) {
+            return (
+                <Link to={{pathname:'/details', state:{profileImg:nftavatar, ownername:ownername, tid:tokenId, buyprice: buynowprice, nft}}}><ExploreImage profileImg={nftavatar} ownername={ownername} nft={nft} buyprice={buynowprice}/></Link>
+            )
+        }
+    } 
+
+    return <></>
 }
 
 export default Nft

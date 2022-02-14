@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch } from "react-redux";
 import UploadImage from '../../assets/images/plus.png'
 import { Common } from '../../redux/common'
-import { updateUserInfo } from '../../redux/actions'
+import { updateUserInfo, updateUserInfoNoImg } from '../../redux/actions'
 
 const ProfileForm = () => {
     const dispatch = useDispatch();
@@ -33,7 +33,11 @@ const ProfileForm = () => {
     const update = (e)=> {
         e.preventDefault();
         if(account) {
-            dispatch( updateUserInfo( account, updateName, updateProfileImg, updateProfileUrl) )
+            if( updateProfileImg === "") {
+                dispatch( updateUserInfoNoImg( account, updateName, updateProfileUrl) )
+            } else {
+                dispatch( updateUserInfo( account, updateName, updateProfileImg, updateProfileUrl) )
+            }
         } else {
             alert("please MetaMask connect!");
         }
