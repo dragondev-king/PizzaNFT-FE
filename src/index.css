@@ -1115,13 +1115,13 @@ h2 {
 }
 
 .search-container {
-  padding: 15px 5px;
+  /* padding: 15px 5px; */
 }
 
 .form-search-bar {
-  max-width: 560px;
+  max-width: 500px;
   position: relative;
-  padding: 20px 0;
+  /* padding: 20px 0; */
 }
 
 .form-search-bar input {
@@ -1250,6 +1250,21 @@ h2 {
   border-radius: 0;
 }
 
+.verify_checkbox button {
+  margin-top: 5px;
+  width: 100%;
+  padding: 0px 0px !important;
+  border-radius: 5px;
+  background-image: linear-gradient(102deg, #f61eff 3%, #76c5e0 100%);
+  font-family: Akira-Super;
+  color: #000;
+  letter-spacing: 0.18px;
+  font-size: 14px;
+  text-decoration: none !important;
+  border: none;
+  border-radius: 0;
+}
+
 .standards-container span {
   padding: 8px 15px;
   /* border: 1px solid #6a6a6a; */
@@ -1328,6 +1343,7 @@ h2 {
 .filter-set button,
 .loadmore-button button {
   margin-right: 5px;
+  margin-bottom: 3px;
   font-family: Manrope;
   font-size: 12px;
   font-weight: bold;
@@ -1341,6 +1357,12 @@ h2 {
   border: 1px solid #f61eff;
   padding: 3px 20px;
   border-radius: 30px;
+}
+
+.filter-set .active {
+  background-color: #e300ffbf;
+  color: white;
+  font-weight: 900;
 }
 
 .main-explore-image-container {

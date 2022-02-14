@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import  { ethers }  from "ethers"
 import { useDispatch } from "react-redux"
 import { NftProvider } from "use-nft"
@@ -19,16 +19,23 @@ import { NftTokenID, topOwner, hotAuctionGet } from '../redux/actions'
 import { Common } from "../redux/common"
 import { rpc_provider } from "../config/contractConnect"
 
+const options = [
+    'All', 'art', 'photography', 'sports', 'athletes', 'celebrities', 'music', 'gif and videos', 'collectibles', 'trading cards', 'utilities', 'virtual worlds',
+];
+
 const Home = () => {
     const dispatch = useDispatch();
-    
+
+    const [category, setCategory] = useState(['active'])
+    const [chooseCategory, setChooseCategory] = useState("All")
+
     useEffect( ()=> {
         dispatch ( NftTokenID() );
         dispatch ( topOwner() );
         dispatch ( hotAuctionGet() );
     }, [])
     
-    const { token_ids, top_owners, hots } = Common();
+    const { token_ids, top_owners, hots, searchText } = Common();
     
     const fetcher = ["ethers", { ethers, provider: rpc_provider }]
     
@@ -53,11 +60,22 @@ const Home = () => {
 
     };
 
+    const selectCategory = (item) => {
+        let flag = [];
+        setChooseCategory(item);
+        options.map( (value, index) => {
+            if(item === value) {
+                flag[index] = 'active'
+            } else {
+                flag[index] = ''
+            }
+        })
+        setCategory(flag)
+    }
+    
     return (
         <>
             <StarParalax />
-            <SearchBar />
-
             <div className="top-artist">
                 <div className="container">
                     <div className="artist-list">
@@ -73,7 +91,7 @@ const Home = () => {
                 </div>
             </div>
 
-            <div className="exclusive-drops">
+            {/* <div className="exclusive-drops">
                 <div className="container">
                     <div className="exclusive-drops-list">
                         <h2>Exclusive Drops</h2>
@@ -88,7 +106,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             <div className="exclusive-drops">
                 <div className="container">
@@ -113,19 +131,20 @@ const Home = () => {
                 <div className="container">
                     <div className="exclusive-drops-list">
                         <h2>Explore</h2>
+                        <SearchBar />
                         <div className="filter-set">
-                            <FilterButton name="All" />
-                            <FilterButton name="Filter-i" />
-                            <FilterButton name="Filter-ii" />
-                            <FilterButton name="Filter-iii" />
-                            <FilterButton name="Filter-iv" />
+                            {
+                                options.map( (item, index) => 
+                                    <FilterButton name={item} active={category[index]} selectCategory={selectCategory} key={index}/>
+                                )
+                            }
                         </div>
                         <div className="main-explore-image-container">
                             <div style={{"display":'grid', 'gridTemplateColumns':'auto auto auto auto', 'gridGap':'20px'}}>
                                 <NftProvider fetcher={fetcher}>
                                     {   
                                         token_ids?.map( (item, index) => 
-                                            <Nft tokenId={item} key={index} />
+                                            <Nft tokenId={item} category={chooseCategory} searchText={searchText} key={index} />
                                         ) 
                                     }
                                 </NftProvider>

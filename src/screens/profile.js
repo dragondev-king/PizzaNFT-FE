@@ -9,10 +9,17 @@ import ProfileHeader from '../components/profileheader/ProfileHeader'
 import Nft from '../modules/NftGet'
 import {rpc_provider} from "../config/contractConnect"
 
+const options = [
+    'All', 'art', 'photography', 'sports', 'athletes', 'celebrities', 'music', 'gif and videos', 'collectibles', 'trading cards', 'utilities', 'virtual worlds',
+];
+
 const Profile = () => {
     const { state } = useLocation();
     const [ids, setIds] = useState([]);
     const fetcher = ["ethers", { ethers, provider: rpc_provider }]
+    const [category, setCategory] = useState(['active'])
+    const [chooseCategory, setChooseCategory] = useState("All")
+
     useEffect( ()=> {
         let midArr = [];
         try {
@@ -26,6 +33,19 @@ const Profile = () => {
             })
         } catch (err) {}
     }, [])
+
+    const selectCategory = (item) => {
+        let flag = [];
+        setChooseCategory(item);
+        options.map( (value, index) => {
+            if(item === value) {
+                flag[index] = 'active'
+            } else {
+                flag[index] = ''
+            }
+        })
+        setCategory(flag)
+    }
     return (
         <>
             <Breadcrumb name="Profile" />
@@ -34,11 +54,11 @@ const Profile = () => {
                 <div className="container">
                     <div className="exclusive-drops-list">
                         <div className="filter-set">
-                            <FilterButton name="All" />
-                            <FilterButton name="Filter-i" />
-                            <FilterButton name="Filter-ii" />
-                            <FilterButton name="Filter-iii" />
-                            <FilterButton name="Filter-iv" />
+                        {
+                            options.map( (item, index) => 
+                                <FilterButton name={item} active={category[index]} selectCategory={selectCategory} key={index}/>
+                            )
+                        }
                         </div>
                         <div className="main-explore-image-container">
                             <div style={{"display":'grid', 'gridTemplateColumns':'auto auto auto auto', 'gridGap':'20px'}}>
@@ -46,7 +66,7 @@ const Profile = () => {
                                     {
                                         
                                         ids.map( (item, index) => 
-                                            <Nft tokenId={item} key={index} />
+                                            <Nft tokenId={item} category={chooseCategory} key={index} />
                                         )
                                     }
                                 </NftProvider>

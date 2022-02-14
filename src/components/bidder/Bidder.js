@@ -14,7 +14,7 @@ const Bidder = ({item}) => {
                 </div>
                 <div className="bid-description">
                     <h4>{item.bidder}</h4>
-                    <h5>Bid <span>{item.amount} $pizza</span></h5>
+                    <h5>Bid <span>{item.amount} BNB</span></h5>
                     <h6>{ dateFormat(date, "d  mmm  hh:MM:ss tt") }</h6>
                 </div>
             </div>

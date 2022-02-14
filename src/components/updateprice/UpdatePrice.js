@@ -35,7 +35,7 @@ const UpdatePrice = ({setIsOpen, state, setBuyNowPrice, buynowprice }) => {
             <div className="row" style={{'width':'350px'}}>
                 <div className="col-md-12">
                     <div className="form-group">
-                        <label>Update Price ($PIZZA)</label>
+                        <label>Update Price (BNB)</label>
                         <input className="form-control" type="number" id='itemprice' onChange={ (e) => setUpdatePrice(e.target.value)} value={updatePrice} />
                     </div>
                 </div>

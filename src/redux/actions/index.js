@@ -11,8 +11,6 @@ import {
   FT_ABI,
   AUCTION_ADDRESS,
   AUCTION_ABI,
-  USDT_ADDRESS,
-  USDT_TOKEN_ABI
 } from "../../config/contract";
 import { 
   GET_USER_INFO, 
@@ -26,7 +24,9 @@ import {
   HOT_AUCTION_GET,
   BID_FIND_ONE,
   WALLET_CONNECT,
-  WALLET_DISCONNECT
+  WALLET_DISCONNECT,
+  GET_FOLLOW,
+  UPDATE_USERINFO_NO_PROFILE
 } from "../types";
 
 let web3Modal = null;
@@ -158,6 +158,28 @@ export const updateUserInfo = (account, name, profileImg, profileUrl) => (dispat
             type: UPDATE_USERINFO,
             payload: {
               profileImg: profileImg, 
+              name: name,
+              profileUrl: profileUrl
+            }
+          })
+          alert("Success!");
+        } else {
+          alert("Failed!");
+        }
+    })
+  } catch (error){
+    console.log("userInfo Update ", error);
+  }
+}
+
+export const updateUserInfoNoImg = (account, name, profileUrl) => (dispatch, getState) => {
+  try {
+    axios.put(`${BACKEND_API}/profileNoProfile/${ethers.utils.getAddress(account)}`, {name: name, profileUrl: profileUrl})
+    .then(res => {
+        if(res.status == 200) {
+          dispatch({
+            type: UPDATE_USERINFO_NO_PROFILE,
+            payload: {
               name: name,
               profileUrl: profileUrl
             }
@@ -361,8 +383,8 @@ export const walletConnect = () => async (dispatch, getState) => {
           package: WalletConnectProvider,
           options: {
               rpc: {
-                  56: "https://speedy-nodes-nyc.moralis.io/e4584f130b226b97f5b49b8c/bsc/mainnet",
-                  97: "https://speedy-nodes-nyc.moralis.io/e4584f130b226b97f5b49b8c/bsc/testnet/"
+                  56: process.env.REACT_APP_JSONRPC_MAIN_URL,
+                  97: process.env.REACT_APP_JSONRPC_TEST_URL
               }
           }
       }
@@ -392,8 +414,8 @@ export const walletConnect = () => async (dispatch, getState) => {
     const NFTcontract = new ethers.Contract( NFT_ADDRESS, NFT_ABI, signer);
     const FTcontract = new ethers.Contract(FT_ADDRESS, FT_ABI, signer);
     const AUCTIONcontract = new ethers.Contract(AUCTION_ADDRESS, AUCTION_ABI, signer);
-    const USDTcontract = new ethers.Contract(USDT_ADDRESS, USDT_TOKEN_ABI, signer);
     const account = await signer.getAddress();
+    const mintPrice = await NFTcontract.getMintPrice();
     localStorage.setItem('account', account);
     dispatch( userInfo(ethers.utils.getAddress(account)) )
     dispatch({
@@ -403,7 +425,7 @@ export const walletConnect = () => async (dispatch, getState) => {
         NFTcontract: NFTcontract,
         FTcontract: FTcontract,
         AUCTIONcontract: AUCTIONcontract,
-        USDTcontract: USDTcontract
+        mintPrice: mintPrice
       }
     })
 
@@ -421,12 +443,35 @@ export const walletDisconnect = () => async (dispatch, getState) => {
       payload: {
         account: null,
         NFTcontract: null,
-        FTcontract: null,
-        AUCTIONcontract: null,
-        USDTcontract: null
+        AUCTIONcontract: null
       }
     })
   } catch (error) {
     console.log("Wallet Disconnect ", error)
+  }
+}
+
+export const addFollow = (owner, followAccount) => async (dispatch, getState) => {
+  try {
+    axios.post(`${BACKEND_API}/follow/create`, {owner: owner, followAccount:followAccount})
+    .then(res => {
+      dispatch(getFollow(owner))
+    })
+  } catch (err) {
+    console.log("Add follow ", err)
+  }
+}
+
+export const getFollow = (owner) => async (dispatch, getState) => {
+  try {
+    axios.post(`${BACKEND_API}/follow/all`, {owner: owner})
+    .then(res => {
+      dispatch( {
+        type: GET_FOLLOW,
+        payload: res.data
+      })
+    })
+  } catch (err) {
+    console.log("Get Follow ", err)
   }
 }
