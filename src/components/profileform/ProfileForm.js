@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch } from "react-redux";
 import UploadImage from '../../assets/images/plus.png'
 import { Common } from '../../redux/common'
-import { updateUserInfo } from '../../redux/actions'
+import { updateUserInfo, updateUserInfoNoImg } from '../../redux/actions'
 
 const ProfileForm = () => {
     const dispatch = useDispatch();
-    const { profileImg, name, profileUrl, account, status } = Common();
+    const { profileImg, name, profileUrl, account } = Common();
     const [profileImgUrl, setProfileImgUrl] = useState("");
     const [updateName, setUpdateName] = useState("");
     const [updateProfileImg, setUpdateProfileImg] = useState("");
     const [updateProfileUrl, setUpdateProfileUrl] = useState("");
 
     useEffect( ()=> {
-        if( status === "disconnected") {
+        if( !account ) {
             setProfileImgUrl("");
             setUpdateName("");
             setUpdateProfileUrl("");
@@ -22,7 +22,7 @@ const ProfileForm = () => {
             setUpdateName(name ? name : "");
             setUpdateProfileUrl(profileUrl ? profileUrl : "");
         }
-    }, [profileImg, name, profileUrl, status])
+    }, [profileImg, name, profileUrl, account])
 
     const handleChange = (e) => {
         const [file] = e.target.files;
@@ -32,8 +32,12 @@ const ProfileForm = () => {
     
     const update = (e)=> {
         e.preventDefault();
-        if(status === "connected") {
-            dispatch( updateUserInfo( account, updateName, updateProfileImg, updateProfileUrl) )
+        if(account) {
+            if( updateProfileImg === "") {
+                dispatch( updateUserInfoNoImg( account, updateName, updateProfileUrl) )
+            } else {
+                dispatch( updateUserInfo( account, updateName, updateProfileImg, updateProfileUrl) )
+            }
         } else {
             alert("please MetaMask connect!");
         }

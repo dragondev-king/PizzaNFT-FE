@@ -1,18 +1,38 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useDispatch } from "react-redux"
 import AvatarImage from '../avatarimage/AvatarImage'
+import { Common } from "../../redux/common"
+import { getFollow, addFollow } from "../../redux/actions"
 
 const ProfileHeader = ({nft}) => {
+    const dispatch = useDispatch();
+    const [followState, setFollowState] = useState();
+    const { account, followInfos } = Common();
     const [alertmessage, setAlertmessage] = useState("");
+
+    useEffect(() => {
+        dispatch( getFollow(nft?.nft?.owner) )
+    }, [])
+
     const copydata = () => {
         navigator.clipboard.writeText(nft?.nft?.owner)
     }
-
     const allertdata = () => {
         setAlertmessage("Copied")
         setTimeout(() => {
             setAlertmessage("")
         }, 700)
     }
+
+    const addFollowAction = () => {
+        const check = followInfos.filter(item => item.followAccount === account)
+        if(check.length !== 0) {
+            alert("Already Followed!");
+        } else {
+            dispatch( addFollow(nft?.nft?.owner, account) )
+        }
+    }
+
     return (
         <>
             <div className="container">
@@ -23,7 +43,11 @@ const ProfileHeader = ({nft}) => {
                         </div>
                         <div className="profile-image-details">
                             <h2>{nft?.ownername ? nft?.ownername : "unknown"}</h2>
-                            <button>Follow</button>
+                            {
+                                (account !== nft?.nft?.owner) && account ?
+                               <button onClick={addFollowAction} >Follow</button> : <></>
+                            }
+                            <button style={{padding: "3px 10px", marginLeft:"5px"}} disabled >{followInfos?.length}</button>
                         </div>
                     </div>
                     <div className="contract-container">
