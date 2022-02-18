@@ -37,7 +37,7 @@ const data = {
                 <p>Step 2: Click “Select & Buy” and define the NFT’s token ID you would like to buy.</p>
                 <p>Step 3: Validate two Metamask transactions:</p>
                 <ul>
-                    <li>1 - You will be asked to approve spending your $PIZZA token.</li>
+                    <li>1 - You will be asked to approve spending your BNB token.</li>
                     <li>2 - Confirm the transaction, completing your effective aNFT purchase.</li>
                 </ul>
             </div>,

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useDispatch } from "react-redux"
-import { NFTcontract } from '../../config/contractConnect'
 import { nftUpdatePrice } from '../../redux/actions'
+import { Common } from '../../redux/common'
+
 
 const UpdatePrice = ({setIsOpen, state, setBuyNowPrice, buynowprice }) => {
     const dispatch = useDispatch();
     const [pending, setPending] = useState(false);
     const [updatePrice, setUpdatePrice] = useState(ethers.utils.formatEther(buynowprice));
+
+    const { NFTcontract }  = Common();
 
     function closeModal() {
         setIsOpen(false);
@@ -32,7 +35,7 @@ const UpdatePrice = ({setIsOpen, state, setBuyNowPrice, buynowprice }) => {
             <div className="row" style={{'width':'350px'}}>
                 <div className="col-md-12">
                     <div className="form-group">
-                        <label>Update Price ($PIZZA)</label>
+                        <label>Update Price (BNB)</label>
                         <input className="form-control" type="number" id='itemprice' onChange={ (e) => setUpdatePrice(e.target.value)} value={updatePrice} />
                     </div>
                 </div>

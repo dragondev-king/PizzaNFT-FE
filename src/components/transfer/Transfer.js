@@ -1,16 +1,18 @@
 import React, { useState } from 'react'
 import { useDispatch } from "react-redux"
-import { NFTcontract } from '../../config/contractConnect'
+import { Common } from '../../redux/common'
 import { nftTransfer } from "../../redux/actions"
 
 
-const UpdatePrice = ({setIsOpen, state}) => {
+const TransferOwnership = ({setIsOpen, state, regetflag, setRegetFlag}) => {
     const [pending, setPending] = useState(false);
     const dispatch = useDispatch();
     const [toAddress, setToAddress] = useState("");
     function closeModal() {
         setIsOpen(false);
     }
+
+    const { NFTcontract } = Common();
 
     const transfer = async () => {
         try {
@@ -20,6 +22,7 @@ const UpdatePrice = ({setIsOpen, state}) => {
             setPending(false);
             closeModal();
             dispatch( nftTransfer(state?.tid, state?.nft?.owner, state?.nft?.owner,  toAddress) );
+            setRegetFlag(!regetflag);
         } catch (err) {console.log(err)}
     }
     return (
@@ -46,4 +49,4 @@ const UpdatePrice = ({setIsOpen, state}) => {
     )
 }
 
-export default UpdatePrice
+export default TransferOwnership
