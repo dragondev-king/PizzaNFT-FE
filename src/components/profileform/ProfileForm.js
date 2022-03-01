@@ -12,8 +12,8 @@ const ProfileForm = () => {
     const [updateProfileImg, setUpdateProfileImg] = useState("");
     const [updateProfileUrl, setUpdateProfileUrl] = useState("");
 
-    useEffect( ()=> {
-        if( !account ) {
+    useEffect(() => {
+        if (!account) {
             setProfileImgUrl("");
             setUpdateName("");
             setUpdateProfileUrl("");
@@ -29,15 +29,20 @@ const ProfileForm = () => {
         setUpdateProfileImg(file);
         setProfileImgUrl(URL.createObjectURL(file));
     };
-    
-    const update = (e)=> {
+
+    const update = (e) => {
         e.preventDefault();
+<<<<<<< HEAD
         if(account) {
             if( updateProfileImg === "") {
                 dispatch( updateUserInfoNoImg( account, updateName, updateProfileUrl) )
             } else {
                 dispatch( updateUserInfo( account, updateName, updateProfileImg, updateProfileUrl) )
             }
+=======
+        if (account) {
+            dispatch(updateUserInfo(account, updateName, updateProfileImg, updateProfileUrl))
+>>>>>>> 2300e79 (Profile Edits)
         } else {
             alert("please MetaMask connect!");
         }
@@ -47,7 +52,7 @@ const ProfileForm = () => {
         <>
             <div className='picture-lable'>
                 <div className="row">
-                    <div className="col-md-12">
+                    <div className="col-md-3">
                         <div className="form-group">
                             <label htmlFor="fileupload">Upload Profile Picture</label>
                             <div className="picture-container">
@@ -60,21 +65,46 @@ const ProfileForm = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-12">
+                    <div className="col-md-9">
                         <div className="form-group">
-                            <label htmlFor="itemname">Display name</label>
-                            <input className="form-control" type="text" id='displayname' onChange={ (e)=> setUpdateName(e.target.value) } value={updateName} />
+                            <label htmlFor="fileuploadnew" className='cover fileuploadlabel'>Upload Cover Photo</label>
+                            <div className="picture-container">
+                                <div className="picture cover-image">
+                                    <img src={profileImgUrl === "" ? UploadImage : profileImgUrl} className="picture-src" id="wizardPicturePreview-new" title="" />
+                                    <input type="file" id="wizard-picture-new" className="" onChange={handleChange} />
+                                </div>
+                                <h6 className="">Choose Picture</h6>
+
+                            </div>
                         </div>
                     </div>
 
-                    <div className="col-md-12">
+                    <div className="col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="itemname">Display name</label>
+                            <input className="form-control" type="text" id='displayname' onChange={(e) => setUpdateName(e.target.value)} value={updateName} />
+                        </div>
+                    </div>
+                    <div className="col-md-6">
                         <div className="form-group">
                             <label htmlFor="itemname">Custom URL</label>
-                            <input className="form-control" type="text" id='displayname' onChange={ (e)=> setUpdateProfileUrl(e.target.value) } value={updateProfileUrl}/>
+                            <input className="form-control" type="text" id='displayname' onChange={(e) => setUpdateProfileUrl(e.target.value)} value={updateProfileUrl} />
+                        </div>
+                    </div>
+                    <div className="col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="itemname">Email</label>
+                            <input className="form-control" type="text" id='email' />
+                        </div>
+                    </div>
+                    <div className="col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="itemname">Facebook</label>
+                            <input className="form-control" type="text" id='facebook' />
                         </div>
                     </div>
                     <div className="col-md-12">
-                        <button className="btn btn-default" onClick={ update }>Update Profile</button>
+                        <button className="btn btn-default" onClick={update}>Update Profile</button>
                     </div>
                 </div>
             </div>
