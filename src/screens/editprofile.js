@@ -14,7 +14,7 @@ const Editprofile = () => {
                 <div id="title">
                     <div className="container">
                         <div className="row">
-                            <div className="col-md-offset-3 col-md-6">
+                            <div className="col-md-12">
                                 <div className="create-form-container">
                                     <ProfileForm />
                                 </div>
