@@ -9,8 +9,6 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "antd": "^4.18.9",
-    "antd-img-crop": "^4.1.0",
     "aos": "^2.3.4",
     "axios": "^0.18.1",
     "dateformat": "^5.0.2",
@@ -21,7 +19,6 @@
     "moment": "^2.29.1",
     "react": "^17.0.2",
     "react-burger-menu": "^3.0.6",
-    "react-checkbox-component": "^0.1.15",
     "react-countdown": "^2.3.2",
     "react-date-countdown-timer": "^1.0.9",
     "react-dom": "^17.0.2",
@@ -47,12 +44,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

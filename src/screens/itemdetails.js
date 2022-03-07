@@ -81,8 +81,8 @@ const ItemDetails = () => {
             let nft_owner = await NFTcontractRead.ownerOf(state.tid);
 
             let is_auction = await NFTcontractRead.getPutOnSaleState(state.tid);
-            let is_sale = await NFTcontractRead.getBuynowState(state.tid);
-            let is_mint_only = await NFTcontractRead.getNFTActionState(state.tid);
+            let is_sale = await NFTcontractRead.getCanBuyState(state.tid);
+            let is_mint_only = await NFTcontractRead.getOnlyViewState(state.tid);
 
             console.log("flag", is_auction, is_sale, is_mint_only);
             setIsAuction(is_auction);
@@ -123,7 +123,7 @@ const ItemDetails = () => {
                 dispatch( bidFindAll(state?.id, auction_info?.nftSeller) );
             } 
 
-            let buyNowPrice = await NFTcontractRead.price(state?.tid);
+            let buyNowPrice = await NFTcontractRead.prices(state?.tid);
             setBuyNowPrice( buyNowPrice );
         } catch(err) {}
 

@@ -17,6 +17,8 @@ const Profile = () => {
     const { state } = useLocation();
     const [ids, setIds] = useState([]);
     const fetcher = ["ethers", { ethers, provider: rpc_provider }]
+    const [category, setCategory] = useState(['active'])
+    const [chooseCategory, setChooseCategory] = useState("All")
     useEffect(() => {
         let midArr = [];
         try {

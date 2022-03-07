@@ -1276,7 +1276,6 @@ h2 {
   border-radius: 0;
 }
 
-<<<<<<< HEAD
 .verify_checkbox button {
   margin-top: 5px;
   width: 100%;
@@ -1290,10 +1289,10 @@ h2 {
   text-decoration: none !important;
   border: none;
   border-radius: 0;
-=======
+}
+
 .create-form-container button:hover{
   color: #ededed !important;
->>>>>>> f816b91 (create form edits)
 }
 
 .standards-container span {
@@ -1393,12 +1392,11 @@ h2 {
   margin-bottom: 10px;
 }
 
-<<<<<<< HEAD
 .filter-set .active {
   background-color: #e300ffbf;
   color: white;
   font-weight: 900;
-=======
+}
 .size-inputs{
   display: flex;
   justify-content: space-between;
@@ -1413,7 +1411,6 @@ h2 {
   color: #fff;
   margin-right: 5px;
   margin-left: 2px;
->>>>>>> f816b91 (create form edits)
 }
 
 .main-explore-image-container {
