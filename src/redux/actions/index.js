@@ -180,6 +180,7 @@ export const updateUserInfo =
           { Accept: "multipart/form-data" }
         )
         .then((res) => {
+          console.log('====', 'res')
           if (res.status == 200) {
             dispatch({
               type: UPDATE_USERINFO,

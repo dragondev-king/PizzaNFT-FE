@@ -25,8 +25,8 @@ function HotNft({ tokenId }) {
 
     useEffect(async () => {
         try {
-            setOwner(await AUCTIONcontractRead.ownerOfNFT(NFT_ADDRESS, tokenId));
-            let info = await AUCTIONcontractRead.nftContractAuctions(NFT_ADDRESS, tokenId);
+            setOwner(await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId).nftSeller);
+            let info = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId);
             setHightbid( ethers.utils.formatEther(info?.nftHighestBid));
             setDownTime(ethers.utils.formatUnits(info.auctionEnd, 0));
         } catch (err) { }
@@ -35,7 +35,7 @@ function HotNft({ tokenId }) {
     // nft.loading is true during load.
     if (loading) return <>Loading…</>
     // nft.error is an Error instance in case of error.
-    if (error || !nft) return <>Error.</>
+    // if (error || !nft) return <>Error.</>
 
     try {
         (async ()=> {

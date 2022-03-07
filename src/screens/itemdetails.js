@@ -90,7 +90,7 @@ const ItemDetails = () => {
             setIsMintOnly(is_mint_only);
             
             if(nft_owner === AUCTION_ADDRESS) {
-                nft_owner = await AUCTIONcontractRead.nftContractAuctions(NFT_ADDRESS, state.tid);
+                nft_owner = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state.tid);
                 nft_owner = nft_owner.nftSeller;
             }
 
@@ -111,7 +111,7 @@ const ItemDetails = () => {
         } catch (err) {}
 
         try {
-            let auction_info = await AUCTIONcontractRead.nftContractAuctions(NFT_ADDRESS, state?.tid);
+            let auction_info = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid);
             
             if(auction_info?.nftSeller !== '0x0000000000000000000000000000000000000000') {
                 setNftOwner(auction_info?.nftSeller);
@@ -144,7 +144,7 @@ const ItemDetails = () => {
         let addr = await NFTcontractRead.ownerOf(state?.tid);
 
         try {
-            setOwnerAddr(await AUCTIONcontractRead.ownerOfNFT(NFT_ADDRESS, state?.tid));
+            setOwnerAddr(await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid).nftSeller);
         } catch (err) {}
 
         try {
