@@ -23,14 +23,15 @@ function Nft({ tokenId, category, searchText="" }) {
     
     useEffect(async () => {
         try {
-            setOwner(await AUCTIONcontractRead.ownerOfNFT(NFT_ADDRESS, tokenId));
+            setOwner(await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId).nftSeller);
         } catch (err) { }
     }, [])
-
+    
     // nft.loading is true during load.
     if (loading) return <>Loading…</>
+    if(nft) console.log(nft)
     // nft.error is an Error instance in case of error.
-    if (error || !nft) return <>Error.</>
+    // if (error || !nft) return <>Error.</>
 
     try {
         (async ()=> {
