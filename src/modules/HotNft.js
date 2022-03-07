@@ -39,7 +39,7 @@ function HotNft({ tokenId }) {
 
     try {
         (async ()=> {
-            setBuyNowPrice( ethers.utils.formatEther(await NFTcontractRead.price(tokenId)) );
+            setBuyNowPrice( ethers.utils.formatEther(await NFTcontractRead.prices(tokenId)) );
         })()
 
         axios.get(`${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(nft.owner)}`)

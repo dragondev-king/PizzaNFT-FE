@@ -32,17 +32,8 @@ const ProfileForm = () => {
 
     const update = (e) => {
         e.preventDefault();
-<<<<<<< HEAD
-        if(account) {
-            if( updateProfileImg === "") {
-                dispatch( updateUserInfoNoImg( account, updateName, updateProfileUrl) )
-            } else {
-                dispatch( updateUserInfo( account, updateName, updateProfileImg, updateProfileUrl) )
-            }
-=======
         if (account) {
             dispatch(updateUserInfo(account, updateName, updateProfileImg, updateProfileUrl))
->>>>>>> 2300e79 (Profile Edits)
         } else {
             alert("please MetaMask connect!");
         }

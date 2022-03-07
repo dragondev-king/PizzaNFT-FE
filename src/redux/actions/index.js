@@ -1,9 +1,9 @@
-import axios  from 'axios'
-import { ethers } from 'ethers'
-import Web3Modal from "web3modal"
-import WalletConnectProvider from "@walletconnect/web3-provider"
-import metaMask from "../../assets/images/metamask.png"
-import { NFTcontractRead } from '../../config/contractConnect'
+import axios from "axios";
+import { ethers } from "ethers";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import metaMask from "../../assets/images/metamask.png";
+import { NFTcontractRead } from "../../config/contractConnect";
 import {
   NFT_ADDRESS,
   NFT_ABI,
@@ -12,13 +12,13 @@ import {
   AUCTION_ADDRESS,
   AUCTION_ABI,
 } from "../../config/contract";
-import { 
-  GET_USER_INFO, 
-  GET_TOP_OWNER, 
-  GET_NFT_ID, 
-  GET_SELECTED_USER_INFO, 
-  UPDATE_PRICE, 
-  UPDATE_USERINFO, 
+import {
+  GET_USER_INFO,
+  GET_TOP_OWNER,
+  GET_NFT_ID,
+  GET_SELECTED_USER_INFO,
+  UPDATE_PRICE,
+  UPDATE_USERINFO,
   HISTORY_FIND_ALL,
   BID_FIND_ALL,
   HOT_AUCTION_GET,
@@ -26,381 +26,467 @@ import {
   WALLET_CONNECT,
   WALLET_DISCONNECT,
   GET_FOLLOW,
-  UPDATE_USERINFO_NO_PROFILE
+  UPDATE_USERINFO_NO_PROFILE,
 } from "../types";
 
 let web3Modal = null;
-const BACKEND_API = `${process.env.REACT_APP_BACKEND_API}/api`; 
+const BACKEND_API = `${process.env.REACT_APP_BACKEND_API}/api`;
 
-export const userInfo = ( account ) => ( dispatch, getState ) => {
+export const userInfo = (account) => (dispatch, getState) => {
   try {
-    axios.get(`${BACKEND_API}/profile/${account}`)
-    .then( (res) => {
-      if(res.status != 200) return
+    axios.get(`${BACKEND_API}/profile/${account}`).then((res) => {
+      if (res.status != 200) return;
       dispatch({
         type: GET_USER_INFO,
-        payload: res.data
-      })
-    })
+        payload: res.data,
+      });
+    });
   } catch (error) {
     console.log("User Info Get ", error);
   }
-}
+};
 
-export const NftTokenID = () => ( dispatch, getState ) => {
+export const NftTokenID = () => (dispatch, getState) => {
   try {
-    axios.get(`https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}?chain=bsc%20testnet&format=decimal`, {headers:{'accept':'application/json', 'X-API-Key': process.env.REACT_APP_MORALIS_KEY }})
-    .then( res => {
-        if(res.status != 200 ) return
+    axios
+      .get(
+        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}?chain=bsc%20testnet&format=decimal`,
+        {
+          headers: {
+            accept: "application/json",
+            "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status != 200) return;
         let midArr = [];
-        res.data.result.map(item => {
-            midArr.push(item.token_id)
-        })
+        res.data.result.map((item) => {
+          midArr.push(item.token_id);
+        });
 
         dispatch({
           type: GET_NFT_ID,
           payload: {
-            token_ids: midArr
-          }
-        })
-    })  
+            token_ids: midArr,
+          },
+        });
+      });
   } catch (error) {
     console.log("Get NFT Token IDS ", error);
   }
-}
+};
 
-export const topOwner = () => ( dispatch, getState ) => {
+export const topOwner = () => (dispatch, getState) => {
   try {
-      axios.get(`https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}/owners?chain=bsc%20testnet&format=decimal`, {headers:{'accept':'application/json', 'X-API-Key': process.env.REACT_APP_MORALIS_KEY }})
+    axios
+      .get(
+        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}/owners?chain=bsc%20testnet&format=decimal`,
+        {
+          headers: {
+            accept: "application/json",
+            "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
+          },
+        }
+      )
       .then(async (res) => {
-          if(res.status != 200 ) return
-          let owner_info = []
-  
-          for(let i = 0; i < res.data.result.length; i++) {
-              const item = res.data.result[i]
-              
-              if (ethers.utils.getAddress(item.token_address) === ethers.utils.getAddress(process.env.REACT_APP_NFT_ADDRESS)) {
-                  
-                  let price = await NFTcontractRead.price(item.token_id);
-                  
-                  if( owner_info[item.owner_of] === undefined ) {
-                      let profileImg = ""
-                      let name = ""
-  
-                      try {
-                          await axios.get(`${BACKEND_API}/profile/${ethers.utils.getAddress(item.owner_of)}`)
-                          .then( (res) => {
-                              if(res.status != 200) return
-                              profileImg = res.data[0]?.profileImg
-                              name = res.data[0]?.name
-                          })
-                      } catch (err){}
-  
-                      owner_info[item.owner_of] = {
-                          count: 1,
-                          tokens: [item.token_id],
-                          price: +ethers.utils.formatEther(price),
-                          profileImg: profileImg, 
-                          name: name
-                      }
-                  } else {
-                      owner_info[item.owner_of].count ++
-                      owner_info[item.owner_of].tokens.push( item.token_id )
-                      owner_info[item.owner_of].price += +ethers.utils.formatEther(price)
-                  }
-              }
-          }
-  
-          let owner_info_sort = Object.entries(owner_info)
-          owner_info_sort.sort((a, b) => 
-              b[1].price - a[1].price
-          )
-  
-          dispatch({
-            type: GET_TOP_OWNER,
-            payload: {
-              top_owners: owner_info_sort.slice(0, 6)
-            }
-          })
-      })
+        if (res.status != 200) return;
+        let owner_info = [];
 
+        for (let i = 0; i < res.data.result.length; i++) {
+          const item = res.data.result[i];
+
+          if (
+            ethers.utils.getAddress(item.token_address) ===
+            ethers.utils.getAddress(process.env.REACT_APP_NFT_ADDRESS)
+          ) {
+            let price = await NFTcontractRead.prices(item.token_id);
+
+            if (owner_info[item.owner_of] === undefined) {
+              let profileImg = "";
+              let name = "";
+
+              try {
+                await axios
+                  .get(
+                    `${BACKEND_API}/profile/${ethers.utils.getAddress(
+                      item.owner_of
+                    )}`
+                  )
+                  .then((res) => {
+                    if (res.status != 200) return;
+                    profileImg = res.data[0]?.profileImg;
+                    name = res.data[0]?.name;
+                  });
+              } catch (err) {}
+
+              owner_info[item.owner_of] = {
+                count: 1,
+                tokens: [item.token_id],
+                price: +ethers.utils.formatEther(price),
+                profileImg: profileImg,
+                name: name,
+              };
+            } else {
+              owner_info[item.owner_of].count++;
+              owner_info[item.owner_of].tokens.push(item.token_id);
+              owner_info[item.owner_of].price +=
+                +ethers.utils.formatEther(price);
+            }
+          }
+        }
+
+        let owner_info_sort = Object.entries(owner_info);
+        owner_info_sort.sort((a, b) => b[1].price - a[1].price);
+
+        dispatch({
+          type: GET_TOP_OWNER,
+          payload: {
+            top_owners: owner_info_sort.slice(0, 6),
+          },
+        });
+      });
   } catch (error) {
     console.log("Get Top Owner ", error);
   }
-}
+};
 
-export const selectedUserInfo = ( account ) => ( dispatch, getState ) => {
+export const selectedUserInfo = (account) => (dispatch, getState) => {
   try {
-    axios.get(`${BACKEND_API}/profile/${account}`)
-    .then( (res) => {
-      if(res.status != 200) return
+    axios.get(`${BACKEND_API}/profile/${account}`).then((res) => {
+      if (res.status != 200) return;
       dispatch({
         type: GET_SELECTED_USER_INFO,
-        payload: res.data
-      })
-    })
+        payload: res.data,
+      });
+    });
   } catch (error) {
     console.log("User Info Get ", error);
   }
-}
+};
 
-export const updateUserInfo = (account, name, profileImg, profileUrl) => (dispatch, getState) => {
-  try {
-    const formData = new FormData();
-    formData.append('profileImg', profileImg);
-    formData.append("name", name);
-    formData.append("profileUrl", profileUrl);
+export const updateUserInfo =
+  (account, name, profileImg, profileUrl) => (dispatch, getState) => {
+    try {
+      const formData = new FormData();
+      formData.append("profileImg", profileImg);
+      formData.append("name", name);
+      formData.append("profileUrl", profileUrl);
 
-    axios.put(`${BACKEND_API}/profile/${ethers.utils.getAddress(account)}`, formData, {'Accept':'multipart/form-data'})
-    .then(res => {
-        if(res.status == 200) {
-          dispatch({
-            type: UPDATE_USERINFO,
-            payload: {
-              profileImg: profileImg, 
-              name: name,
-              profileUrl: profileUrl
-            }
-          })
-          alert("Success!");
-        } else {
-          alert("Failed!");
-        }
-    })
-  } catch (error){
-    console.log("userInfo Update ", error);
-  }
-}
+      axios
+        .put(
+          `${BACKEND_API}/profile/${ethers.utils.getAddress(account)}`,
+          formData,
+          { Accept: "multipart/form-data" }
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            dispatch({
+              type: UPDATE_USERINFO,
+              payload: {
+                profileImg: profileImg,
+                name: name,
+                profileUrl: profileUrl,
+              },
+            });
+            alert("Success!");
+          } else {
+            alert("Failed!");
+          }
+        });
+    } catch (error) {
+      console.log("userInfo Update ", error);
+    }
+  };
 
-export const updateUserInfoNoImg = (account, name, profileUrl) => (dispatch, getState) => {
-  try {
-    axios.put(`${BACKEND_API}/profileNoProfile/${ethers.utils.getAddress(account)}`, {name: name, profileUrl: profileUrl})
-    .then(res => {
-        if(res.status == 200) {
-          dispatch({
-            type: UPDATE_USERINFO_NO_PROFILE,
-            payload: {
-              name: name,
-              profileUrl: profileUrl
-            }
-          })
-          alert("Success!");
-        } else {
-          alert("Failed!");
-        }
-    })
-  } catch (error){
-    console.log("userInfo Update ", error);
-  }
-}
+export const updateUserInfoNoImg =
+  (account, name, profileUrl) => (dispatch, getState) => {
+    try {
+      axios
+        .put(
+          `${BACKEND_API}/profileNoProfile/${ethers.utils.getAddress(account)}`,
+          { name: name, profileUrl: profileUrl }
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            dispatch({
+              type: UPDATE_USERINFO_NO_PROFILE,
+              payload: {
+                name: name,
+                profileUrl: profileUrl,
+              },
+            });
+            alert("Success!");
+          } else {
+            alert("Failed!");
+          }
+        });
+    } catch (error) {
+      console.log("userInfo Update ", error);
+    }
+  };
 
 export const createAuction = (owner, tokenId) => (dispatch, getState) => {
   try {
-    axios.post(`${BACKEND_API}/auction/create`, {owner: owner, tokenId: tokenId})
-    .then(res => {
-      if(res.status == 200) {
-        alert("Success!");
-      } else {
-        alert("Failed!");
-      }
-    })
+    axios
+      .post(`${BACKEND_API}/auction/create`, { owner: owner, tokenId: tokenId })
+      .then((res) => {
+        if (res.status == 200) {
+          alert("Success!");
+        } else {
+          alert("Failed!");
+        }
+      });
   } catch (error) {
-    console.log("Cancel Auction ", error)
+    console.log("Cancel Auction ", error);
   }
-}
+};
 
-export const updateAuction = (owner, tokenId, status) => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/auction/update`, {owner: owner, tokenId: tokenId, status: status})
-    .then(res => {
-      if(res.status == 200) {
-        alert("Success!");
-      } else {
-        alert("Failed!");
-      }
-    })
-  } catch (error) {
-    console.log("Update Auction ", error)
-  }
-}
+export const updateAuction =
+  (owner, tokenId, status) => (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/auction/update`, {
+          owner: owner,
+          tokenId: tokenId,
+          status: status,
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("Success!");
+          } else {
+            alert("Failed!");
+          }
+        });
+    } catch (error) {
+      console.log("Update Auction ", error);
+    }
+  };
 
-export const makeBid = (tokenId, nftOwner, bidder, amount) => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/bid/create`, {nftOwner: nftOwner, tokenId: tokenId, bidder: bidder, amount: amount})
-    .then(res => {
-      if(res.status == 200) {
-        alert("Success!");
-      } else {
-        alert("Failed!");
-      }
-    })
-  } catch (error){
-    console.log("MakeBid ", error)
-  }
-}
+export const makeBid =
+  (tokenId, nftOwner, bidder, amount) => (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/bid/create`, {
+          nftOwner: nftOwner,
+          tokenId: tokenId,
+          bidder: bidder,
+          amount: amount,
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("Success!");
+          } else {
+            alert("Failed!");
+          }
+        });
+    } catch (error) {
+      console.log("MakeBid ", error);
+    }
+  };
 
-export const updateBid = (tokenId, nftOwner, bidder, amount, status) => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/bid/update`, {owner: nftOwner, tokenId: tokenId, status: status})
-    .then(res => {
-      if(res.status == 200) {
-        alert("Success!");
-      } else {
-        alert("Failed!");
-      }
-    })
-  } catch (error){
-    console.log("Update Bid ", error)
-  }
-}
+export const updateBid =
+  (tokenId, nftOwner, bidder, amount, status) => (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/bid/update`, {
+          owner: nftOwner,
+          tokenId: tokenId,
+          status: status,
+        })
+        .then((res) => {
+          if (res.status == 200) {
+            alert("Success!");
+          } else {
+            alert("Failed!");
+          }
+        });
+    } catch (error) {
+      console.log("Update Bid ", error);
+    }
+  };
 
 export const historyFindAll = (tokenId) => (dispatch, getState) => {
   try {
-    axios.post(`${BACKEND_API}/history/all`, {tokenId: tokenId})
-    .then( (res) => {
-      if(res.status != 200) return
-      dispatch({
-        type: HISTORY_FIND_ALL,
-        payload: res.data
-      })
-    })
+    axios
+      .post(`${BACKEND_API}/history/all`, { tokenId: tokenId })
+      .then((res) => {
+        if (res.status != 200) return;
+        dispatch({
+          type: HISTORY_FIND_ALL,
+          payload: res.data,
+        });
+      });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-export const bidFindAll = (tokenId, owner, status="create") => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/bid/all`, {tokenId: tokenId, owner:owner, status: status})
-    .then( (res) => {
-      if(res.status != 200) return
-      dispatch({
-        type: BID_FIND_ALL,
-        payload: res.data
-      })
-    })
-  } catch (error) {
-    console.log(error)
-  }
-}
+export const bidFindAll =
+  (tokenId, owner, status = "create") =>
+  (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/bid/all`, {
+          tokenId: tokenId,
+          owner: owner,
+          status: status,
+        })
+        .then((res) => {
+          if (res.status != 200) return;
+          dispatch({
+            type: BID_FIND_ALL,
+            payload: res.data,
+          });
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-export const bidFindOne = (tokenId, nftOwner, bidder) => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/bid/findone`, {tokenId: tokenId, nftOwner:nftOwner, bidder: bidder})
-    .then( (res) => {
-      if(res.status != 200) return
-      dispatch({
-        type: BID_FIND_ONE,
-        payload: {bidstatus: res.data}
-      })
-    })
-  } catch (error) {
-    console.log("Bid FindOne ", error);
-  }
-}
+export const bidFindOne =
+  (tokenId, nftOwner, bidder) => (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/bid/findone`, {
+          tokenId: tokenId,
+          nftOwner: nftOwner,
+          bidder: bidder,
+        })
+        .then((res) => {
+          if (res.status != 200) return;
+          dispatch({
+            type: BID_FIND_ONE,
+            payload: { bidstatus: res.data },
+          });
+        });
+    } catch (error) {
+      console.log("Bid FindOne ", error);
+    }
+  };
 
 export const nftMint = (tokenId, owner) => (dispatch, getState) => {
   try {
-    axios.post(`${BACKEND_API}/mint`, {tokenId: tokenId, owner:owner})
-    .then( (res) => {
-      if(res.status != 200) return
-    })
+    axios
+      .post(`${BACKEND_API}/mint`, { tokenId: tokenId, owner: owner })
+      .then((res) => {
+        if (res.status != 200) return;
+      });
   } catch (error) {
-    console.log("MINT ", error)
+    console.log("MINT ", error);
   }
-}
+};
 
-export const nftUpdatePrice = (tokenId, owner, prevPrice, currPrice) => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/updateprice`, {tokenId: tokenId, owner:owner, prevPrice:prevPrice, currPrice: currPrice})
-    .then( (res) => {
-      if(res.status != 200) return
-      dispatch({
-        type: UPDATE_PRICE,
-        payload: {price: currPrice}
-      })
-    })
-  } catch (error) {
-    console.log("Update Price ", error);
-  }
-}
+export const nftUpdatePrice =
+  (tokenId, owner, prevPrice, currPrice) => (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/updateprice`, {
+          tokenId: tokenId,
+          owner: owner,
+          prevPrice: prevPrice,
+          currPrice: currPrice,
+        })
+        .then((res) => {
+          if (res.status != 200) return;
+          dispatch({
+            type: UPDATE_PRICE,
+            payload: { price: currPrice },
+          });
+        });
+    } catch (error) {
+      console.log("Update Price ", error);
+    }
+  };
 
 export const hotAuctionGet = () => (dispatch, getState) => {
   try {
-    axios.get(`${BACKEND_API}/hotauction`)
-    .then( (res) => {
-      if(res.status != 200) return
+    axios.get(`${BACKEND_API}/hotauction`).then((res) => {
+      if (res.status != 200) return;
       dispatch({
         type: HOT_AUCTION_GET,
-        payload: res.data
-      })
-    })
+        payload: res.data,
+      });
+    });
   } catch (error) {
     console.log("Hot Auction ", error);
   }
-}
+};
 
-export const settleAuction = (tokenId, owner, from, to) => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/settleauction`, {tokenId: tokenId, owner:owner, from:from, to: to})
-    .then( (res) => {
-    })
-  } catch (error) {
-    console.log("Settle Auction ", error);
-  }
-}
+export const settleAuction =
+  (tokenId, owner, from, to) => (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/settleauction`, {
+          tokenId: tokenId,
+          owner: owner,
+          from: from,
+          to: to,
+        })
+        .then((res) => {});
+    } catch (error) {
+      console.log("Settle Auction ", error);
+    }
+  };
 
-export const nftTransfer = (tokenId, owner, from, to) => (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/transfer`, {tokenId: tokenId, owner:owner, from:from, to: to})
-    .then( (res) => {
-      if(res.status != 200) return
-      dispatch({
-        type: UPDATE_PRICE,
-        payload: res.data
-      })
-    })
-  } catch (error) {
-    console.log("Transfer ", error);
-  }
-}
+export const nftTransfer =
+  (tokenId, owner, from, to) => (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/transfer`, {
+          tokenId: tokenId,
+          owner: owner,
+          from: from,
+          to: to,
+        })
+        .then((res) => {
+          if (res.status != 200) return;
+          dispatch({
+            type: UPDATE_PRICE,
+            payload: res.data,
+          });
+        });
+    } catch (error) {
+      console.log("Transfer ", error);
+    }
+  };
 
 export const walletConnect = () => async (dispatch, getState) => {
   try {
     const providerOptions = {
       injected: {
-          display: {
-              name: "Metamask",
-              description: "For desktop web wallets",
-              logo: metaMask
-          }
+        display: {
+          name: "Metamask",
+          description: "For desktop web wallets",
+          logo: metaMask,
+        },
       },
       walletconnect: {
-          display: {
-              name: "WalletConnect",
-              description: "For mobile app wallets",
-          },
-          package: WalletConnectProvider,
-          options: {
-              rpc: {
-                  56: process.env.REACT_APP_JSONRPC_MAIN_URL,
-                  97: process.env.REACT_APP_JSONRPC_TEST_URL
-              }
-          }
-      }
-    };
-    
-    web3Modal = new Web3Modal({
-        cacheProvider: true,
-        providerOptions,
-        disableInjectedProvider: false,
-        theme: {
-            background: "rgb(39, 49, 56)",
-            main: "rgb(199, 199, 199)",
-            secondary: "rgb(136, 136, 136)",
-            border: "rgba(195, 195, 195, 0.14)",
-            hover: "rgb(16, 26, 32)",
+        display: {
+          name: "WalletConnect",
+          description: "For mobile app wallets",
         },
+        package: WalletConnectProvider,
+        options: {
+          rpc: {
+            56: process.env.REACT_APP_JSONRPC_MAIN_URL,
+            97: process.env.REACT_APP_JSONRPC_TEST_URL,
+          },
+        },
+      },
+    };
+
+    web3Modal = new Web3Modal({
+      cacheProvider: true,
+      providerOptions,
+      disableInjectedProvider: false,
+      theme: {
+        background: "rgb(39, 49, 56)",
+        main: "rgb(199, 199, 199)",
+        secondary: "rgb(136, 136, 136)",
+        border: "rgba(195, 195, 195, 0.14)",
+        hover: "rgb(16, 26, 32)",
+      },
     });
 
     const instance = await web3Modal.connect();
@@ -408,16 +494,20 @@ export const walletConnect = () => async (dispatch, getState) => {
     const signer = provider.getSigner();
 
     provider.on("disconnect", () => {
-      dispatch( walletDisconnect() )
+      dispatch(walletDisconnect());
     });
 
-    const NFTcontract = new ethers.Contract( NFT_ADDRESS, NFT_ABI, signer);
+    const NFTcontract = new ethers.Contract(NFT_ADDRESS, NFT_ABI, signer);
     const FTcontract = new ethers.Contract(FT_ADDRESS, FT_ABI, signer);
-    const AUCTIONcontract = new ethers.Contract(AUCTION_ADDRESS, AUCTION_ABI, signer);
+    const AUCTIONcontract = new ethers.Contract(
+      AUCTION_ADDRESS,
+      AUCTION_ABI,
+      signer
+    );
     const account = await signer.getAddress();
     const mintPrice = await NFTcontract.getMintPrice();
-    localStorage.setItem('account', account);
-    dispatch( userInfo(ethers.utils.getAddress(account)) )
+    localStorage.setItem("account", account);
+    dispatch(userInfo(ethers.utils.getAddress(account)));
     dispatch({
       type: WALLET_CONNECT,
       payload: {
@@ -425,53 +515,56 @@ export const walletConnect = () => async (dispatch, getState) => {
         NFTcontract: NFTcontract,
         FTcontract: FTcontract,
         AUCTIONcontract: AUCTIONcontract,
-        mintPrice: mintPrice
-      }
-    })
-
-  } catch(error) {
-    console.log("Wallet Connect ", error)
+        mintPrice: mintPrice,
+      },
+    });
+  } catch (error) {
+    console.log("Wallet Connect ", error);
   }
-}
+};
 
 export const walletDisconnect = () => async (dispatch, getState) => {
   try {
-    localStorage.setItem('account', "");
+    localStorage.setItem("account", "");
     await web3Modal.clearCachedProvider();
     dispatch({
       type: WALLET_DISCONNECT,
       payload: {
         account: null,
         NFTcontract: null,
-        AUCTIONcontract: null
-      }
-    })
+        AUCTIONcontract: null,
+      },
+    });
   } catch (error) {
-    console.log("Wallet Disconnect ", error)
+    console.log("Wallet Disconnect ", error);
   }
-}
+};
 
-export const addFollow = (owner, followAccount) => async (dispatch, getState) => {
-  try {
-    axios.post(`${BACKEND_API}/follow/create`, {owner: owner, followAccount:followAccount})
-    .then(res => {
-      dispatch(getFollow(owner))
-    })
-  } catch (err) {
-    console.log("Add follow ", err)
-  }
-}
+export const addFollow =
+  (owner, followAccount) => async (dispatch, getState) => {
+    try {
+      axios
+        .post(`${BACKEND_API}/follow/create`, {
+          owner: owner,
+          followAccount: followAccount,
+        })
+        .then((res) => {
+          dispatch(getFollow(owner));
+        });
+    } catch (err) {
+      console.log("Add follow ", err);
+    }
+  };
 
 export const getFollow = (owner) => async (dispatch, getState) => {
   try {
-    axios.post(`${BACKEND_API}/follow/all`, {owner: owner})
-    .then(res => {
-      dispatch( {
+    axios.post(`${BACKEND_API}/follow/all`, { owner: owner }).then((res) => {
+      dispatch({
         type: GET_FOLLOW,
-        payload: res.data
-      })
-    })
+        payload: res.data,
+      });
+    });
   } catch (err) {
-    console.log("Get Follow ", err)
+    console.log("Get Follow ", err);
   }
-}
+};
