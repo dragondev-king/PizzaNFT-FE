@@ -1,15 +1,16 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { create } from 'ipfs-http-client';
 import { ethers } from "ethers";
-import Size from '../size/Size';
-import VerifiedArtist from '../verifiedArtist/VerifiedArtist';
 import Dropdown from 'react-dropdown';
+
+import Size from '../size/Size';
 import 'react-dropdown/style.css';
 import { Common } from '../../redux/common';
 import {
     NFT_ADDRESS,
     FT_ADDRESS,
   } from "../../config/contract";
+
 const client = create('https://ipfs.infura.io:5001/api/v0');
 const options = [
     'art', 'photography', 'sports', 'athletes', 'celebrities', 'music', 'gif and videos', 'collectibles', 'trading cards', 'utilities', 'virtual worlds',
@@ -31,7 +32,6 @@ const CreateForm = () => {
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [capacity, setCapacity] = useState(0);
-    const [verified, setVerified] = useState(false);
 
     const handleChange = (e) => {
         const [file] = e.target.files;
@@ -56,7 +56,6 @@ const CreateForm = () => {
                 width: width,
                 height: height,
                 capacity: capacity,
-                verified: verified,
                 type: defaultOption
             }
 
@@ -112,39 +111,18 @@ const CreateForm = () => {
                 <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="royality">Royalty (max 20%)</label>
-                        <input className="form-control" type="text" id='royality' />
+                        <input className="form-control" type="text" id='royality'  onChange={ (e) => { try {setRoyaltyFee(e.target.value)} catch(err){} }} placeholder="100 is 1%" />
                     </div>
                 </div>
                 <div className="col-md-12">
                     <div className="form-group">
-                        <label htmlFor="itemsize">Size</label>
-                        <div className="size-inputs">
-                            <div className="input-field-items">
-                                <input className="form-control" type="text" id='itemsize' /><span>px</span>
-                            </div>
-                            <div className="input-field-items">
-                                <input className="form-control" type="text" id='itemsize' /><span>px</span>
-                            </div>
-                        </div>
+                        <Size setWidth={setWidth} width={width} setHeight={setHeight} height={height} setCapacity={setCapacity} capacity={capacity} />
                     </div>
                 </div>
                 <div className="col-md-12">
                     <div className="form-group">
                         <label htmlFor="artist_social_link">Artist Social Media Link</label>
                         <input className="form-control" type="text" id='artist_social_link' value={socialLink} onChange={ (e) => { try {setsocialLink(e.target.value)} catch(err) {}}}/>
-                    </div>
-                </div>
-                <div className="col-md-12">
-                    <div className="form-group">
-                        <VerifiedArtist setVerified={setVerified} verified={verified}  />
-                        <label htmlFor="itemsize">Size</label>
-                        <input className="form-control" type="text" id='itemsize' />
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="noofcopies"># of Copies to Mint/Sell</label>
-                        <input className="form-control" type="text" id='noofcopies' />
                     </div>
                 </div>
                 <div className="col-md-12 create-radio-buttons">
@@ -164,55 +142,6 @@ const CreateForm = () => {
                         </label>
                     </div>
                 </div>
-                <div className="col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="bidprice">Bid Price</label>
-                        <input className="form-control" type="text" id='bidprice' />
-                    </div>
-                </div>
-                <div className="col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="sociallink">Artist Social Media Link</label>
-                        <input className="form-control" type="text" id='sociallink' />
-                    </div>
-                </div>
-                <div className="col-md-12 create-radio-buttons">
-                    <div className="standards-container row">
-                        <div className="col-md-6">
-                            <label className="checkbox-button">
-                                <input type="radio" name="saletype" />
-                                <span>Buy Now</span>
-                            </label>
-                        </div>
-
-                        <div className="col-md-6">
-                            <label className="checkbox-button">
-                                <input type="radio" name="saletype" />
-                                <span>Mint Only | Not On Sale</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-md-12 create-radio-buttons">
-                    <label htmlFor="verified-artist">Verified Artist</label>
-                    <div className="standards-container row">
-                        <div className="col-md-6">
-                            <label className="checkbox-button">
-                                <input type="radio" name="artisttype" />
-                                <span>Verified </span>
-                            </label>
-                        </div>
-
-                        <div className="col-md-6">
-                            <label className="checkbox-button">
-                                <input type="radio" name="artisttype" />
-                                <span>Not Verified</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
                 <div className="col-md-12">
                     {
                         !itempending ? <button className="btn btn-default" onClick={createItem}>Create Item</button> :
