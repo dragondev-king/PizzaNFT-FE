@@ -8,8 +8,7 @@ import { createAuction } from '../../redux/actions'
 const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
     const dispatch = useDispatch();
     const { account, AUCTIONcontract, NFTcontract } = Common();
-    const [minprice, setMinPrice] = useState(0.1);
-    const [buyprice, setBuyPrice] = useState(100);
+    const [startPrice, setStartPrice] = useState(0.1);
     const [pending, setPending] = useState(false);
 
     const create_auction = async ()=> {
@@ -18,7 +17,7 @@ const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
                const nft_send = await NFTcontract.approve(AUCTION_ADDRESS, state?.tid);
                setPending(true);
                await nft_send.wait();
-               const creat_auction =  await AUCTIONcontract.createDefaultNftAuction( NFT_ADDRESS, state?.tid, "0x0000000000000000000000000000000000000000", ethers.utils.parseEther(minprice.toString()), ethers.utils.parseEther(buyprice.toString()))
+               const creat_auction =  await AUCTIONcontract.createDefaultNftAuction( NFT_ADDRESS, state?.tid, startPrice, startPrice * 3)
                await creat_auction.wait();
                setPending(false);
                setAcutionCreate(true);
@@ -38,7 +37,7 @@ const CreateAuction = ({setIsOpen, state, setAcutionCreate}) => {
                 <div className="col-md-12">
                     <div className="form-group">
                         <label>Bid Start Price (BNB)</label>
-                        <input className="form-control" type="number" id='itemname'  onChange={ (e) => setMinPrice(e.target.value)} value={minprice}/>
+                        <input className="form-control" type="number" id='itemname'  onChange={ (e) => setStartPrice(e.target.value)} value={startPrice}/>
                     </div>
                 </div>
                 <div className="col-md-6 col-sm-6">

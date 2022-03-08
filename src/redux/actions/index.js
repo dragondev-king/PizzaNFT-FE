@@ -265,14 +265,15 @@ export const updateAuction =
   };
 
 export const makeBid =
-  (tokenId, nftOwner, bidder, amount) => (dispatch, getState) => {
+  (tokenId, nftOwner, bidder, amount, recipient) => (dispatch, getState) => {
     try {
       axios
         .post(`${BACKEND_API}/bid/create`, {
-          nftOwner: nftOwner,
-          tokenId: tokenId,
-          bidder: bidder,
-          amount: amount,
+          nftOwner,
+          tokenId,
+          bidder,
+          amount,
+          recipient,
         })
         .then((res) => {
           if (res.status == 200) {
@@ -419,10 +420,10 @@ export const settleAuction =
     try {
       axios
         .post(`${BACKEND_API}/settleauction`, {
-          tokenId: tokenId,
-          owner: owner,
-          from: from,
-          to: to,
+          tokenId,
+          owner,
+          from,
+          to,
         })
         .then((res) => {});
     } catch (error) {
