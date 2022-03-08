@@ -84,7 +84,7 @@ const ItemDetails = () => {
             let is_sale = await NFTcontractRead.getCanBuyState(state.tid);
             let is_mint_only = await NFTcontractRead.getOnlyViewState(state.tid);
 
-            console.log("flag", is_auction, is_sale, is_mint_only);
+            console.log("flag", 'isAuction:', is_auction, 'isSale:', is_sale, 'isMintOnly:',is_mint_only);
             setIsAuction(is_auction);
             setIsSale(is_sale);
             setIsMintOnly(is_mint_only);
