@@ -29,7 +29,6 @@ function Nft({ tokenId, category, searchText="" }) {
     
     // nft.loading is true during load.
     if (loading) return <>Loading…</>
-    if(nft) console.log(nft)
     // nft.error is an Error instance in case of error.
     // if (error || !nft) return <>Error.</>
 

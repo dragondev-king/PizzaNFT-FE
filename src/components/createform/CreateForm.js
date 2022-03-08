@@ -45,25 +45,28 @@ const CreateForm = () => {
     const createItem = async () => {
         if (account) {
             setItemPending(true);
-            const item = await client.add(itemfile);
-            const url = `https://ipfs.infura.io/ipfs/${item.path}`;
-
-            const metadata = {
-                name: itemname,
-                description: itemdesc,
-                image: url,
-                social: socialLink,
-                width: width,
-                height: height,
-                capacity: capacity,
-                type: defaultOption
-            }
-
-            const metadataJson = JSON.stringify(metadata);
-            const blob = new Blob([metadataJson], { type: "application/json" });
-            const metadataAdd = await client.add(blob);
-            const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
             try {
+                const item = await client.add(itemfile);
+                const url = `https://ipfs.infura.io/ipfs/${item.path}`;
+
+                const metadata = {
+                    name: itemname,
+                    description: itemdesc,
+                    image: url,
+                    social: socialLink,
+                    width: width,
+                    height: height,
+                    capacity: capacity,
+                    type: defaultOption
+                }
+                console.log(metadata, 'metadata')
+
+                const metadataJson = JSON.stringify(metadata);
+                const blob = new Blob([metadataJson], { type: "application/json" });
+                const metadataAdd = await client.add(blob);
+                console.log(metadataAdd,'METADATA-ADD')
+                const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
+            
                 let cost_pay = await FTcontract.approve(NFT_ADDRESS, mintPrice);
                 await cost_pay.wait();
                 let pizzaNFT = await NFTcontract.mint(ipfsMeta, itemprice, FT_ADDRESS, mintPrice, royaltyFee, putOnSale, buynowState, viewState);
