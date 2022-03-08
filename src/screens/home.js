@@ -163,7 +163,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* <ScrollTop /> */}
+            <ScrollTop />
 
         </>
     )
