@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import Modal from "react-modal";
 import axios from "axios";
 import Countdown from "react-countdown";
@@ -50,10 +50,14 @@ const ItemDetails = () => {
   const { state } = useLocation();
   const { account, bids, historys, NFTcontract, AUCTIONcontract } = Common();
   const [minthash, setMintHash] = useState();
-  const [auctionCreate, setAcutionCreate] = useState();
+  
+  const [auctionCreated, setAcutionCreated] = useState();
   const [nftHighestBid, setNftHighestBid] = useState();
   const [nftHighestBider, setNftHighestBider] = useState();
-  const [auctionFinish, setAuctionFinish] = useState();
+  const [auctionCreatedAt, setAuctionCreatedAt] = useState();
+  const [auctionPeriod, setAuctionPeriod] = useState();
+  const [startPrice, setStartPrice] = useState(0);
+  
   const [regetflag, setRegetFlag] = useState();
 
   const [isAuction, setIsAuction] = useState();
@@ -66,13 +70,13 @@ const ItemDetails = () => {
   const [transferIsOpen, setTransferIsOpen] = useState();
   const [pending, setPending] = useState();
   const [bidprice, setBidPrice] = useState(0);
+  const [recipient, setRecipient] = useState(ethers.constants.AddressZero)
   const [buynowprice, setBuyNowPrice] = useState(0);
   const [owner, setOwner] = useState();
-  const [bidMinPrice, setBidMinPrice] = useState(0);
   const [nftOwner, setNftOwner] = useState(
-    "0x0000000000000000000000000000000000000000"
+    ethers.constants.AddressZero
   );
-  const [auctionEnd, setAuctionEnd] = useState(0);
+  const [auctionOngoing, setAuctionOngoing] = useState(0);
 
   const [nftavatar, setNftAvatar] = useState();
   const [ownername, setOwnerName] = useState();
@@ -106,16 +110,6 @@ const ItemDetails = () => {
       setIsSale(is_sale);
       setIsMintOnly(is_mint_only);
       
-      //never occured
-      // if (nft_owner === AUCTION_ADDRESS) {
-      //   console.log('XXXXXXXXXXXXXXxxx')
-      //   nft_owner = await AUCTIONcontractRead.pizzaAuctions(
-      //     NFT_ADDRESS,
-      //     state.tid
-      //   );
-      //   nft_owner = nft_owner.nftSeller;
-      // }
-
       console.log(state, 'state')
       console.log(state.nft.owner, 'before')
       state.nft.owner = nft_owner;
@@ -158,17 +152,23 @@ const ItemDetails = () => {
       );
 
       if (
-        auction_info?.nftSeller !== "0x0000000000000000000000000000000000000000"
+        auction_info?.nftSeller !== ethers.constants.AddressZero
       ) {
-        setNftOwner(auction_info?.nftSeller);
-        setAcutionCreate(true);
-        setNftHighestBid(ethers.utils.formatEther(auction_info?.nftHighestBid));
-        setNftHighestBider(auction_info?.nftHighestBidder);
-        setBidMinPrice(ethers.utils.formatEther(auction_info?.minPrice));
-        setAuctionEnd(
-          Number(ethers.utils.formatUnits(auction_info?.auctionEnd, 0))
+        const { nftSeller, nftHighestBid, nftHighestBidder, auctionPeriod, createdAt, startPrice, reservePrice} = auction_info;
+        setNftOwner(nftSeller);
+        setAcutionCreated(true);
+        setNftHighestBid(ethers.utils.formatEther(nftHighestBid));
+        setNftHighestBider(nftHighestBidder);
+        setAuctionPeriod(auctionPeriod);
+        setAuctionCreatedAt(createdAt);
+        setReservePrice(reservePrice);
+        setStartPrice(startPrice)
+
+        
+        setAuctionOngoing(
+          Boolean(Date.now() - (createdAt + auctionPeriod) > 0)
         );
-        dispatch(bidFindAll(state?.id, auction_info?.nftSeller));
+        dispatch(bidFindAll(state?.id, nftSeller));
       }
 
       let buyNowPrice = await NFTcontractRead.prices(state?.tid);
@@ -228,14 +228,14 @@ const ItemDetails = () => {
         const make_bid = await AUCTIONcontract.makeBid(
           NFT_ADDRESS,
           state?.tid,
-          "0x0000000000000000000000000000000000000000",
-          "0",
+          price,
+          recipient,
           { value: price }
         );
         await make_bid.wait();
         setPending(false);
         BidCloseModal();
-        dispatch(makeBid(state?.tid, nftOwner, account, bidprice));
+        dispatch(makeBid(state?.tid, nftOwner, account, bidprice, recipient));
         setRegetFlag(!regetflag);
       } else {
         alert("Please connect MetaMask!");
@@ -248,7 +248,7 @@ const ItemDetails = () => {
   const cancelAuction = async () => {
     try {
       await AUCTIONcontract.withdrawAuction(NFT_ADDRESS, state?.tid);
-      setAcutionCreate(false);
+      setAcutionCreated(false);
       dispatch(updateAuction(account, state?.tid, "cancel"));
       setRegetFlag(!regetflag);
     } catch (error) {
@@ -329,7 +329,7 @@ const ItemDetails = () => {
               <div className="col-md-6">
                 <div className="items-main-cont">
                   <h2>{state?.nft?.name}</h2>
-                  {auctionCreate ? (
+                  {auctionCreated ? (
                     <h3>
                       Highest Bid: <span>{nftHighestBid} BNB</span>
                     </h3>
@@ -342,9 +342,9 @@ const ItemDetails = () => {
 
                   <div className="item-description">
                     <p>{state?.nft?.description}</p>
-                    {auctionEnd ? (
+                    {auctionOngoing ? (
                       <Countdown
-                        date={new Date(Number(auctionEnd) * 1000)}
+                        date={auctionCreatedAt + auctionPeriod - Date.now()}
                         renderer={renderer}
                       />
                     ) : (
@@ -391,7 +391,7 @@ const ItemDetails = () => {
                                   setIsOpen={setUpdatePriceIsOpen}
                                   state={state}
                                   AUCTIONcontract={AUCTIONcontract}
-                                  setAcutionCreate={setAcutionCreate}
+                                  setAcutionCreate={setAcutionCreated}
                                   setBuyNowPrice={setBuyNowPrice}
                                   buynowprice={buynowprice}
                                 />
@@ -403,7 +403,7 @@ const ItemDetails = () => {
                             </>
                           ) : isAuction ? (
                             <>
-                              {!auctionCreate && auctionEnd ? (
+                              {!auctionCreated && auctionOngoing ? (
                                 <>
                                   <button
                                     className="create-auction-button"
@@ -420,14 +420,14 @@ const ItemDetails = () => {
                                       setIsOpen={setAuctionCreateSetIsOpen}
                                       state={state}
                                       AUCTIONcontract={AUCTIONcontract}
-                                      setAcutionCreate={setAcutionCreate}
+                                      setAcutionCreate={setAcutionCreated}
                                     />
                                   </Modal>
                                 </>
                               ) : (
                                 <></>
                               )}
-                              {auctionCreate && !auctionEnd ? (
+                              {auctionCreated && !auctionOngoing ? (
                                 <button
                                   className="create-auction-button"
                                   onClick={cancelAuction}
@@ -477,6 +477,19 @@ const ItemDetails = () => {
                                             }
                                             value={bidprice}
                                             placeholder=""
+                                          />
+                                        </div>
+                                        <div className="form-group">
+                                          <label>Recipient</label>
+                                          <input
+                                            className="form-control"
+                                            type="text"
+                                            id="recipient"
+                                            onChange={(e) =>
+                                              setRecipient(e.target.value)
+                                            }
+                                            value={bidprice}
+                                            placeholder="default recipient is you"
                                           />
                                         </div>
                                       </div>
@@ -554,7 +567,7 @@ const ItemDetails = () => {
                     <div className="tab-content">
                       <div id="home" className="tab-pane fade in active">
                         <div className="bidders-div">
-                          {auctionCreate ? (
+                          {auctionCreated ? (
                             bids?.map((item, index) => (
                               <Bidder key={index} item={item} />
                             ))
