@@ -50,14 +50,14 @@ const ItemDetails = () => {
   const { state } = useLocation();
   const { account, bids, historys, NFTcontract, AUCTIONcontract } = Common();
   const [minthash, setMintHash] = useState();
-  
+
   const [auctionCreated, setAcutionCreated] = useState();
   const [nftHighestBid, setNftHighestBid] = useState();
   const [nftHighestBider, setNftHighestBider] = useState();
   const [auctionCreatedAt, setAuctionCreatedAt] = useState();
   const [auctionPeriod, setAuctionPeriod] = useState();
   const [startPrice, setStartPrice] = useState(0);
-  
+
   const [regetflag, setRegetFlag] = useState();
 
   const [isAuction, setIsAuction] = useState();
@@ -70,12 +70,10 @@ const ItemDetails = () => {
   const [transferIsOpen, setTransferIsOpen] = useState();
   const [pending, setPending] = useState();
   const [bidprice, setBidPrice] = useState(0);
-  const [recipient, setRecipient] = useState(ethers.constants.AddressZero)
+  const [recipient, setRecipient] = useState(ethers.constants.AddressZero);
   const [buynowprice, setBuyNowPrice] = useState(0);
   const [owner, setOwner] = useState();
-  const [nftOwner, setNftOwner] = useState(
-    ethers.constants.AddressZero
-  );
+  const [nftOwner, setNftOwner] = useState(ethers.constants.AddressZero);
   const [auctionOngoing, setAuctionOngoing] = useState(0);
 
   const [nftavatar, setNftAvatar] = useState();
@@ -91,7 +89,7 @@ const ItemDetails = () => {
       }
 
       let nft_owner = await NFTcontractRead.ownerOf(state.tid);
-      console.log(nft_owner, 'owner')
+      console.log(nft_owner, "owner");
 
       let is_auction = await NFTcontractRead.getPutOnSaleState(state.tid);
       let is_sale = await NFTcontractRead.getCanBuyState(state.tid);
@@ -99,21 +97,21 @@ const ItemDetails = () => {
 
       console.log(
         "flag",
-        "isAuction:",
+        "putOnSale:",
         is_auction,
-        "isSale:",
+        "canBuy:",
         is_sale,
-        "isMintOnly:",
+        "onlyView:",
         is_mint_only
       );
       setIsAuction(is_auction);
       setIsSale(is_sale);
       setIsMintOnly(is_mint_only);
-      
-      console.log(state, 'state')
-      console.log(state.nft.owner, 'before')
+
+      console.log(state, "state");
+      console.log(state.nft.owner, "before");
       state.nft.owner = nft_owner;
-      console.log(state.nft.owner, 'after')
+      console.log(state.nft.owner, "after");
       await axios
         .get(
           `${
@@ -151,10 +149,16 @@ const ItemDetails = () => {
         state?.tid
       );
 
-      if (
-        auction_info?.nftSeller !== ethers.constants.AddressZero
-      ) {
-        const { nftSeller, nftHighestBid, nftHighestBidder, auctionPeriod, createdAt, startPrice, reservePrice} = auction_info;
+      if (auction_info?.nftSeller !== ethers.constants.AddressZero) {
+        const {
+          nftSeller,
+          nftHighestBid,
+          nftHighestBidder,
+          auctionPeriod,
+          createdAt,
+          startPrice,
+          reservePrice,
+        } = auction_info;
         setNftOwner(nftSeller);
         setAcutionCreated(true);
         setNftHighestBid(ethers.utils.formatEther(nftHighestBid));
@@ -162,9 +166,8 @@ const ItemDetails = () => {
         setAuctionPeriod(auctionPeriod);
         setAuctionCreatedAt(createdAt);
         setReservePrice(reservePrice);
-        setStartPrice(startPrice)
+        setStartPrice(startPrice);
 
-        
         setAuctionOngoing(
           Boolean(Date.now() - (createdAt + auctionPeriod) > 0)
         );
@@ -403,7 +406,7 @@ const ItemDetails = () => {
                             </>
                           ) : isAuction ? (
                             <>
-                              {!auctionCreated && auctionOngoing ? (
+                              {!auctionCreated ? (
                                 <>
                                   <button
                                     className="create-auction-button"
@@ -448,81 +451,87 @@ const ItemDetails = () => {
                         ) : (
                           <>
                             {nftHighestBider !== account ? (
-                              <>
-                                <button
-                                  className="place-a-bid-button"
-                                  onClick={BidOpenModal}
-                                >
-                                  Place a Bid
-                                </button>
-                                <Modal
-                                  isOpen={bidModalIsOpen}
-                                  style={customStyles}
-                                  contentLabel="Place a Bid"
-                                >
+                              ( auctionCreated ?
+                                <>
+                                  <button
+                                    className="place-a-bid-button"
+                                    onClick={BidOpenModal}
+                                  >
+                                    Place a Bid
+                                  </button>
+                                  <Modal
+                                    isOpen={bidModalIsOpen}
+                                    style={customStyles}
+                                    contentLabel="Place a Bid"
+                                  >
+                                    <>
+                                      <div
+                                        className="row"
+                                        style={{ width: "350px" }}
+                                      >
+                                        <div className="col-md-12">
+                                          <div className="form-group">
+                                            <label>Bid Price</label>
+                                            <input
+                                              className="form-control"
+                                              type="number"
+                                              id="itemprice"
+                                              onChange={(e) =>
+                                                setBidPrice(e.target.value)
+                                              }
+                                              value={bidprice}
+                                              placeholder=""
+                                            />
+                                          </div>
+                                          <div className="form-group">
+                                            <label>Recipient</label>
+                                            <input
+                                              className="form-control"
+                                              type="text"
+                                              id="recipient"
+                                              onChange={(e) =>
+                                                setRecipient(e.target.value)
+                                              }
+                                              value={bidprice}
+                                              placeholder="default recipient is you"
+                                            />
+                                          </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                          {pending ? (
+                                            <button
+                                              className="btn btn-default"
+                                              disabled
+                                            >
+                                              Waiting
+                                            </button>
+                                          ) : (
+                                            <button
+                                              className="btn btn-default"
+                                              onClick={make_bid}
+                                            >
+                                              Make Bid
+                                            </button>
+                                          )}
+                                        </div>
+                                        <div className="col-md-6">
+                                          <button
+                                            className="btn btn-default"
+                                            onClick={BidCloseModal}
+                                            style={{ float: "right" }}
+                                          >
+                                            Close
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </>
+                                  </Modal>
+                                </> : (
                                   <>
-                                    <div
-                                      className="row"
-                                      style={{ width: "350px" }}
-                                    >
-                                      <div className="col-md-12">
-                                        <div className="form-group">
-                                          <label>Bid Price</label>
-                                          <input
-                                            className="form-control"
-                                            type="number"
-                                            id="itemprice"
-                                            onChange={(e) =>
-                                              setBidPrice(e.target.value)
-                                            }
-                                            value={bidprice}
-                                            placeholder=""
-                                          />
-                                        </div>
-                                        <div className="form-group">
-                                          <label>Recipient</label>
-                                          <input
-                                            className="form-control"
-                                            type="text"
-                                            id="recipient"
-                                            onChange={(e) =>
-                                              setRecipient(e.target.value)
-                                            }
-                                            value={bidprice}
-                                            placeholder="default recipient is you"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-md-6">
-                                        {pending ? (
-                                          <button
-                                            className="btn btn-default"
-                                            disabled
-                                          >
-                                            Waiting
-                                          </button>
-                                        ) : (
-                                          <button
-                                            className="btn btn-default"
-                                            onClick={make_bid}
-                                          >
-                                            Make Bid
-                                          </button>
-                                        )}
-                                      </div>
-                                      <div className="col-md-6">
-                                        <button
-                                          className="btn btn-default"
-                                          onClick={BidCloseModal}
-                                          style={{ float: "right" }}
-                                        >
-                                          Close
-                                        </button>
-                                      </div>
-                                    </div>
+                                    <p>Auction is not created yet</p>
                                   </>
-                                </Modal>
-                              </>
+                                )
+                              )
                             ) : (
                               <>
                                 {" "}
@@ -535,7 +544,30 @@ const ItemDetails = () => {
                         )}
                       </div>
                     ) : (
-                      <></>
+                      owner &&<>
+                      {console.log(account, 'account', isMintOnly, 'isMintOnly')}
+                        <button
+                          className="buy-it-button"
+                          onClick={TransferOpenModal}
+                        >
+                          Transfer
+                        </button>
+                        <Modal
+                          isOpen={transferIsOpen}
+                          style={customStyles}
+                          contentLabel="Create Auction"
+                        >
+                          <Transfer
+                            setIsOpen={setTransferIsOpen}
+                            state={state}
+                            regetflag={regetflag}
+                            setRegetFlag={setRegetFlag}
+                          />
+                        </Modal>
+                        <button className="burn-it-button" onClick={burn}>
+                          Burn
+                        </button>
+                      </>
                     )
                   ) : (
                     <></>
