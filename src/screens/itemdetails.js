@@ -200,9 +200,9 @@ const ItemDetails = () => {
     let addr = await NFTcontractRead.ownerOf(state?.tid);
 
     try {
+        const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid)
       setOwnerAddr(
-        await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid)
-          .nftSeller
+        auction.nftSeller
       );
     } catch (err) {}
 
@@ -429,7 +429,18 @@ const ItemDetails = () => {
                                   </Modal>
                                 </>
                               ) : (
-                                <></>
+                                <>
+                                  { auctionCreated && auctionOngoing ? (
+                                    <button
+                                      className="create-auction-button"
+                                      onClick={cancelAuction}
+                                    >
+                                      Cancel Auction
+                                    </button>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </>
                               )}
                             </>
                           ) : (
@@ -441,17 +452,6 @@ const ItemDetails = () => {
                           </button>
                         ) : (
                           <>
-                            {console.log(nftOwner, 'heehere owner', auctionOngoing)}
-                            {nftOwner === account && auctionCreated && auctionOngoing ? (
-                                <button
-                                  className="create-auction-button"
-                                  onClick={cancelAuction}
-                                >
-                                  Cancel Auction
-                                </button>
-                              ) : (
-                                <></>
-                              )}
                             {highestBider !== account ? (
                               ( auctionCreated && nftOwner != account ?
                                 <>

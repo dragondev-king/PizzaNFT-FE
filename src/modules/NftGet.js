@@ -13,7 +13,7 @@ import ExploreImage from '../components/exploreimage/ExploreImage'
 function Nft({ tokenId, category, searchText="" }) {
     const [nftavatar, setNftAvatar] = useState();
     const [ownername, setOwnerName] = useState();
-    const [owner, setOwner] = useState("");
+    const [seller, setSeller] = useState("");
     const [buynowprice, setBuyNowPrice] = useState(0);
 
     const { loading, error, nft } = useNft(
@@ -23,7 +23,8 @@ function Nft({ tokenId, category, searchText="" }) {
     
     useEffect(async () => {
         try {
-            setOwner(await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId).nftSeller);
+            const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId);
+            setSeller(auction.nftSeller)
         } catch (err) { }
     }, [])
     
@@ -45,7 +46,7 @@ function Nft({ tokenId, category, searchText="" }) {
     } catch (err){}
 
     if (nft?.owner === AUCTION_ADDRESS) {
-        nft.owner = owner;
+        nft.owner = seller;
     }
 
     let flag = false;
