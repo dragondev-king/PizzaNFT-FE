@@ -52,11 +52,11 @@ const ItemDetails = () => {
   const { account, bids, historys, NFTcontract, AUCTIONcontract } = Common();
   const [minthash, setMintHash] = useState();
 
-  const [auctionCreated, setAcutionCreated] = useState();
-  const [nftHighestBid, setNftHighestBid] = useState();
-  const [nftHighestBider, setNftHighestBider] = useState();
+  const [auctionCreated, setAcutionCreated] = useState(false);
+  const [highestBid, setNftHighestBid] = useState();
+  const [highestBider, setNftHighestBider] = useState();
   const [auctionCreatedAt, setAuctionCreatedAt] = useState();
-  const [auctionPeriod, setAuctionPeriod] = useState();
+  const [auctionDuration, setAuctionDuration] = useState();
 
   const [regetflag, setRegetFlag] = useState();
 
@@ -108,10 +108,11 @@ const ItemDetails = () => {
       setIsSale(is_sale);
       setIsMintOnly(is_mint_only);
 
-      console.log(state, "state");
-      console.log(state.nft.owner, "before");
+      if(nft_owner === AUCTION_ADDRESS) {
+        nft_owner = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state.tid);
+        nft_owner = nft_owner.nftSeller;
+    }
       state.nft.owner = nft_owner;
-      console.log(state.nft.owner, "after");
       await axios
         .get(
           `${
@@ -148,7 +149,8 @@ const ItemDetails = () => {
         NFT_ADDRESS,
         state?.tid
       );
-
+      
+      console.log(auction_info, 'auction_info')
       if (auction_info?.nftSeller !== ethers.constants.AddressZero) {
         const {
           nftSeller,
@@ -156,19 +158,20 @@ const ItemDetails = () => {
           nftHighestBidder,
           auctionPeriod,
           createdAt,
-          reservePrice,
         } = auction_info;
+
         setNftOwner(nftSeller);
         setAcutionCreated(true);
-        setNftHighestBid(ethers.utils.formatEther(nftHighestBid));
+        setNftHighestBid(parseInt(ethers.utils.formatEther(nftHighestBid), 10));
         setNftHighestBider(nftHighestBidder);
-        setAuctionPeriod(auctionPeriod);
-        setAuctionCreatedAt(createdAt);
-        setReservePrice(reservePrice);
+        setAuctionDuration(parseInt(auctionPeriod, 10));
+        setAuctionCreatedAt(parseInt(createdAt, 10));
 
         setAuctionOngoing(
-          Boolean(Date.now() / 1000 - (createdAt + auctionPeriod) > 0)
+          Boolean((auctionCreatedAt + auctionDuration - Date.now() / 1000) > 0)
         );
+        console.log(auctionCreatedAt, auctionDuration, '--------')
+        console.log(auctionOngoing, 'ongoing')
         dispatch(bidFindAll(state?.id, nftSeller));
       }
 
@@ -178,7 +181,7 @@ const ItemDetails = () => {
 
     dispatch(historyFindAll(state?.tid));
     // dispatch( bidFindOne(state?.tid, state?.nft?.owner, account))
-  }, [account, regetflag]);
+  }, [account, regetflag, auctionCreatedAt, auctionDuration, auctionOngoing, highestBid, highestBider]);
 
   const buy_it = async () => {
     try {
@@ -299,8 +302,7 @@ const ItemDetails = () => {
 
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
-      setAuctionFinish(completed);
-      return nftHighestBider == account ? (
+      return highestBider == account ? (
         <button className="buy-it-button" onClick={settle_auction}>
           Settle Auction
         </button>
@@ -317,6 +319,7 @@ const ItemDetails = () => {
       );
     }
   };
+  console.log(auctionCreated, 'auctionCreated')
 
   return (
     <>
@@ -333,7 +336,7 @@ const ItemDetails = () => {
                   <h2>{state?.nft?.name}</h2>
                   {auctionCreated ? (
                     <h3>
-                      Highest Bid: <span>{nftHighestBid} BNB</span>
+                      Highest Bid: <span>{highestBid} BNB</span>
                     </h3>
                   ) : (
                     <h3>
@@ -346,7 +349,7 @@ const ItemDetails = () => {
                     <p>{state?.nft?.description}</p>
                     {auctionOngoing ? (
                       <Countdown
-                        date={auctionCreatedAt + auctionPeriod - Date.now() / 1000}
+                        date={auctionCreatedAt + auctionDuration - Date.now() / 1000}
                         renderer={renderer}
                       />
                     ) : (
@@ -392,8 +395,6 @@ const ItemDetails = () => {
                                 <UpdatePrice
                                   setIsOpen={setUpdatePriceIsOpen}
                                   state={state}
-                                  AUCTIONcontract={AUCTIONcontract}
-                                  setAcutionCreate={setAcutionCreated}
                                   setBuyNowPrice={setBuyNowPrice}
                                   buynowprice={buynowprice}
                                 />
@@ -430,16 +431,6 @@ const ItemDetails = () => {
                               ) : (
                                 <></>
                               )}
-                              {auctionCreated && auctionOngoing ? (
-                                <button
-                                  className="create-auction-button"
-                                  onClick={cancelAuction}
-                                >
-                                  Cancel Auction
-                                </button>
-                              ) : (
-                                <></>
-                              )}
                             </>
                           ) : (
                             <></>
@@ -450,8 +441,19 @@ const ItemDetails = () => {
                           </button>
                         ) : (
                           <>
-                            {nftHighestBider !== account ? (
-                              ( auctionCreated ?
+                            {console.log(nftOwner, 'heehere owner', auctionOngoing)}
+                            {nftOwner === account && auctionCreated && auctionOngoing ? (
+                                <button
+                                  className="create-auction-button"
+                                  onClick={cancelAuction}
+                                >
+                                  Cancel Auction
+                                </button>
+                              ) : (
+                                <></>
+                              )}
+                            {highestBider !== account ? (
+                              ( auctionCreated && nftOwner != account ?
                                 <>
                                   <button
                                     className="place-a-bid-button"
