@@ -11,7 +11,16 @@ import {
     FT_ADDRESS,
   } from "../../config/contract";
 
-const client = create('https://ipfs.infura.io:5001/api/v0');
+
+let client;
+try {
+    client = create({
+        url: 'https://ipfs.infura.io:5001/api/v0'
+    })
+} catch (err) {
+    console.error(console.log(err))
+    client = undefined
+}
 const options = [
     'art', 'photography', 'sports', 'athletes', 'celebrities', 'music', 'gif and videos', 'collectibles', 'trading cards', 'utilities', 'virtual worlds',
 ];
@@ -34,7 +43,7 @@ const CreateForm = () => {
     const [capacity, setCapacity] = useState(0);
 
     const handleChange = (e) => {
-        const [file] = e.target.files;
+        const file = e.target.files[0];
         setItemFile(file);
     };
 
@@ -43,36 +52,38 @@ const CreateForm = () => {
     }
             
     const createItem = async () => {
-        if (account) {
-            setItemPending(true);
-            const item = await client.add(itemfile);
-            const url = `https://ipfs.infura.io/ipfs/${item.path}`;
-            
-            const metadata = {
-                name: itemname,
-                description: itemdesc,
-                image: url,
-                social: socialLink,
-                width: width,
-                height: height,
-                capacity: capacity,
-                type: defaultOption
-            }
-            console.log(metadata, 'metadata')
-            
-            const metadataJson = JSON.stringify(metadata);
-            const blob = new Blob([metadataJson], { type: "application/json" });
-            const metadataAdd = await client.add(blob);
-            console.log(metadataAdd,'METADATA-ADD')
-            const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
-            
+        if (account && client) {
             try {
+                setItemPending(true);
+                const item = await client.add(itemfile);
+                const url = `https://ipfs.infura.io/ipfs/${item.path}`;
+                
+                const metadata = {
+                    name: itemname,
+                    description: itemdesc,
+                    image: url,
+                    social: socialLink,
+                    width: width,
+                    height: height,
+                    capacity: capacity,
+                    type: defaultOption
+                }
+                console.log(metadata, 'metadata')
+                
+                const metadataJson = JSON.stringify(metadata);
+                const blob = new Blob([metadataJson], { type: "application/json" });
+                const metadataAdd = await client.add(blob);
+                console.log(metadataAdd,'METADATA-ADD')
+                const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
+                
                 let cost_pay = await FTcontract.approve(NFT_ADDRESS, mintPrice);
                 await cost_pay.wait();
                 let pizzaNFT = await NFTcontract.mint(ipfsMeta, itemprice, FT_ADDRESS, mintPrice, royaltyFee, putOnSale, buynowState, viewState);
                 await pizzaNFT.wait();
                 setItemPending(false);
             } catch (err) { setItemPending(false) }
+        } else if(!client) {
+            alert("please check your connection")
         } else {
             alert("please connect MetaMask!");
         }
