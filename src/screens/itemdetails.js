@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { useDispatch, useStore } from "react-redux";
 import Modal from "react-modal";
 import axios from "axios";
@@ -47,6 +47,7 @@ Modal.setAppElement("#root");
 
 const ItemDetails = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { state } = useLocation();
   const { account, bids, historys, NFTcontract, AUCTIONcontract } = Common();
   const [minthash, setMintHash] = useState();
@@ -56,7 +57,6 @@ const ItemDetails = () => {
   const [nftHighestBider, setNftHighestBider] = useState();
   const [auctionCreatedAt, setAuctionCreatedAt] = useState();
   const [auctionPeriod, setAuctionPeriod] = useState();
-  const [startPrice, setStartPrice] = useState(0);
 
   const [regetflag, setRegetFlag] = useState();
 
@@ -74,7 +74,7 @@ const ItemDetails = () => {
   const [buynowprice, setBuyNowPrice] = useState(0);
   const [owner, setOwner] = useState();
   const [nftOwner, setNftOwner] = useState(ethers.constants.AddressZero);
-  const [auctionOngoing, setAuctionOngoing] = useState(0);
+  const [auctionOngoing, setAuctionOngoing] = useState(false);
 
   const [nftavatar, setNftAvatar] = useState();
   const [ownername, setOwnerName] = useState();
@@ -156,7 +156,6 @@ const ItemDetails = () => {
           nftHighestBidder,
           auctionPeriod,
           createdAt,
-          startPrice,
           reservePrice,
         } = auction_info;
         setNftOwner(nftSeller);
@@ -166,10 +165,9 @@ const ItemDetails = () => {
         setAuctionPeriod(auctionPeriod);
         setAuctionCreatedAt(createdAt);
         setReservePrice(reservePrice);
-        setStartPrice(startPrice);
 
         setAuctionOngoing(
-          Boolean(Date.now() - (createdAt + auctionPeriod) > 0)
+          Boolean(Date.now() / 1000 - (createdAt + auctionPeriod) > 0)
         );
         dispatch(bidFindAll(state?.id, nftSeller));
       }
@@ -276,6 +274,7 @@ const ItemDetails = () => {
       await burn.wait();
       alert("Burn Success!");
       setRegetFlag(!regetflag);
+      history.push('/');
     } catch (error) {}
   };
 
@@ -347,7 +346,7 @@ const ItemDetails = () => {
                     <p>{state?.nft?.description}</p>
                     {auctionOngoing ? (
                       <Countdown
-                        date={auctionCreatedAt + auctionPeriod - Date.now()}
+                        date={auctionCreatedAt + auctionPeriod - Date.now() / 1000}
                         renderer={renderer}
                       />
                     ) : (
@@ -422,6 +421,7 @@ const ItemDetails = () => {
                                     <CreateAuction
                                       setIsOpen={setAuctionCreateSetIsOpen}
                                       state={state}
+                                      startPrice={buynowprice}
                                       AUCTIONcontract={AUCTIONcontract}
                                       setAcutionCreate={setAcutionCreated}
                                     />
@@ -430,7 +430,7 @@ const ItemDetails = () => {
                               ) : (
                                 <></>
                               )}
-                              {auctionCreated && !auctionOngoing ? (
+                              {auctionCreated && auctionOngoing ? (
                                 <button
                                   className="create-auction-button"
                                   onClick={cancelAuction}
