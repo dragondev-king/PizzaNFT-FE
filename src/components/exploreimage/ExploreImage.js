@@ -8,7 +8,7 @@ const ExploreImage = ({profileImg, ownername, nft, buyprice }) => {
                 <img src={nft?.image} alt="" className="img-responsive" />
                 <div className="details-container">
                     <div className="name-details">
-                        <h3>{ Number(buyprice).toFixed(2) } BNB</h3>
+                        <h3>{ Number(buyprice).toFixed(3) } BNB</h3>
                         <h2>{nft?.name}</h2>
                         <h3>{ownername ? ownername : "unknown"}</h3>
                     </div>
