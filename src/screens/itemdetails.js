@@ -79,6 +79,10 @@ const ItemDetails = () => {
   const [nftavatar, setNftAvatar] = useState();
   const [ownername, setOwnerName] = useState();
   const [ownerAddr, setOwnerAddr] = useState("");
+  const currentTime = Date.now()
+
+  const [tradeFee, setTradeFee] = useState();
+  const [royaltyFee, setRoyaltyFee] = useState();
 
   useEffect(async () => {
     try {
@@ -159,7 +163,7 @@ const ItemDetails = () => {
         setAuctionCreatedAt(parseInt(createdAt, 10));
 
         setAuctionOngoing(
-          Boolean((auctionCreatedAt + auctionDuration - Date.now() / 1000) > 0)
+          Boolean((auctionCreatedAt + auctionDuration - currentTime / 1000) > 0)
         );
         console.log(auctionCreatedAt, auctionDuration, '--------')
         console.log(auctionOngoing, 'ongoing')
@@ -168,6 +172,13 @@ const ItemDetails = () => {
 
       let buyNowPrice = await NFTcontractRead.prices(state?.tid);
       setBuyNowPrice(buyNowPrice);
+      
+      const trFee = await NFTcontractRead.getFee(buyNowPrice)
+      setTradeFee(parseInt(trFee, 10))
+
+      const rlFee = await NFTcontractRead.getRoyaltyFee(state?.tid)
+      setRoyaltyFee(parseInt(rlFee, 10))
+
     } catch (err) {}
 
     dispatch(historyFindAll(state?.tid));
@@ -177,8 +188,9 @@ const ItemDetails = () => {
   const buy_it = async () => {
     try {
       if (account) {
+        const requiredPrice = buynowprice * (10000 + royaltyFee + tradeFee ) / 10000
         let buynow = await NFTcontract.buynow(state?.tid, {
-          value: buynowprice,
+          value: requiredPrice
         });
         await buynow.wait();
       } else {
@@ -340,7 +352,6 @@ const ItemDetails = () => {
                     <p>{state?.nft?.description}</p>
                     {auctionCreated && auctionOngoing ? (
                       <>
-                      {console.log(auctionCreatedAt, auctionDuration, Math.floor(Date.now() / 1000))}
                       <Countdown
                         date={auctionCreatedAt * 1000 + auctionDuration * 1000}
                         renderer={renderer}
