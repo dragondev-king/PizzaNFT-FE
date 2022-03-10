@@ -13,10 +13,10 @@ import HotAuction from '../components/hotauction/HotAuction'
 function HotNft({ tokenId }) {
     const [nftavatar, setNftAvatar] = useState();
     const [ownername, setOwnerName] = useState();
-    const [owner, setOwner] = useState("");
+    const [seller, setSeller] = useState("");
     const [buynowprice, setBuyNowPrice] = useState(0);
-    const [hightbid, setHightbid] = useState(0);
-    const [downtime,setDownTime] = useState(0);
+    const [highestBid, setHighestBid] = useState(0);
+    const [downtime, setDownTime] = useState(0);
 
     const { loading, error, nft } = useNft(
         NFT_ADDRESS,
@@ -25,10 +25,10 @@ function HotNft({ tokenId }) {
 
     useEffect(async () => {
         try {
-            setOwner(await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId).nftSeller);
-            let info = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId);
-            setHightbid( ethers.utils.formatEther(info?.nftHighestBid));
-            setDownTime(ethers.utils.formatUnits(info.auctionEnd, 0));
+            const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, tokenId)
+            setSeller(auction.nftSeller);
+            setHighestBid( ethers.utils.formatEther(auction?.nftHighestBid));
+            setDownTime(auction.createdAt * 1000 + auction.auctionPeriod * 1000)
         } catch (err) { }
     }, [])
 
@@ -50,12 +50,12 @@ function HotNft({ tokenId }) {
     } catch (err){}
 
     if (nft?.owner === AUCTION_ADDRESS) {
-        nft.owner = owner;
+        nft.owner = seller;
     }
 
     // You can now display the NFT metadata.
     return (
-        <Link to={{pathname:'/details', state:{profileImg:nftavatar, ownername:ownername, tid:tokenId, buyprice: buynowprice, nft}}}><HotAuction profileImg={nftavatar} ownername={ownername} nft={nft} buyprice={buynowprice} hightbid={hightbid} downtime={downtime}/></Link>
+        <Link to={{pathname:'/details', state:{profileImg:nftavatar, ownername:ownername, tid:tokenId, buyprice: buynowprice, nft}}}><HotAuction profileImg={nftavatar} ownername={ownername} nft={nft} buyprice={buynowprice} highestBid={highestBid} downtime={downtime}/></Link>
     )
 }
 
