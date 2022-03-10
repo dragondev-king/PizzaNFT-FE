@@ -82,7 +82,7 @@ const Home = () => {
                         <h2>Top Artists</h2>
                         <ul>
                             {
-                                top_owners?.map((item, index) =>
+                                top_owners?.filter((itm, key) => itm[1].name).map((item, index) =>
                                     <ArtistAvatar info={item} key={index} />
                                 )
                             }
