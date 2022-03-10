@@ -31,7 +31,7 @@ const HotAuction = ({
         <img src={nft?.image} alt="" className="img-responsive" />
         <div className="auction-bar">
           {Number(highestBid) > Number(buyprice) ? (
-            (account !== nft.owner) && <>Please, please bid before it's too late</>
+            (account !== nft.owner) && <p>Please bid before it's too late</p>
             ) : (
               <>
                 <span>No Bid yet</span>
@@ -45,9 +45,9 @@ const HotAuction = ({
             <h2>{nft?.name}</h2>
             {
               (Number(highestBid) > Number(buyprice))? (
-                <h3>Highest Bid: {Number(highestBid).toFixed(3)} BNB</h3>
+                <h3>Highest Bid: {Number(highestBid).toFixed(5)} BNB</h3>
               ) : (
-                <h3>Buy Price: {Number(buyprice).toFixed(3)} BNB</h3>
+                <h3>Buy Price: {Number(buyprice).toFixed(5)} BNB</h3>
               )
             }
             <h3>{ownername ? ownername : "Unknown"}</h3>

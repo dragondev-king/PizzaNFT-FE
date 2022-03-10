@@ -28,7 +28,9 @@ import {
   bidFindAll,
   historyFindAll,
   settleAuction,
+  bidFindOne,
 } from "../redux/actions";
+import { BigNumber } from "ethers/utils";
 
 const customStyles = {
   content: {
@@ -52,7 +54,7 @@ const ItemDetails = () => {
   const { account, bids, historys, NFTcontract, AUCTIONcontract } = Common();
   const [minthash, setMintHash] = useState();
 
-  const [auctionCreated, setAcutionCreated] = useState(false);
+  const [auctionCreated, setAuctionCreated] = useState(false);
   const [highestBid, setNftHighestBid] = useState();
   const [highestBider, setNftHighestBider] = useState();
   const [auctionCreatedAt, setAuctionCreatedAt] = useState();
@@ -79,52 +81,79 @@ const ItemDetails = () => {
   const [nftavatar, setNftAvatar] = useState();
   const [ownername, setOwnerName] = useState();
   const [ownerAddr, setOwnerAddr] = useState("");
-  const currentTime = Date.now()
 
   const [tradeFee, setTradeFee] = useState();
   const [royaltyFee, setRoyaltyFee] = useState();
 
-  useEffect(async () => {
+  useEffect(() => {
+    if(state?.nft?.owner === account) {
+      setOwner(true)
+    } else {
+      setOwner(false)
+    }
+  }, [setOwner, state?.nft?.owner, account])
+
+  useEffect( async() => {
     try {
-      if (state?.nft?.owner === account) {
-        setOwner(true);
+      const ownerAddress = await NFTcontractRead.ownerOf(state?.tid)
+      const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid);
+      if(ownerAddress === AUCTION_ADDRESS) {
+        state.nft.owner = auction.nftSeller;
       } else {
-        setOwner(false);
+        state.nft.owner = ownerAddress
       }
 
-      let nft_owner = await NFTcontractRead.ownerOf(state.tid);
-      console.log(nft_owner, "owner");
+      if (auction?.nftSeller !== ethers.constants.AddressZero) {
+        const {
+          nftSeller,
+          nftHighestBid,
+          nftHighestBidder,
+          auctionPeriod,
+          createdAt,
+        } = auction;
 
-      let is_auction = await NFTcontractRead.getPutOnSaleState(state.tid);
-      let is_sale = await NFTcontractRead.getCanBuyState(state.tid);
-      let is_mint_only = await NFTcontractRead.getOnlyViewState(state.tid);
+        setNftOwner(nftSeller);
+        setAuctionCreated(true);
+        setNftHighestBid(nftHighestBid);
+        setNftHighestBider(nftHighestBidder);
+        setAuctionDuration(parseInt(auctionPeriod, 10));
+        setAuctionCreatedAt(parseInt(createdAt, 10));
 
-      setIsAuction(is_auction);
-      setIsSale(is_sale);
-      setIsMintOnly(is_mint_only);
+        setAuctionOngoing(
+          Boolean((parseInt(auctionPeriod, 10) + parseInt(createdAt, 10) - Date.now() / 1000) > 0)
+        );
+        dispatch(bidFindAll(state?.id, nftSeller));
+      }
 
-      if(nft_owner === AUCTION_ADDRESS) {
-        nft_owner = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state.tid);
-        nft_owner = nft_owner.nftSeller;
+      await axios.get(
+        `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(state.nft.owner)}`
+      )
+      .then((res) => {
+        state.profileImg = res.data[0]?.profileImg;
+        state.ownername = res.data[0]?.name;
+      });
+    } catch(err) {
+      console.log(err)
     }
-      state.nft.owner = nft_owner;
-      await axios
-        .get(
-          `${
-            process.env.REACT_APP_BACKEND_API
-          }/api/profile/${ethers.utils.getAddress(nft_owner)}`
-        )
-        .then((res) => {
-          state.profileImg = res.data[0]?.profileImg;
-          state.ownername = res.data[0]?.name;
-        });
-    } catch (err) {
-      console.log(err);
-    }
+  }, [state?.tid,state.nft.owner, setNftOwner, setAuctionCreated, setNftHighestBid, setNftHighestBider, setAuctionDuration, setAuctionCreatedAt, setAuctionOngoing])
 
+  useEffect( async() => {
     try {
-      axios
-        .get(
+      const putOnSale = await NFTcontractRead.getPutOnSaleState(state.tid)
+      const canBy = await NFTcontractRead.getCanBuyState(state.tid)
+      const onlyView = await NFTcontractRead.getOnlyViewState(state.tid)
+
+      setIsAuction(putOnSale)
+      setIsSale(canBy)
+      setIsMintOnly(onlyView)
+    } catch(err) {
+      console.log(err)
+    }
+  }, [setIsAuction, setIsSale, setIsMintOnly])
+
+  useEffect( async() => {
+    try{
+      axios.get(
           `https://deep-index.moralis.io/api/v2/nft/${NFT_ADDRESS}/${state?.tid}/transfers?chain=bsc%20testnet&format=decimal&offset=0&limit=1`,
           {
             headers: {
@@ -137,53 +166,25 @@ const ItemDetails = () => {
           if (res.status != 200) return;
           setMintHash(res.data.result[0].transaction_hash);
         });
-    } catch (err) {}
+    } catch(err) {
+      console.log(err)
+    }
+  }, [NFT_ADDRESS, state?.tid, setMintHash])
 
+  useEffect(async () => {
     try {
-      let auction_info = await AUCTIONcontractRead.pizzaAuctions(
-        NFT_ADDRESS,
-        state?.tid
-      );
-      
-      console.log(auction_info, 'auction_info')
-      if (auction_info?.nftSeller !== ethers.constants.AddressZero) {
-        const {
-          nftSeller,
-          nftHighestBid,
-          nftHighestBidder,
-          auctionPeriod,
-          createdAt,
-        } = auction_info;
-
-        setNftOwner(nftSeller);
-        setAcutionCreated(true);
-        setNftHighestBid(parseInt(ethers.utils.formatEther(nftHighestBid), 10));
-        setNftHighestBider(nftHighestBidder);
-        setAuctionDuration(parseInt(auctionPeriod, 10));
-        setAuctionCreatedAt(parseInt(createdAt, 10));
-
-        setAuctionOngoing(
-          Boolean((auctionCreatedAt + auctionDuration - currentTime / 1000) > 0)
-        );
-        console.log(auctionCreatedAt, auctionDuration, '--------')
-        console.log(auctionOngoing, 'ongoing')
-        dispatch(bidFindAll(state?.id, nftSeller));
-      }
-
-      let buyNowPrice = await NFTcontractRead.prices(state?.tid);
-      setBuyNowPrice(buyNowPrice);
-      
+      const buyNowPrice = await NFTcontractRead.prices(state?.tid);
       const trFee = await NFTcontractRead.getFee(buyNowPrice)
-      setTradeFee(parseInt(trFee, 10))
-
       const rlFee = await NFTcontractRead.getRoyaltyFee(state?.tid)
+      
+      setBuyNowPrice(buyNowPrice);
+      setTradeFee(parseInt(trFee, 10))
       setRoyaltyFee(parseInt(rlFee, 10))
-
-    } catch (err) {}
-
+    } catch (err) {
+      console.log(err)
+    }
     dispatch(historyFindAll(state?.tid));
-    // dispatch( bidFindOne(state?.tid, state?.nft?.owner, account))
-  }, [account, regetflag, auctionCreatedAt, auctionDuration, auctionOngoing, highestBid, highestBider]);
+  }, [state?.tid, setBuyNowPrice, setTradeFee, setRoyaltyFee, historyFindAll]);
 
   const buy_it = async () => {
     try {
@@ -230,14 +231,15 @@ const ItemDetails = () => {
   const make_bid = async () => {
     try {
       if (account) {
-        let price = ethers.utils.parseEther(bidprice.toString());
+        const bidPrice = ethers.utils.parseEther(bidprice.toString());
+        const requiredPrice = bidPrice * (10000 + royaltyFee + tradeFee ) / 10000
         setPending(true);
         const make_bid = await AUCTIONcontract.makeBid(
           NFT_ADDRESS,
           state?.tid,
-          price,
+          bidPrice,
           recipient,
-          { value: price }
+          { value: requiredPrice }
         );
         await make_bid.wait();
         setPending(false);
@@ -255,7 +257,7 @@ const ItemDetails = () => {
   const cancelAuction = async () => {
     try {
       await AUCTIONcontract.withdrawAuction(NFT_ADDRESS, state?.tid);
-      setAcutionCreated(false);
+      setAuctionCreated(false);
       dispatch(updateAuction(account, state?.tid, "cancel"));
       setRegetFlag(!regetflag);
     } catch (error) {
@@ -322,7 +324,6 @@ const ItemDetails = () => {
       );
     }
   };
-  console.log(auctionCreated, 'auctionCreated')
 
   return (
     <>
@@ -337,10 +338,15 @@ const ItemDetails = () => {
               <div className="col-md-6">
                 <div className="items-main-cont">
                   <h2>{state?.nft?.name}</h2>
-                  {auctionCreated ? (
-                    <h3>
-                      Highest Bid: <span>{highestBid} BNB</span>
-                    </h3>
+                  {auctionCreated && (Number(highestBid) > Number(buynowprice)) ? (
+                    <>
+                      <h3>
+                        Original Price: <span>{ethers.utils.formatEther(buynowprice)} BNB</span>
+                      </h3>
+                      <h3>
+                        Highest Bid: <span>{ethers.utils.formatEther(highestBid)} BNB</span>
+                      </h3>
+                    </>
                   ) : (
                     <h3>
                       Buy Now Price:{" "}
@@ -429,7 +435,7 @@ const ItemDetails = () => {
                                       state={state}
                                       startPrice={buynowprice}
                                       AUCTIONcontract={AUCTIONcontract}
-                                      setAcutionCreate={setAcutionCreated}
+                                      setAcutionCreate={setAuctionCreated}
                                     />
                                   </Modal>
                                 </>
@@ -552,7 +558,6 @@ const ItemDetails = () => {
                       </div>
                     ) : (
                       owner &&<>
-                      {console.log(account, 'account', isMintOnly, 'isMintOnly')}
                         <button
                           className="buy-it-button"
                           onClick={TransferOpenModal}

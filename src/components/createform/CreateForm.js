@@ -68,12 +68,10 @@ const CreateForm = () => {
                     capacity: capacity,
                     type: defaultOption
                 }
-                console.log(metadata, 'metadata')
                 
                 const metadataJson = JSON.stringify(metadata);
                 const blob = new Blob([metadataJson], { type: "application/json" });
                 const metadataAdd = await client.add(blob);
-                console.log(metadataAdd,'METADATA-ADD')
                 const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
                 
                 let cost_pay = await FTcontract.approve(NFT_ADDRESS, mintPrice);
