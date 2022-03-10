@@ -17,7 +17,8 @@ const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
     try {
       if (account) {
         const rsvP = ethers.utils.parseEther(reservedPrice)
-        if (rsvP && rsvP >= startPrice) {
+        console.log(rsvP, startPrice)
+        if (rsvP && parseInt(rsvP, 10) >= parseInt(startPrice, 10)) {
           const nft_send = await NFTcontract.approve(AUCTION_ADDRESS, state?.tid);
           setPending(true);
           await nft_send.wait();

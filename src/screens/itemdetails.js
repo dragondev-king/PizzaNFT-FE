@@ -95,15 +95,6 @@ const ItemDetails = () => {
       let is_sale = await NFTcontractRead.getCanBuyState(state.tid);
       let is_mint_only = await NFTcontractRead.getOnlyViewState(state.tid);
 
-      console.log(
-        "flag",
-        "putOnSale:",
-        is_auction,
-        "canBuy:",
-        is_sale,
-        "onlyView:",
-        is_mint_only
-      );
       setIsAuction(is_auction);
       setIsSale(is_sale);
       setIsMintOnly(is_mint_only);
@@ -347,11 +338,14 @@ const ItemDetails = () => {
 
                   <div className="item-description">
                     <p>{state?.nft?.description}</p>
-                    {auctionOngoing ? (
+                    {auctionCreated && auctionOngoing ? (
+                      <>
+                      {console.log(auctionCreatedAt, auctionDuration, Math.floor(Date.now() / 1000))}
                       <Countdown
-                        date={auctionCreatedAt + auctionDuration - Date.now() / 1000}
+                        date={auctionCreatedAt * 1000 + auctionDuration * 1000}
                         renderer={renderer}
                       />
+                      </>
                     ) : (
                       <></>
                     )}
@@ -494,7 +488,7 @@ const ItemDetails = () => {
                                               onChange={(e) =>
                                                 setRecipient(e.target.value)
                                               }
-                                              value={bidprice}
+                                              value={recipient}
                                               placeholder="default recipient is you"
                                             />
                                           </div>
