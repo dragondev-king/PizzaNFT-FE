@@ -262,12 +262,13 @@ const ItemDetails = () => {
       const auction= await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid)
       const currentHighestBid = auction.nftHighestBid
       const reservePrice = auction.reservePrice
-      if( currentHighestBid >= reservePrice) {
+      if( Number(currentHighestBid) >=Number(reservePrice)) {
         let settle = await AUCTIONcontract.settleAuction(NFT_ADDRESS, state?.tid);
         await settle.wait();
-        dispatch(settleAuction(state?.tid, account, state?.nft?.owner, account));
+        dispatch(settleAuction(state?.tid, account, state?.nft?.owner, recipient));
       } else {
-        await AUCTIONcontract.withdrawAuction(NFT_ADDRESS, state?.tid);
+        const withdraw = await AUCTIONcontract.withdrawAuction(NFT_ADDRESS, state?.tid);
+        await withdraw.wait()
         dispatch(updateAuction(account, state?.tid, "cancel"));
       }
       setAuctionCreated(false);
@@ -335,6 +336,7 @@ const ItemDetails = () => {
               <div className="col-md-6">
                 <div className="items-main-cont">
                   <h2>{state?.nft?.name}</h2>
+                  {console.log(nftOwner, '===========')}
                   {auctionCreated && (Number(highestBid) > Number(buynowprice)) ? (
                     <>
                       <h3>
