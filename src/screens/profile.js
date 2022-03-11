@@ -45,6 +45,7 @@ const Profile = () => {
         )
         .then((res) => {
           if (res.status != 200) return;
+          console.log(res.data.result, 'result')
           res.data.result.map((item) => {
             midArr.push(item.token_id);
           });
