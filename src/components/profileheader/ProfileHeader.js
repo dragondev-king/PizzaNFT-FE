@@ -3,15 +3,16 @@ import { useDispatch } from "react-redux"
 import AvatarImage from '../avatarimage/AvatarImage'
 import { Common } from "../../redux/common"
 import { getFollow, addFollow } from "../../redux/actions"
+import CoverImage from "../../assets/images/cover-image.jpeg"
 
-const ProfileHeader = ({nft}) => {
+const ProfileHeader = ({ nft }) => {
     const dispatch = useDispatch();
     const [followState, setFollowState] = useState();
     const { account, followInfos } = Common();
     const [alertmessage, setAlertmessage] = useState("");
 
     useEffect(() => {
-        dispatch( getFollow(nft?.nft?.owner) )
+        dispatch(getFollow(nft?.nft?.owner))
     }, [])
 
     const copydata = () => {
@@ -26,28 +27,31 @@ const ProfileHeader = ({nft}) => {
 
     const addFollowAction = () => {
         const check = followInfos.filter(item => item.followAccount === account)
-        if(check.length !== 0) {
+        if (check.length !== 0) {
             alert("Already Followed!");
         } else {
-            dispatch( addFollow(nft?.nft?.owner, account) )
+            dispatch(addFollow(nft?.nft?.owner, account))
         }
     }
 
     return (
         <>
             <div className="container">
+                <div className="cover-image-container">
+                    <img src={CoverImage} alt="" />
+                </div>
                 <div className="profile-avatar-image-container">
                     <div className="profile-avatar">
                         <div className="profile-image">
-                            <AvatarImage profileImg={nft?.profileImg}/>
+                            <AvatarImage profileImg={nft?.profileImg} />
                         </div>
                         <div className="profile-image-details">
                             <h2>{nft?.ownername ? nft?.ownername : "unknown"}</h2>
                             {
                                 (account !== nft?.nft?.owner) && account ?
-                               <button onClick={addFollowAction} >Follow</button> : <></>
+                                    <button onClick={addFollowAction} >Follow</button> : <></>
                             }
-                            <button style={{padding: "3px 10px", marginLeft:"5px"}} disabled >{followInfos?.length}</button>
+                            <button style={{ padding: "3px 10px", marginLeft: "5px" }} disabled >{followInfos?.length}</button>
                         </div>
                     </div>
                     <div className="contract-container">
