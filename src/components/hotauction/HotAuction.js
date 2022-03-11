@@ -11,7 +11,6 @@ const HotAuction = ({
   highestBid,
   downtime,
 }) => {
-  const { account } = Common();
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
       return <span>Auction is Ended</span>;
@@ -30,14 +29,11 @@ const HotAuction = ({
       <div className="auction-image exd-image">
         <img src={nft?.image} alt="" className="img-responsive" />
         <div className="auction-bar">
-          {Number(highestBid) > Number(buyprice) ? (
-            (account !== nft.owner) && <p>Please bid before it's too late</p>
-            ) : (
-              <>
-                <span>No Bid yet</span>
-                <br></br>
-              </>
-          )}
+          {Number(highestBid) === Number(buyprice) && (
+            <>
+              <span>No Bid</span>
+              <br></br>
+            </>)}
           <Countdown date={downtime} renderer={renderer} />
         </div>
         <div className="details-container">

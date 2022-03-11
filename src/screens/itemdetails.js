@@ -28,9 +28,7 @@ import {
   bidFindAll,
   historyFindAll,
   settleAuction,
-  bidFindOne,
 } from "../redux/actions";
-import { BigNumber } from "ethers/utils";
 
 const customStyles = {
   content: {
@@ -204,13 +202,6 @@ const ItemDetails = () => {
     let addr = await NFTcontractRead.ownerOf(state?.tid);
 
     try {
-        const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid)
-      setOwnerAddr(
-        auction.nftSeller
-      );
-    } catch (err) {}
-
-    try {
       axios
         .get(`${process.env.REACT_APP_BACKEND_API}/api/profile/${addr}`)
         .then((res) => {
@@ -258,6 +249,7 @@ const ItemDetails = () => {
     try {
       await AUCTIONcontract.withdrawAuction(NFT_ADDRESS, state?.tid);
       setAuctionCreated(false);
+      setAuctionOngoing(false)
       dispatch(updateAuction(account, state?.tid, "cancel"));
       setRegetFlag(!regetflag);
     } catch (error) {
@@ -267,9 +259,19 @@ const ItemDetails = () => {
 
   const settle_auction = async () => {
     try {
-      let settle = await AUCTIONcontract.settleAuction(NFT_ADDRESS, state?.tid);
-      await settle.wait();
-      dispatch(settleAuction(state?.tid, account, state?.nft?.owner, account));
+      const auction= await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, state?.tid)
+      const currentHighestBid = auction.nftHighestBid
+      const reservePrice = auction.reservePrice
+      if( currentHighestBid >= reservePrice) {
+        let settle = await AUCTIONcontract.settleAuction(NFT_ADDRESS, state?.tid);
+        await settle.wait();
+        dispatch(settleAuction(state?.tid, account, state?.nft?.owner, account));
+      } else {
+        await AUCTIONcontract.withdrawAuction(NFT_ADDRESS, state?.tid);
+        dispatch(updateAuction(account, state?.tid, "cancel"));
+      }
+      setAuctionCreated(false);
+      setAuctionOngoing(false)
       setRegetFlag(!regetflag);
     } catch (error) {
       console.log("Settle Auction ", error);
@@ -307,16 +309,11 @@ const ItemDetails = () => {
 
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
-      return highestBider == account ? (
-        <button className="buy-it-button" onClick={settle_auction}>
-          Settle Auction
-        </button>
-      ) : (
-        <></>
-      );
+      return (<></>)
     } else {
       return (
         <>
+        {console.log('KKKKKKKKKK')}
           <span style={{ color: "yellow" }}>
             {days} Days, {hours} Hours, {minutes} Minutes, {seconds}s
           </span>
@@ -356,15 +353,28 @@ const ItemDetails = () => {
 
                   <div className="item-description">
                     <p>{state?.nft?.description}</p>
-                    {auctionCreated && auctionOngoing ? (
-                      <>
+                    {auctionCreated && (Number(highestBid) === Number(buynowprice)) && (
+                      <p>No Bid</p>
+                    )}
+                    {auctionCreated  && ( auctionOngoing ? 
+                    (
                       <Countdown
                         date={auctionCreatedAt * 1000 + auctionDuration * 1000}
                         renderer={renderer}
                       />
-                      </>
                     ) : (
-                      <></>
+                      nftOwner === account ? 
+                        (
+                          <>
+                            <p>Auction is ended</p>
+                            <button className="buy-it-button" onClick={settle_auction}>
+                              Settle Auction
+                            </button>
+                          </>
+                        ) : (
+                        <><p>Auction is ended</p></>
+                        )
+                      )
                     )}
                   </div>
                   {account ? (
@@ -464,7 +474,7 @@ const ItemDetails = () => {
                         ) : (
                           <>
                             {highestBider !== account ? (
-                              ( auctionCreated && nftOwner != account ?
+                              ( auctionCreated && nftOwner != account && auctionOngoing ?
                                 <>
                                   <button
                                     className="place-a-bid-button"
@@ -540,7 +550,7 @@ const ItemDetails = () => {
                                     </>
                                   </Modal>
                                 </> : (
-                                  <>
+                                  !auctionCreated && <>
                                     <p>Auction is not created yet</p>
                                   </>
                                 )
