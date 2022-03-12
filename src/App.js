@@ -6,8 +6,10 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import routes from './config/routes'
 import NavBar from './components/navbar/NavBar'
 import Footer from './components/footer/Footer'
+import { handleRightClick } from './utils/helpers'
 
 function App() {
+  document.addEventListener('contextmenu', handleRightClick);
   return (
 
     <>
