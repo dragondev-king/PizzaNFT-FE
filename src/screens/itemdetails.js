@@ -193,7 +193,13 @@ const ItemDetails = () => {
         });
         await buynow.wait();
       } else {
-        alert("Please connect MetaMask or Trust Wallet!");
+        showNotification({
+          title: 'Warning',
+          message: 'Please connect MetaMask',
+          type: 'warning',
+          insert: 'top',
+          container: 'top-right'
+        })
       }
     } catch (err) {
       console.log(err);
@@ -238,7 +244,13 @@ const ItemDetails = () => {
         dispatch(makeBid(state?.tid, nftOwner, account, bidprice, recipient));
         setRegetFlag(!regetflag);
       } else {
-        alert("Please connect MetaMask!");
+        showNotification({
+          title: 'Warning',
+          message: 'Please connect MetaMask',
+          type: 'warning',
+          insert: 'top',
+          container: 'top-right'
+        })
       }
     } catch (err) {
       setPending(false);
@@ -283,7 +295,13 @@ const ItemDetails = () => {
     try {
       let burn = await NFTcontract.burn(state?.tid);
       await burn.wait();
-      alert("Burn Success!");
+      showNotification({
+        title: 'Success',
+        message: 'Your NFT successfully burned',
+        type: 'success',
+        insert: 'top',
+        container: 'top-right'
+      })
       setRegetFlag(!regetflag);
       history.push('/');
     } catch (error) {}

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { NFT_ADDRESS, AUCTION_ADDRESS } from "../../config/contract";
 import { Common } from "../../redux/common";
 import { createAuction } from "../../redux/actions";
+import { showNotification } from "../../utils/helpers";
 
 const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
   const dispatch = useDispatch();
@@ -34,10 +35,22 @@ const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
           dispatch(createAuction(account, state?.tid));
           setPending(false);
         } else {
-          alert("reservered price should be bigger than nft price");
+          showNotification({
+            title: 'Warning',
+            message: 'Reserved price should be higher than start price',
+            type: 'danger',
+            insert: 'top',
+            container: 'top-right'
+          })
         }
       } else {
-        alert("Please connect MetaMask!");
+        showNotification({
+          title: 'Warning',
+          message: 'Please connect MetaMask',
+          type: 'warning',
+          insert: 'top',
+          container: 'top-right'
+        })
       }
     } catch (err) {
       setPending(false);

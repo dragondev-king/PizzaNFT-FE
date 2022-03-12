@@ -35,7 +35,13 @@ const ProfileForm = () => {
         if (account) {
             dispatch(updateUserInfo(account, updateName, updateProfileImg, updateProfileUrl))
         } else {
-            alert("please MetaMask connect!");
+            showNotification({
+                title: 'Warning',
+                message: 'Please connect MetaMask',
+                type: 'danger',
+                insert: 'top',
+                container: 'top-right'
+              })
         }
     }
 

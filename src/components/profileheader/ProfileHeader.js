@@ -28,7 +28,13 @@ const ProfileHeader = ({ nft }) => {
     const addFollowAction = () => {
         const check = followInfos.filter(item => item.followAccount === account)
         if (check.length !== 0) {
-            alert("Already Followed!");
+            showNotification({
+                title: 'Warning',
+                message: "You've already followed",
+                type: 'warning',
+                insert: 'top',
+                container: 'top-right'
+              })
         } else {
             dispatch(addFollow(nft?.nft?.owner, account))
         }
