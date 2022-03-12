@@ -4,6 +4,7 @@ import AvatarImage from '../avatarimage/AvatarImage'
 import { Common } from "../../redux/common"
 import { getFollow, addFollow } from "../../redux/actions"
 import CoverImage from "../../assets/images/cover-image.jpeg"
+import { showNotification } from '../../utils/helpers';
 
 const ProfileHeader = ({ nft }) => {
     const dispatch = useDispatch();

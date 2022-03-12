@@ -29,6 +29,7 @@ import {
   historyFindAll,
   settleAuction,
 } from "../redux/actions";
+import { showNotification } from "../utils/helpers";
 
 const customStyles = {
   content: {
@@ -295,6 +296,7 @@ const ItemDetails = () => {
     try {
       let burn = await NFTcontract.burn(state?.tid);
       await burn.wait();
+      history.push('/');
       showNotification({
         title: 'Success',
         message: 'Your NFT successfully burned',
@@ -303,7 +305,6 @@ const ItemDetails = () => {
         container: 'top-right'
       })
       setRegetFlag(!regetflag);
-      history.push('/');
     } catch (error) {}
   };
 

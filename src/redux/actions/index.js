@@ -4,6 +4,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import metaMask from "../../assets/images/metamask.png";
 import { NFTcontractRead } from "../../config/contractConnect";
+import { showNotification } from '../../utils/helpers';
 import {
   NFT_ADDRESS,
   NFT_ABI,
