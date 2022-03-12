@@ -81,9 +81,21 @@ const CreateForm = () => {
                 setItemPending(false);
             } catch (err) { setItemPending(false) }
         } else if(!client) {
-            alert("please check your connection")
+            showNotification({
+                title: 'Warning',
+                message: 'Please check your network connection',
+                type: 'danger',
+                insert: 'top',
+                container: 'top-right'
+              })
         } else {
-            alert("please connect MetaMask!");
+            showNotification({
+                title: 'Warning',
+                message: 'Please connect MetaMask',
+                type: 'danger',
+                insert: 'top',
+                container: 'top-right'
+              })
         }
     }
 

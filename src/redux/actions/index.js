@@ -189,9 +189,21 @@ export const updateUserInfo =
                 profileUrl: profileUrl,
               },
             });
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'Profile information successfully updated',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            })
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Profile information update failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -216,9 +228,21 @@ export const updateUserInfoNoImg =
                 profileUrl: profileUrl,
               },
             });
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'Profile image successfully updated',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            })
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Profile image update failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -232,9 +256,21 @@ export const createAuction = (owner, tokenId) => (dispatch, getState) => {
       .post(`${BACKEND_API}/auction/create`, { owner: owner, tokenId: tokenId })
       .then((res) => {
         if (res.status == 200) {
-          alert("Success!");
+          showNotification({
+            title: 'Success',
+            message: 'Auction created successfully',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          })
         } else {
-          alert("Failed!");
+          showNotification({
+            title: 'Warning',
+            message: 'Auction creation failed',
+            type: 'warning',
+            insert: 'top',
+            container: 'top-right'
+          })
         }
       });
   } catch (error) {
@@ -253,9 +289,21 @@ export const updateAuction =
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'Auction updated successfully',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            })
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Auction updating failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -276,9 +324,21 @@ export const makeBid =
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'You placed a bid successfully',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            })
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Placing bid failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -297,9 +357,21 @@ export const updateBid =
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'you bid successfully updated',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            });
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Updating bid failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
