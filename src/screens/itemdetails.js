@@ -47,6 +47,7 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 const ItemDetails = () => {
+
   const dispatch = useDispatch();
   const history = useHistory();
   const { state } = useLocation();
@@ -223,6 +224,7 @@ const ItemDetails = () => {
     state.nft.owner = addr;
     state.profileImg = nftavatar;
     state.ownername = ownername;
+    window.location.reload()
     setRegetFlag(!regetflag);
   };
 
@@ -243,6 +245,13 @@ const ItemDetails = () => {
         setPending(false);
         BidCloseModal();
         dispatch(makeBid(state?.tid, nftOwner, account, bidprice, recipient));
+        showNotification({
+          title: 'SUccess',
+          message: "You've bidded successfully",
+          type: 'warning',
+          insert: 'top',
+          container: 'top-right'
+        })
         setRegetFlag(!regetflag);
       } else {
         showNotification({
@@ -333,7 +342,6 @@ const ItemDetails = () => {
     } else {
       return (
         <>
-        {console.log('KKKKKKKKKK')}
           <span style={{ color: "yellow" }}>
             {days} Days, {hours} Hours, {minutes} Minutes, {seconds}s
           </span>
@@ -355,7 +363,6 @@ const ItemDetails = () => {
               <div className="col-md-6">
                 <div className="items-main-cont">
                   <h2>{state?.nft?.name}</h2>
-                  {console.log(nftOwner, '===========')}
                   {auctionCreated && (Number(highestBid) > Number(buynowprice)) ? (
                     <>
                       <h3>
