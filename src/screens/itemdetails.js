@@ -4,6 +4,7 @@ import { useDispatch, useStore } from "react-redux";
 import Modal from "react-modal";
 import axios from "axios";
 import Countdown from "react-countdown";
+import ReactPlayer from "react-player";
 import Breadcrumb from "../components/breadcrumb/Breadcrumb";
 
 import MainImage from "../components/mainimage/MainImage";
@@ -84,6 +85,7 @@ const ItemDetails = () => {
 
   const [tradeFee, setTradeFee] = useState();
   const [royaltyFee, setRoyaltyFee] = useState();
+  const [contentType, setContentType] = useState()
 
   useEffect(() => {
     if(state?.nft?.owner === account) {
@@ -92,6 +94,17 @@ const ItemDetails = () => {
       setOwner(false)
     }
   }, [setOwner, state?.nft?.owner, account])
+
+  useEffect(async () => {
+    if(state?.nft?.image) {
+      try {
+        const result = await axios.get(state?.nft?.image)
+        setContentType(result.headers['content-type'])
+      } catch(err) {
+        console.log(err)
+      }
+    }
+  })
 
   useEffect( async() => {
     try {
@@ -686,7 +699,13 @@ const ItemDetails = () => {
               </div>
               <div className="col-md-6">
                 <div className="main-item-right-container">
-                  <MainImage nftImg={state?.nft?.image} />
+                  {
+                    contentType === 'audio/mpeg' ? (
+                      <ReactPlayer width="100%" height="300px" url={state?.nft?.image} playing={false} controls />
+                    ) : (
+                      <MainImage nftImg={state?.nft?.image} />
+                    )
+                  }
                 </div>
               </div>
             </div>

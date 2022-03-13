@@ -61,68 +61,79 @@ const CreateForm = () => {
   };
 
   const createItem = async () => {
-    if (account && client) {
-      try {
-        setItemPending(true);
-        const item = await client.add(itemfile);
-        const url = `https://ipfs.infura.io/ipfs/${item.path}`;
+    if (buynowState || putOnSale || viewState) {
 
-        const metadata = {
-          name: itemname,
-          description: itemdesc,
-          image: url,
-          social: socialLink,
-          width: width,
-          height: height,
-          capacity: capacity,
-          type: defaultOption,
-        };
-
-        const metadataJson = JSON.stringify(metadata);
-        const blob = new Blob([metadataJson], { type: "application/json" });
-        const metadataAdd = await client.add(blob);
-        const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
-
-        let cost_pay = await FTcontract.approve(NFT_ADDRESS, mintPrice);
-        await cost_pay.wait();
-        let pizzaNFT = await NFTcontract.mint(
-          ipfsMeta,
-          itemprice,
-          FT_ADDRESS,
-          mintPrice,
-          royaltyFee,
-          putOnSale,
-          buynowState,
-          viewState
-        );
-        await pizzaNFT.wait();
-        setItemPending(false);
+      if (account && client) {
+        try {
+          setItemPending(true);
+          const item = await client.add(itemfile);
+          const url = `https://ipfs.infura.io/ipfs/${item.path}`;
+  
+          const metadata = {
+            name: itemname,
+            description: itemdesc,
+            image: url,
+            social: socialLink,
+            width: width,
+            height: height,
+            capacity: capacity,
+            type: defaultOption,
+          };
+  
+          const metadataJson = JSON.stringify(metadata);
+          const blob = new Blob([metadataJson], { type: "application/json" });
+          const metadataAdd = await client.add(blob);
+          const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
+  
+          let cost_pay = await FTcontract.approve(NFT_ADDRESS, mintPrice);
+          await cost_pay.wait();
+          let pizzaNFT = await NFTcontract.mint(
+            ipfsMeta,
+            itemprice,
+            FT_ADDRESS,
+            mintPrice,
+            royaltyFee,
+            putOnSale,
+            buynowState,
+            viewState
+          );
+          await pizzaNFT.wait();
+          setItemPending(false);
+          showNotification({
+            title: 'Success',
+            message: 'NFT created successfully',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          });
+        } catch (err) {
+          setItemPending(false);
+        }
+      } else if (!client) {
         showNotification({
-          title: 'Success',
-          message: 'NFT created successfully',
-          type: 'success',
-          insert: 'top',
-          container: 'top-right'
+          title: "Warning",
+          message: "Please check your network connection",
+          type: "danger",
+          insert: "top",
+          container: "top-right",
         });
-      } catch (err) {
-        setItemPending(false);
+      } else {
+        showNotification({
+          title: "Warning",
+          message: "Please connect MetaMask",
+          type: "danger",
+          insert: "top",
+          container: "top-right",
+        });
       }
-    } else if (!client) {
-      showNotification({
-        title: "Warning",
-        message: "Please check your network connection",
-        type: "danger",
-        insert: "top",
-        container: "top-right",
-      });
     } else {
       showNotification({
         title: "Warning",
-        message: "Please connect MetaMask",
+        message: "Please select state '\n (BID PRICE, BUY NOW, MINT ONLY)",
         type: "danger",
         insert: "top",
         container: "top-right",
-      });
+      })
     }
   };
 

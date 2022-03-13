@@ -35,7 +35,7 @@ function HotNft({ tokenId }) {
     // nft.loading is true during load.
     if (loading) return <>Loading…</>
     // nft.error is an Error instance in case of error.
-    // if (error || !nft) return <>Error.</>
+    if (error || !nft) return <>Error.</>
 
     try {
         (async ()=> {
