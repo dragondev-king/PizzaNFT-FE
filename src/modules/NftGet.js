@@ -29,9 +29,9 @@ function Nft({ tokenId, category, searchText="" }) {
     }, [])
     
     // nft.loading is true during load.
-    if (loading) return <></>
+    if (loading) return <>Loading</>
     // nft.error is an Error instance in case of error.
-    if (error || !nft) return <></>
+    if (error || !nft) return <>Error</>
 
     try {
         (async ()=> {
