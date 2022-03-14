@@ -701,7 +701,20 @@ const ItemDetails = () => {
                 <div className="main-item-right-container">
                   {
                     contentType === 'audio/mpeg' ? (
-                      <ReactPlayer width="100%" height="300px" url={state?.nft?.image} playing={false} controls />
+                      <ReactPlayer
+                        width="100%"
+                        height="300px"
+                        url={state?.nft?.image}
+                        playing={false}
+                        config={{
+                          file: {
+                            attributes: {
+                              controlsList: 'nodownload'
+                            }
+                          }
+                        }}
+                        controls
+                      />
                     ) : (
                       <MainImage nftImg={state?.nft?.image} />
                     )
