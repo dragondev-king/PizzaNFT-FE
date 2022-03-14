@@ -18,6 +18,7 @@ function HotNft({ tokenId }) {
   const [highestBid, setHighestBid] = useState(0);
   const [downtime, setDownTime] = useState(0);
   const [contentType, setContentType] = useState();
+  const [coverImage, setCoverImage] = useState()
 
   const { loading, error, nft } = useNft(NFT_ADDRESS, tokenId);
 
@@ -65,6 +66,7 @@ function HotNft({ tokenId }) {
       .then((res) => {
         setNftAvatar(res.data[0]?.profileImg);
         setOwnerName(res.data[0]?.name);
+        setCoverImage(res.data[0].coverImg)
       });
   } catch (err) {}
 
@@ -96,6 +98,7 @@ function HotNft({ tokenId }) {
             highestBid={highestBid}
             downtime={downtime}
             isImage={false}
+            coverImage={coverImage}
           />
         ) : (
         <HotAuction
@@ -106,6 +109,7 @@ function HotNft({ tokenId }) {
           highestBid={highestBid}
           downtime={downtime}
           isImage={true}
+          coverImage={coverImage}
         />
         )
       }

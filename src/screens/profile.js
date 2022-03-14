@@ -26,6 +26,7 @@ const options = [
 
 const Profile = () => {
   const { state } = useLocation();
+  console.log(state, 'state')
   const [ids, setIds] = useState([]);
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
   const [category, setCategory] = useState(["active"]);

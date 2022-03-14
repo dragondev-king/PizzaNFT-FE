@@ -86,6 +86,7 @@ const ItemDetails = () => {
   const [tradeFee, setTradeFee] = useState();
   const [royaltyFee, setRoyaltyFee] = useState();
   const [contentType, setContentType] = useState()
+  const [coverImage, setCoverImage] = useState()
 
   useEffect(() => {
     if(state?.nft?.owner === account) {
@@ -144,6 +145,7 @@ const ItemDetails = () => {
       .then((res) => {
         state.profileImg = res.data[0]?.profileImg;
         state.ownername = res.data[0]?.name;
+        setCoverImage(res.data[0]?.coverImg)
       });
     } catch(err) {
       console.log(err)
@@ -673,7 +675,7 @@ const ItemDetails = () => {
                       </div>
                       <div id="menu1" className="tab-pane fade">
                         <div className="bidders-div">
-                          <Owner state={state} />
+                          <Owner state={state} coverImage={coverImage}/>
                         </div>
                       </div>
                       <div id="menu2" className="tab-pane fade">
