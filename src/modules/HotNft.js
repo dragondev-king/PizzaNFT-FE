@@ -26,7 +26,7 @@ function HotNft({ tokenId }) {
     if(nft?.image) {
       try {
         const result = await axios.get(nft?.image)
-        setContentType(result.data['content-type'])
+        setContentType(result.headers['content-type'])
       } catch (err) {
         console.log(err)
       }
@@ -75,6 +75,7 @@ function HotNft({ tokenId }) {
   }
 
   // You can now display the NFT metadata.
+  console.log(contentType)
   return (
     <Link
       to={{
@@ -89,7 +90,7 @@ function HotNft({ tokenId }) {
       }}
     >
       {
-        contentType === 'audio/mpeg' ? (
+        contentType && (contentType.includes('audio') || contentType.includes('video')) ? (
           <HotAuction
             profileImg={nftavatar}
             ownername={ownername}
@@ -100,7 +101,7 @@ function HotNft({ tokenId }) {
             isImage={false}
             coverImage={coverImage}
           />
-        ) : (
+        ) : contentType && contentType.includes('image') && (
         <HotAuction
           profileImg={nftavatar}
           ownername={ownername}

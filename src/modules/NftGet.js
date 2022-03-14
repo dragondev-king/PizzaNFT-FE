@@ -94,7 +94,7 @@ function Nft({ tokenId, category, searchText = "" }) {
             },
           }}
         >{
-          contentType === 'audio/mpeg' ? (
+          contentType && (contentType.includes('audio') || contentType.includes('video')) ? (
             <>
               <ExploreImage
                 profileImg={nftavatar}
@@ -105,7 +105,7 @@ function Nft({ tokenId, category, searchText = "" }) {
                 coverImage={coverImage}
               />
             </>
-          ) : (
+          ) : contentType && contentType.includes('image') && (
             <ExploreImage
               profileImg={nftavatar}
               ownername={ownername}
