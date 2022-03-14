@@ -1,5 +1,6 @@
 import React from "react";
 import Countdown from "react-countdown";
+import ReactPlayer from "react-player";
 import { Common } from "../../redux/common";
 import AvatarImage from "../avatarimage/AvatarImage";
 
@@ -10,6 +11,7 @@ const HotAuction = ({
   buyprice,
   highestBid,
   downtime,
+  isImage
 }) => {
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -27,7 +29,26 @@ const HotAuction = ({
   return (
     <div>
       <div className="auction-image exd-image">
-        <img src={nft?.image} alt="" className="img-responsive" />
+        {isImage ? (
+          <img src={nft?.image} alt="" className="img-responsive" />
+        ) : (
+          <div style={{height: "240px"}}>
+            <ReactPlayer
+              width="100%"
+              height="230px"
+              url={nft?.image}
+              playing={false}
+              config={{
+                file: {
+                  attributes: {
+                    controlsList: 'nodownload'
+                  }
+                }
+              }}
+              controls
+            />
+          </div>
+        )}
         <div className="auction-bar">
           {Number(highestBid) === Number(buyprice) && (
             <>

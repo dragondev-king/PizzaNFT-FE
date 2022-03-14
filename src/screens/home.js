@@ -91,7 +91,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* <div className="exclusive-drops">
+            <div className="exclusive-drops">
                 <div className="container">
                     <div className="exclusive-drops-list">
                         <h2>Exclusive Drops</h2>
@@ -106,7 +106,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </div> */}
+            </div>
 
             <div className="exclusive-drops">
                 <div className="container">
