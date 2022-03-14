@@ -11,7 +11,8 @@ const HotAuction = ({
   buyprice,
   highestBid,
   downtime,
-  isImage
+  isImage,
+  coverImage
 }) => {
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -76,6 +77,7 @@ const HotAuction = ({
                 ownername={ownername}
                 nft={nft}
                 buyprice={buyprice}
+                coverImage={coverImage}
               />
             </div>
           </div>

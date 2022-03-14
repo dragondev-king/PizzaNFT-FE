@@ -16,6 +16,7 @@ function Nft({ tokenId, category, searchText = "" }) {
   const [seller, setSeller] = useState("");
   const [buynowprice, setBuyNowPrice] = useState(0);
   const [contentType, setContentType] = useState();
+  const [coverImage, setCoverImage] = useState()
 
   const { loading, error, nft } = useNft(NFT_ADDRESS, tokenId);
   useEffect(async () => {
@@ -60,6 +61,7 @@ function Nft({ tokenId, category, searchText = "" }) {
       .then((res) => {
         setNftAvatar(res.data[0]?.profileImg);
         setOwnerName(res.data[0]?.name);
+        setCoverImage(res.data[0].coverImg)
       });
   } catch (err) {}
 
@@ -100,6 +102,7 @@ function Nft({ tokenId, category, searchText = "" }) {
                 nft={nft}
                 buyprice={buynowprice}
                 isImage={false}
+                coverImage={coverImage}
               />
             </>
           ) : (
@@ -109,6 +112,7 @@ function Nft({ tokenId, category, searchText = "" }) {
               nft={nft}
               buyprice={buynowprice}
               isImage={true}
+              coverImage={coverImage}
             />
           )
         }

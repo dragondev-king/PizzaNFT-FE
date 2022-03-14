@@ -45,7 +45,7 @@ const ProfileHeader = ({ nft }) => {
         <>
             <div className="container">
                 <div className="cover-image-container">
-                    <img src={CoverImage} alt="" />
+                    <img src={nft?.coverImage} alt="" />
                 </div>
                 <div className="profile-avatar-image-container">
                     <div className="profile-avatar">
