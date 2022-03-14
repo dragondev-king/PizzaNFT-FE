@@ -106,6 +106,9 @@ export const topOwner = () => (dispatch, getState) => {
             if (owner_info[item.owner_of] === undefined) {
               let profileImg = "";
               let name = "";
+              let coverImg
+              let email
+              let facebook
 
               try {
                 await axios
@@ -118,6 +121,9 @@ export const topOwner = () => (dispatch, getState) => {
                     if (res.status != 200) return;
                     profileImg = res.data[0]?.profileImg;
                     name = res.data[0]?.name;
+                    coverImg = res.data[0]?.coverImg
+                    email = res.data[0]?.email
+                    facebook = res.data[0].facebook
                   });
               } catch (err) {}
 
@@ -127,6 +133,9 @@ export const topOwner = () => (dispatch, getState) => {
                 price: +ethers.utils.formatEther(price),
                 profileImg: profileImg,
                 name: name,
+                coverImg,
+                email,
+                facebook
               };
             } else {
               owner_info[item.owner_of].count++;
@@ -167,46 +176,52 @@ export const selectedUserInfo = (account) => (dispatch, getState) => {
 };
 
 export const updateUserInfo =
-  (account, name, profileImg, profileUrl) => (dispatch, getState) => {
+  (account, name, profileImg, profileUrl, coverImg, email, facebook) => (dispatch, getState) => {
     try {
       const formData = new FormData();
-      formData.append("profileImg", profileImg);
+      if(typeof(profileImg) === 'object') formData.append("profileImg", profileImg)
+      if(typeof(coverImg) === 'object') formData.append("coverImg", coverImg)
       formData.append("name", name);
       formData.append("profileUrl", profileUrl);
-
-      axios
-        .put(
-          `${BACKEND_API}/profile/${ethers.utils.getAddress(account)}`,
-          formData,
-          { Accept: "multipart/form-data" }
-        )
-        .then((res) => {
-          if (res.status == 200) {
-            dispatch({
-              type: UPDATE_USERINFO,
-              payload: {
-                profileImg: profileImg,
-                name: name,
-                profileUrl: profileUrl,
-              },
-            });
-            showNotification({
-              title: 'Success',
-              message: 'Profile information successfully updated',
-              type: 'success',
-              insert: 'top',
-              container: 'top-right'
-            })
-          } else {
-            showNotification({
-              title: 'Warning',
-              message: 'Profile information update failed',
-              type: 'warning',
-              insert: 'top',
-              container: 'top-right'
-            })
-          }
-        });
+      formData.append("email", email)
+      formData.append("facebook", facebook)
+      
+      axios({
+        method: 'put',
+        headers: {Accept: "multipart/form-data", "Content-Type": "image/jpeg"},
+        url: `${BACKEND_API}/profile/${ethers.utils.getAddress(account)}`,
+        data: formData
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          dispatch({
+            type: UPDATE_USERINFO,
+            payload: {
+              profileImg,
+              name,
+              profileUrl,
+              coverImg,
+              email,
+              facebook
+            },
+          });
+          showNotification({
+            title: 'Success',
+            message: 'Profile information successfully updated',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          })
+        } else {
+          showNotification({
+            title: 'Warning',
+            message: 'Profile information update failed',
+            type: 'warning',
+            insert: 'top',
+            container: 'top-right'
+          })
+        }
+      });
     } catch (error) {
       console.log("userInfo Update ", error);
     }
