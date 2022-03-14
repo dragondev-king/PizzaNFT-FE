@@ -396,6 +396,7 @@ const ItemDetails = () => {
 
                   <div className="item-description">
                     <p>{state?.nft?.description}</p>
+                    <p>{state?.nft?.rawData?.social}</p>
                     {auctionCreated && (Number(highestBid) === Number(buynowprice)) && (
                       <p>No Bid</p>
                     )}
@@ -702,7 +703,7 @@ const ItemDetails = () => {
               <div className="col-md-6">
                 <div className="main-item-right-container">
                   {
-                    contentType === 'audio/mpeg' ? (
+                    contentType && (contentType.includes('audio') ||contentType.includes('video') ) ? (
                       <ReactPlayer
                         width="100%"
                         height="300px"
@@ -717,9 +718,9 @@ const ItemDetails = () => {
                         }}
                         controls
                       />
-                    ) : (
+                    ) : contentType ? contentType.includes('image') &&(
                       <MainImage nftImg={state?.nft?.image} />
-                    )
+                    ) : <></>
                   }
                 </div>
               </div>
