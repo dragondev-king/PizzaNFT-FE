@@ -65,13 +65,6 @@ const CreateForm = () => {
 
       if (account && client) {
         try {
-          showNotification({
-            title: 'aaa',
-            message: 'message',
-            type: 'success',
-            insert: 'top',
-            container: 'top-right'
-          })
           setItemPending(true);
           const item = await client.add(itemfile);
           const url = `https://ipfs.infura.io/ipfs/${item.path}`;
@@ -105,7 +98,6 @@ const CreateForm = () => {
             viewState
           );
           await pizzaNFT.wait();
-          setItemPending(false);
           showNotification({
             title: 'Success',
             message: 'NFT created successfully',
@@ -113,7 +105,9 @@ const CreateForm = () => {
             insert: 'top',
             container: 'top-right'
           });
+          setItemPending(false);
         } catch (err) {
+          history.push('/')
           setItemPending(false);
         }
       } else if (!client) {
