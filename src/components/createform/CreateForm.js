@@ -65,6 +65,13 @@ const CreateForm = () => {
 
       if (account && client) {
         try {
+          showNotification({
+            title: 'aaa',
+            message: 'message',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          })
           setItemPending(true);
           const item = await client.add(itemfile);
           const url = `https://ipfs.infura.io/ipfs/${item.path}`;
