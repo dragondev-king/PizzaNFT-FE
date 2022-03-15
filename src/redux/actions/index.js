@@ -4,6 +4,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import metaMask from "../../assets/images/metamask.png";
 import { NFTcontractRead } from "../../config/contractConnect";
+import { showNotification } from '../../utils/helpers';
 import {
   NFT_ADDRESS,
   NFT_ABI,
@@ -105,6 +106,9 @@ export const topOwner = () => (dispatch, getState) => {
             if (owner_info[item.owner_of] === undefined) {
               let profileImg = "";
               let name = "";
+              let coverImg
+              let email
+              let facebook
 
               try {
                 await axios
@@ -117,6 +121,9 @@ export const topOwner = () => (dispatch, getState) => {
                     if (res.status != 200) return;
                     profileImg = res.data[0]?.profileImg;
                     name = res.data[0]?.name;
+                    coverImg = res.data[0]?.coverImg
+                    email = res.data[0]?.email
+                    facebook = res.data[0].facebook
                   });
               } catch (err) {}
 
@@ -126,6 +133,9 @@ export const topOwner = () => (dispatch, getState) => {
                 price: +ethers.utils.formatEther(price),
                 profileImg: profileImg,
                 name: name,
+                coverImg,
+                email,
+                facebook
               };
             } else {
               owner_info[item.owner_of].count++;
@@ -166,35 +176,52 @@ export const selectedUserInfo = (account) => (dispatch, getState) => {
 };
 
 export const updateUserInfo =
-  (account, name, profileImg, profileUrl) => (dispatch, getState) => {
+  (account, name, profileImg, profileUrl, coverImg, email, facebook) => (dispatch, getState) => {
     try {
       const formData = new FormData();
-      formData.append("profileImg", profileImg);
+      if(typeof(profileImg) === 'object') formData.append("profileImg", profileImg)
+      if(typeof(coverImg) === 'object') formData.append("coverImg", coverImg)
       formData.append("name", name);
       formData.append("profileUrl", profileUrl);
-
-      axios
-        .put(
-          `${BACKEND_API}/profile/${ethers.utils.getAddress(account)}`,
-          formData,
-          { Accept: "multipart/form-data" }
-        )
-        .then((res) => {
-          console.log('====', 'res')
-          if (res.status == 200) {
-            dispatch({
-              type: UPDATE_USERINFO,
-              payload: {
-                profileImg: profileImg,
-                name: name,
-                profileUrl: profileUrl,
-              },
-            });
-            alert("Success!");
-          } else {
-            alert("Failed!");
-          }
-        });
+      formData.append("email", email)
+      formData.append("facebook", facebook)
+      
+      axios({
+        method: 'put',
+        headers: {Accept: "multipart/form-data", "Content-Type": "image/jpeg"},
+        url: `${BACKEND_API}/profile/${ethers.utils.getAddress(account)}`,
+        data: formData
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          dispatch({
+            type: UPDATE_USERINFO,
+            payload: {
+              profileImg,
+              name,
+              profileUrl,
+              coverImg,
+              email,
+              facebook
+            },
+          });
+          showNotification({
+            title: 'Success',
+            message: 'Profile information successfully updated',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          })
+        } else {
+          showNotification({
+            title: 'Warning',
+            message: 'Profile information update failed',
+            type: 'warning',
+            insert: 'top',
+            container: 'top-right'
+          })
+        }
+      });
     } catch (error) {
       console.log("userInfo Update ", error);
     }
@@ -217,9 +244,21 @@ export const updateUserInfoNoImg =
                 profileUrl: profileUrl,
               },
             });
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'Profile image successfully updated',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            })
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Profile image update failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -233,9 +272,21 @@ export const createAuction = (owner, tokenId) => (dispatch, getState) => {
       .post(`${BACKEND_API}/auction/create`, { owner: owner, tokenId: tokenId })
       .then((res) => {
         if (res.status == 200) {
-          alert("Success!");
+          showNotification({
+            title: 'Success',
+            message: 'Auction created successfully',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          })
         } else {
-          alert("Failed!");
+          showNotification({
+            title: 'Warning',
+            message: 'Auction creation failed',
+            type: 'warning',
+            insert: 'top',
+            container: 'top-right'
+          })
         }
       });
   } catch (error) {
@@ -254,9 +305,21 @@ export const updateAuction =
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'Auction updated successfully',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            })
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Auction updating failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -265,20 +328,33 @@ export const updateAuction =
   };
 
 export const makeBid =
-  (tokenId, nftOwner, bidder, amount) => (dispatch, getState) => {
+  (tokenId, nftOwner, bidder, amount, recipient) => (dispatch, getState) => {
     try {
       axios
         .post(`${BACKEND_API}/bid/create`, {
-          nftOwner: nftOwner,
-          tokenId: tokenId,
-          bidder: bidder,
-          amount: amount,
+          nftOwner,
+          tokenId,
+          bidder,
+          amount,
+          recipient,
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'You placed a bid successfully',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            })
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Placing bid failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -297,9 +373,21 @@ export const updateBid =
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Success!");
+            showNotification({
+              title: 'Success',
+              message: 'you bid successfully updated',
+              type: 'success',
+              insert: 'top',
+              container: 'top-right'
+            });
           } else {
-            alert("Failed!");
+            showNotification({
+              title: 'Warning',
+              message: 'Updating bid failed',
+              type: 'warning',
+              insert: 'top',
+              container: 'top-right'
+            })
           }
         });
     } catch (error) {
@@ -419,10 +507,10 @@ export const settleAuction =
     try {
       axios
         .post(`${BACKEND_API}/settleauction`, {
-          tokenId: tokenId,
-          owner: owner,
-          from: from,
-          to: to,
+          tokenId,
+          owner,
+          from,
+          to,
         })
         .then((res) => {});
     } catch (error) {

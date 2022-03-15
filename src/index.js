@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ReactNotifications } from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -9,6 +11,7 @@ import store from "./redux/store";
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={ store }>
+      <ReactNotifications />
       <App />
     </Provider>
   </React.StrictMode>,
