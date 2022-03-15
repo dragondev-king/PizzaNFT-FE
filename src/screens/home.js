@@ -1,97 +1,110 @@
-import React, { useState, useEffect } from 'react'
-import  { ethers }  from "ethers"
-import { useDispatch } from "react-redux"
-import { NftProvider } from "use-nft"
+import React, { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { useDispatch } from "react-redux";
+import { NftProvider } from "use-nft";
 
-import StarParalax from '../components/starparalax/StarParalax'
-import ScrollTop from '../components/scrolltop/ScrollTop'
-import SearchBar from '../components/searchbar/SearchBar'
-import ArtistAvatar from '../components/artistavatar/ArtistAvatar'
+import StarParalax from "../components/starparalax/StarParalax";
+import ScrollTop from "../components/scrolltop/ScrollTop";
+import SearchBar from "../components/searchbar/SearchBar";
+import ArtistAvatar from "../components/artistavatar/ArtistAvatar";
 
-import Slider from "react-slick"
+import Slider from "react-slick";
 
-import ExclusiveDrops from '../components/exclusivedrops/ExclusiveDrops'
-import FilterButton from '../components/filterbutton/FilterButton'
-import Nft from '../modules/NftGet'
-import HotNft from '../modules/HotNft'
-import FaqDetails from '../components/faqdetails/FaqDetails'
-import { NftTokenID, topOwner, hotAuctionGet } from '../redux/actions'
-import { Common } from "../redux/common"
-import { rpc_provider } from "../config/contractConnect"
+// import ExclusiveDrops from "../components/exclusivedrops/ExclusiveDrops";
+import FilterButton from "../components/filterbutton/FilterButton";
+import Nft from "../modules/NftGet";
+import HotNft from "../modules/HotNft";
+// import FaqDetails from "../components/faqdetails/FaqDetails";
+import { NftTokenID, topOwner, hotAuctionGet } from "../redux/actions";
+import { Common } from "../redux/common";
+import { rpc_provider } from "../config/contractConnect";
+import { Link } from "react-router-dom";
 
 const options = [
-    'All', 'art', 'photography', 'sports', 'athletes', 'celebrities', 'music', 'gif and videos', 'collectibles', 'trading cards', 'utilities', 'virtual worlds',
+  "All",
+  "art",
+  "photography",
+  "sports",
+  "athletes",
+  "celebrities",
+  "music",
+  "gif and videos",
+  "collectibles",
+  "trading cards",
+  "utilities",
+  "virtual worlds",
 ];
 
 const Home = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const [category, setCategory] = useState(['active'])
-    const [chooseCategory, setChooseCategory] = useState("All")
+  const [category, setCategory] = useState(["active"]);
+  const [chooseCategory, setChooseCategory] = useState("All");
 
-    useEffect( ()=> {
-        dispatch ( NftTokenID() );
-        dispatch ( topOwner() );
-        dispatch ( hotAuctionGet() );
-    }, [])
-    
-    const { token_ids, top_owners, hots, searchText } = Common();
-    
-    const fetcher = ["ethers", { ethers, provider: rpc_provider }]
+  useEffect(() => {
+    dispatch(NftTokenID());
+    dispatch(topOwner());
+    dispatch(hotAuctionGet());
+  }, []);
 
-    var settings = {
-        centerMode: true,
-        centerPadding: '5px',
-        infinite: true,
-        speed: 500,
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        slide: '> div',
-        adaptiveHeight: true,
+  const { token_ids, top_owners, hots, searchText } = Common();
 
-        responsive: [{
-            breakpoint: 600,
-            settings: {
-                slidesToShow: 1,
-                centerPadding: '20px',
-                slidesToScroll: 1,
-            }
-        }]
+  const fetcher = ["ethers", { ethers, provider: rpc_provider }];
 
-    };
+  var settings = {
+    centerMode: true,
+    centerPadding: "5px",
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    slide: "> div",
+    adaptiveHeight: true,
 
-    const selectCategory = (item) => {
-        let flag = [];
-        setChooseCategory(item);
-        options.map( (value, index) => {
-            if(item === value) {
-                flag[index] = 'active'
-            } else {
-                flag[index] = ''
-            }
-        })
-        setCategory(flag)
-    }
-    
-    return (
-        <>
-            <StarParalax />
-            <div className="top-artist">
-                <div className="container">
-                    <div className="artist-list">
-                        <h2>Top Artists</h2>
-                        <ul>
-                            {
-                                top_owners?.filter((itm, key) => itm[1].name).map((item, index) =>
-                                    <ArtistAvatar info={item} key={index} />
-                                )
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          centerPadding: "20px",
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
-            {/* <div className="exclusive-drops">
+  const selectCategory = (item) => {
+    let flag = [];
+    setChooseCategory(item);
+    options.map((value, index) => {
+      if (item === value) {
+        flag[index] = "active";
+      } else {
+        flag[index] = "";
+      }
+    });
+    setCategory(flag);
+  };
+
+  return (
+    <>
+      <StarParalax />
+      <div className="top-artist">
+        <div className="container">
+          <div className="artist-list">
+            <h2>Top Artists</h2>
+            <ul>
+              {top_owners
+                ?.filter((itm, key) => itm[1].name)
+                .map((item, index) => (
+                  <ArtistAvatar info={item} key={index} />
+                ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* <div className="exclusive-drops">
                 <div className="container">
                     <div className="exclusive-drops-list">
                         <h2>Exclusive Drops</h2>
@@ -108,65 +121,74 @@ const Home = () => {
                 </div>
             </div> */}
 
-            <div className="exclusive-drops">
-                <div className="container">
-                    <div className="exclusive-drops-list">
-                        <h2>Hot Auctions</h2>
-                        <div className="exclusive-carousal">
-                            <NftProvider fetcher={fetcher}>
-                                <Slider {...settings}>
-                                    {
-                                        hots?.map((item, index) =>
-                                            <HotNft key={index} tokenId={item?.tokenId} />
-                                        )
-                                    }
-                                </Slider>
-                            </NftProvider>
-                        </div>
-                    </div>
-                </div>
+      <div className="exclusive-drops">
+        <div className="container">
+          <div className="exclusive-drops-list">
+            <h2>Hot Auctions</h2>
+            <div className="exclusive-carousal">
+              <NftProvider fetcher={fetcher}>
+                <Slider {...settings}>
+                  {hots?.map((item, index) => (
+                    <HotNft key={index} tokenId={item?.tokenId} />
+                  ))}
+                </Slider>
+              </NftProvider>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="exclusive-drops">
-                <div className="container">
-                    <div className="exclusive-drops-list" id='exlpore-more'>
-                        <h2>Explore</h2>
-                        <SearchBar />
-                        <div className="filter-set">
-                            {
-                                options.map( (item, index) => 
-                                    <FilterButton name={item} active={category[index]} selectCategory={selectCategory} key={index}/>
-                                )
-                            }
-                        </div>
-                        <div className="main-explore-image-container">
-                            <div style={{ "display": 'grid', 'gridTemplateColumns': 'auto auto auto auto', 'gridGap': '20px' }}>
-                                <NftProvider fetcher={fetcher}>
-                                    {   
-                                        token_ids?.map( (item, index) => 
-                                            <Nft tokenId={item} category={chooseCategory} searchText={searchText} key={index} />
-                                        ) 
-                                    }
-                                </NftProvider>
-                            </div>
-                            {/* <div className="loadmore-button">
+      <div className="exclusive-drops">
+        <div className="container">
+          <div className="exclusive-drops-list" id="exlpore-more">
+            <h2>Explore</h2>
+            <SearchBar />
+            <div className="filter-set">
+              {options.map((item, index) => (
+                <FilterButton
+                  name={item}
+                  active={category[index]}
+                  selectCategory={selectCategory}
+                  key={index}
+                />
+              ))}
+            </div>
+            <div className="main-explore-image-container">
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "auto auto auto auto",
+                  gridGap: "20px",
+                }}
+              >
+                <NftProvider fetcher={fetcher}>
+                  {token_ids?.map((item, index) => (
+                    <Nft
+                      tokenId={item}
+                      category={chooseCategory}
+                      searchText={searchText}
+                      key={index}
+                    />
+                  ))}
+                </NftProvider>
+              </div>
+              {/* <div className="loadmore-button">
                                 <button>Load More <i className="fas fa-arrow-right"></i></button>
                             </div> */}
-                        </div>
-                    </div>
-                </div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="faq-container">
-                <div className="container">
-                    <FaqDetails />
-                </div>
-            </div>
+      <div className="faq-container">
+        <div className="container">
+          <a href="http://www.nftsmarket.cc/" target="_blank"><h2>FAQ</h2></a>
+        </div>
+      </div>
 
-            <ScrollTop />
+      <ScrollTop />
+    </>
+  );
+};
 
-        </>
-    )
-}
-
-export default Home
+export default Home;
