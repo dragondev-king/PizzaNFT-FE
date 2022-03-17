@@ -53,7 +53,7 @@ const ProfileForm = () => {
         e.preventDefault();
         if (account) {
             dispatch(updateUserInfo(account, updateName, updateProfileImg, updateProfileUrl, updateCoverImg, updateEmail, updateFacebook))
-            window.location.reload(false)
+            // window.location.reload(false)
         } else {
             showNotification({
                 title: 'Warning',
