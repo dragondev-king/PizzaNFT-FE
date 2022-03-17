@@ -56,6 +56,7 @@ export const NftTokenID = () => (dispatch, getState) => {
           headers: {
             accept: "application/json",
             "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
+            'Access-Control-Allow-Origin': '*'
           },
         }
       )
@@ -87,6 +88,7 @@ export const topOwner = () => (dispatch, getState) => {
           headers: {
             accept: "application/json",
             "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
+            'Access-Control-Allow-Origin': '*'
           },
         }
       )
@@ -188,7 +190,7 @@ export const updateUserInfo =
       
       axios({
         method: 'put',
-        headers: {Accept: "multipart/form-data", "Content-Type": "image/jpeg"},
+        headers: {Accept: "multipart/form-data", "Content-Type": "image/jpeg", 'Access-Control-Allow-Origin': '*'},
         url: `${BACKEND_API}/profile/${ethers.utils.getAddress(account)}`,
         data: formData
       })
