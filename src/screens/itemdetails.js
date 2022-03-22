@@ -246,9 +246,11 @@ const ItemDetails = () => {
   const make_bid = async () => {
     try {
       if (account) {
+console.log('account YES')
         const bidPrice = ethers.utils.parseEther(bidprice.toString());
         const requiredPrice = bidPrice * (10000 + royaltyFee + tradeFee ) / 10000
         setPending(true);
+console.log('set pending true')
         const make_bid = await AUCTIONcontract.makeBid(
           NFT_ADDRESS,
           state?.tid,
@@ -256,8 +258,11 @@ const ItemDetails = () => {
           recipient,
           { value: requiredPrice }
         );
+console.log('makeBid function succeeds')
         await make_bid.wait();
+console.log('waiting')
         setPending(false);
+console.log('success')
         BidCloseModal();
         dispatch(makeBid(state?.tid, nftOwner, account, bidprice, recipient));
         showNotification({

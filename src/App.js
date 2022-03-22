@@ -9,8 +9,8 @@ import Footer from './components/footer/Footer'
 import { handleRightClick, handleKeyDown } from './utils/helpers'
 
 function App() {
-  // document.addEventListener('contextmenu', handleRightClick);
-  // document.addEventListener('keydown', handleKeyDown)
+  document.addEventListener('contextmenu', handleRightClick);
+ // document.addEventListener('keydown', handleKeyDown)
   return (
 
     <>
