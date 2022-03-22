@@ -2,9 +2,10 @@ import React from 'react'
 import dateFormat from "dateformat"
 import AvatarImage from '../avatarimage/AvatarImage'
 import AvatarImages from '../../assets/images/artist-avatar.jpg'
+import { getUTCTime } from '../../utils/helpers'
 
 const History = ({item}) => {
-    let date = new Date(item.createdAt)
+    const date = getUTCTime(item.createdAt)
     return (
         <>
             <div className="main-bid-container">

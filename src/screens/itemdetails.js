@@ -30,7 +30,7 @@ import {
   historyFindAll,
   settleAuction,
 } from "../redux/actions";
-import { showNotification } from "../utils/helpers";
+import { showNotification, getUTCTime } from "../utils/helpers";
 
 const customStyles = {
   content: {
@@ -134,7 +134,7 @@ const ItemDetails = () => {
         setAuctionCreatedAt(parseInt(createdAt, 10));
 
         setAuctionOngoing(
-          Boolean((parseInt(auctionPeriod, 10) + parseInt(createdAt, 10) - Date.now() / 1000) > 0)
+          Boolean((parseInt(auctionPeriod, 10) + parseInt(createdAt, 10) - getUTCTime().getTime() / 1000) > 0)
         );
         dispatch(bidFindAll(state?.id, nftSeller));
       }
@@ -246,11 +246,9 @@ const ItemDetails = () => {
   const make_bid = async () => {
     try {
       if (account) {
-console.log('account YES')
         const bidPrice = ethers.utils.parseEther(bidprice.toString());
         const requiredPrice = bidPrice * (10000 + royaltyFee + tradeFee ) / 10000
         setPending(true);
-console.log('set pending true')
         const make_bid = await AUCTIONcontract.makeBid(
           NFT_ADDRESS,
           state?.tid,
@@ -258,20 +256,10 @@ console.log('set pending true')
           recipient,
           { value: requiredPrice }
         );
-console.log('makeBid function succeeds')
         await make_bid.wait();
-console.log('waiting')
         setPending(false);
-console.log('success')
         BidCloseModal();
         dispatch(makeBid(state?.tid, nftOwner, account, bidprice, recipient));
-        showNotification({
-          title: 'SUccess',
-          message: "You've bidded successfully",
-          type: 'warning',
-          insert: 'top',
-          container: 'top-right'
-        })
         setRegetFlag(!regetflag);
       } else {
         showNotification({
