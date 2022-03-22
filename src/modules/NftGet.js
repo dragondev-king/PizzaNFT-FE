@@ -71,8 +71,8 @@ function Nft({ tokenId, category, searchText = "" }) {
 
   let flag = false;
   if (
-    String(nft?.name).toLowerCase().includes(searchText) ||
-    String(ownername).toLowerCase().includes(searchText) ||
+    String(nft?.name).includes(searchText) ||
+    String(ownername).includes(searchText) ||
     searchText === tokenId ||
     searchText === ""
   ) {

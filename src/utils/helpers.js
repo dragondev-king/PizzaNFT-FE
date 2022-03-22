@@ -78,3 +78,16 @@ export const handleKeyDown = (e) => {
   })
  }
 }
+
+export const getUTCTime = (timestamp) => {
+  const currentTime = timestamp ? new Date(timestamp) : new Date()
+  const UTCtime = new Date(
+    currentTime.getUTCFullYear(),
+    currentTime.getUTCMonth(),
+    currentTime.getUTCDate(),
+    currentTime.getUTCHours(),
+    currentTime.getUTCMinutes(),
+    currentTime.getUTCSeconds()
+  )
+  return UTCtime
+}
