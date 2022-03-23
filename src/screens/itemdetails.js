@@ -169,7 +169,7 @@ const ItemDetails = () => {
   useEffect( async() => {
     try{
       axios.get(
-          `https://deep-index.moralis.io/api/v2/nft/${NFT_ADDRESS}/${state?.tid}/transfers?chain=bsc%20mainnet&format=decimal&offset=0&limit=1`,
+          `https://deep-index.moralis.io/api/v2/nft/${NFT_ADDRESS}/${state?.tid}/transfers?chain=bsc&format=decimal&offset=0&limit=1`,
           {
             headers: {
               accept: "application/json",
