@@ -51,7 +51,7 @@ export const NftTokenID = () => (dispatch, getState) => {
   try {
     axios
       .get(
-        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}?chain=bsc%20testnet&format=decimal`,
+        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}?chain=bsc&format=decimal`,
         {
           headers: {
             accept: "application/json",
@@ -82,7 +82,7 @@ export const topOwner = () => (dispatch, getState) => {
   try {
     axios
       .get(
-        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}/owners?chain=bsc%20testnet&format=decimal`,
+        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}/owners?chain=bsc&format=decimal`,
         {
           headers: {
             accept: "application/json",

@@ -35,7 +35,7 @@ const Profile = () => {
     try {
       axios
         .get(
-          `https://deep-index.moralis.io/api/v2/${state?.nft?.owner}/nft?chain=bsc%20testnet&format=decimal&token_addresses=${process.env.REACT_APP_NFT_ADDRESS}`,
+          `https://deep-index.moralis.io/api/v2/${state?.nft?.owner}/nft?chain=bsc&format=decimal&token_addresses=${process.env.REACT_APP_NFT_ADDRESS}`,
           {
             headers: {
               accept: "application/json",
