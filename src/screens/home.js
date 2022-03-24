@@ -40,14 +40,26 @@ const Home = () => {
 
   const [category, setCategory] = useState(["active"]);
   const [chooseCategory, setChooseCategory] = useState("All");
+  const { token_ids, page, page_size, total, top_owners, hots, searchText } = Common();
+  
+  const [offset, setOffset] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [pageSize, setPageSize] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const [limit, setLimit] = useState(8)
 
   useEffect(() => {
-    dispatch(NftTokenID());
+    dispatch(NftTokenID(offset, limit));
     dispatch(topOwner());
     dispatch(hotAuctionGet());
-  }, []);
+  }, [offset, limit]);
 
-  const { token_ids, top_owners, hots, searchText } = Common();
+  useEffect(() => {
+    setCurrentPage(page)
+    setPageSize(page_size)
+    setTotalCount(total)
+  }, [page, page_size, total])
+
 
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
 
@@ -172,9 +184,9 @@ const Home = () => {
                   ))}
                 </NftProvider>
               </div>
-              {/* <div className="loadmore-button">
-                                <button>Load More <i className="fas fa-arrow-right"></i></button>
-                            </div> */}
+              <div className="loadmore-button">
+                {(currentPage * pageSize < totalCount) && <button onClick={() => setOffset(offset + pageSize)}>Load More <i className="fas fa-arrow-right"></i></button>}
+            </div>
             </div>
           </div>
         </div>
