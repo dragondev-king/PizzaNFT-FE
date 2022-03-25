@@ -47,11 +47,11 @@ export const userInfo = (account) => (dispatch, getState) => {
   }
 };
 
-export const NftTokenID = () => (dispatch, getState) => {
+export const NftTokenID = (offset, limit) => (dispatch, getState) => {
   try {
     axios
       .get(
-        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}?chain=bsc&format=decimal`,
+        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}?chain=bsc&format=decimal&limit=${limit}&offset=${offset}`,
         {
           headers: {
             accept: "application/json",
@@ -61,14 +61,20 @@ export const NftTokenID = () => (dispatch, getState) => {
       )
       .then((res) => {
         if (res.status != 200) return;
-        let midArr = [];
+        let midArr = getState()?.data?.token_ids || []
         res.data.result.map((item) => {
           midArr.push(item.token_id);
         });
+        const total = res.data.total
+        const page_size = res.data.page_size
+        const page = res.data.page
 
         dispatch({
           type: GET_NFT_ID,
           payload: {
+            total,
+            page_size,
+            page,
             token_ids: midArr,
           },
         });
