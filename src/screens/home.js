@@ -185,7 +185,7 @@ const Home = () => {
                 </NftProvider>
               </div>
               <div className="loadmore-button">
-                {(currentPage * pageSize < totalCount) && <button onClick={() => setOffset(offset + pageSize)}>Load More <i className="fas fa-arrow-right"></i></button>}
+                {((currentPage + 1 ) * pageSize < totalCount) && <button onClick={() => setOffset(offset + pageSize)}>Load More <i className="fas fa-arrow-right"></i></button>}
             </div>
             </div>
           </div>
