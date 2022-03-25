@@ -30,12 +30,17 @@ const Profile = () => {
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
   const [category, setCategory] = useState(["active"]);
   const [chooseCategory, setChooseCategory] = useState("All");
+  const [pageSize, setPageSize] = useState(0)
+  const [offset, setOffset] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [totalCount, setTotalCount] = useState(0)
+  const [limit, setLimit] = useState(8)
   useEffect(() => {
     let midArr = [];
     try {
       axios
         .get(
-          `https://deep-index.moralis.io/api/v2/${state?.nft?.owner}/nft?chain=bsc&format=decimal&token_addresses=${process.env.REACT_APP_NFT_ADDRESS}`,
+          `https://deep-index.moralis.io/api/v2/${state?.nft?.owner}/nft?chain=bsc&format=decimal&token_addresses=${process.env.REACT_APP_NFT_ADDRESS}&limit=${limit}&offset=${offset}`,
           {
             headers: {
               accept: "application/json",
@@ -49,9 +54,12 @@ const Profile = () => {
             midArr.push(item.token_id);
           });
           setIds([...ids, ...midArr]);
+          setPageSize(res.data.page_size)
+          setTotalCount(res.data.total)
+          setCurrentPage(res.data.page)
         });
     } catch (err) {}
-  }, []);
+  }, [limit, offset]);
 
   const selectCategory = (item) => {
     let flag = [];
@@ -97,6 +105,9 @@ const Profile = () => {
                 </NftProvider>
               </div>
             </div>
+          </div>
+          <div className="loadmore-button">
+              {((currentPage + 1 ) * pageSize < totalCount) && <button onClick={() => setOffset(offset + pageSize)}>Load More <i className="fas fa-arrow-right"></i></button>}
           </div>
         </div>
       </div>
