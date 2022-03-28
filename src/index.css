@@ -33,6 +33,38 @@ h2 {
   width: 100%;
 }
 
+.pagination>li>a, .pagination>li>span{
+  color: #f61eff !important;
+  background: transparent !important;
+  border: none;
+  min-height: 30px;
+  min-width: 30px;
+    text-align: center;
+}
+
+.pagination>li>a:hover, .pagination>li>span:hover{
+  color: #fff !important;
+}
+
+#react-paginate li{
+  border-color: #f61eff !important;
+}
+
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{
+  background-color: transparent !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.page-item.active{
+  background-color: #f61eff !important;
+
+}
+
+.page-item:hover{
+  background-color: #f61eff !important;
+}
+
 .hero-text img{
   max-width: 120px;
 }
@@ -1193,7 +1225,7 @@ h2 {
 
 .exd-image {
   max-width: 250px;
-  height: 235px;
+  height: auto !important;
 }
 
 .exd-image img {
@@ -1355,6 +1387,7 @@ h2 {
   line-height: normal;
   letter-spacing: normal !important;
   color: #000 !important;
+  min-height: 70px !important;
 }
 
 .details-container .name-details h3 {
@@ -1963,16 +1996,18 @@ color: #000 !important;
   border: 1px solid rgb(224, 224, 224);
   color: #000;
   cursor: pointer;
-  margin-right: 3px;
+  margin-right: 7px;
   border-radius: 5px;
-  margin-bottom: 5px;
+  /* margin-bottom: 5px; */
 }
 
 #react-paginate li a {
     padding: 2px 5px;
-    display: inline-block;
+    display: inline-flex;
     color: #000;
     outline: none;
+    align-items: center;
+    justify-content: center;
 }
 
 #react-paginate li.active {
