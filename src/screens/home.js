@@ -18,7 +18,8 @@ import HotNft from "../modules/HotNft";
 import { NftTokenID, topOwner, hotAuctionGet } from "../redux/actions";
 import { Common } from "../redux/common";
 import { rpc_provider } from "../config/contractConnect";
-import { Link } from "react-router-dom";
+import Paginate from "../components/paginate/Paginate";
+import { useCallback } from "react";
 
 const options = [
   "All",
@@ -47,6 +48,8 @@ const Home = () => {
   const [pageSize, setPageSize] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
   const [limit, setLimit] = useState(8)
+  const [pageCount, setPageCount] = useState(0)
+  
 
   useEffect(() => {
     dispatch(NftTokenID(offset, limit));
@@ -58,7 +61,8 @@ const Home = () => {
     setCurrentPage(page)
     setPageSize(page_size)
     setTotalCount(total)
-  }, [page, page_size, total])
+    setPageCount(Math.ceil(total / limit))
+  }, [page, page_size, total, limit])
 
 
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
@@ -97,6 +101,11 @@ const Home = () => {
     });
     setCategory(flag);
   };
+
+  const handlePageChange = useCallback((event) => {
+    const newOffset = event.selected * limit
+    setOffset(newOffset)
+  }, [setOffset, limit])
 
   return (
     <>
@@ -184,9 +193,12 @@ const Home = () => {
                   ))}
                 </NftProvider>
               </div>
-              <div className="loadmore-button">
+              {/* <div className="loadmore-button">
                 {((currentPage + 1 ) * pageSize < totalCount) && <button onClick={() => setOffset(offset + pageSize)}>Load More <i className="fas fa-arrow-right"></i></button>}
+            </div> */}
             </div>
+            <div id="react-paginate">
+              <Paginate onPageChange={handlePageChange} pageCount={pageCount} />
             </div>
           </div>
         </div>
