@@ -22,8 +22,8 @@ function HotNft({ tokenId }) {
 
   const { loading, error, nft } = useNft(NFT_ADDRESS, tokenId);
 
-  useEffect( async () => {
-    if(nft?.image) {
+  useEffect(async () => {
+    if (nft?.image) {
       try {
         const result = await axios.get(nft?.image)
         setContentType(result.headers['content-type'])
@@ -42,11 +42,15 @@ function HotNft({ tokenId }) {
       setSeller(auction.nftSeller);
       setHighestBid(ethers.utils.formatEther(auction?.nftHighestBid));
       setDownTime(auction.createdAt * 1000 + auction.auctionPeriod * 1000);
-    } catch (err) {}
+    } catch (err) { }
   }, []);
 
   // nft.loading is true during load.
-  if (loading) return <>Loading…</>;
+  if (loading) return <>
+    <div class="fa-3x">
+      <i class="fas fa-spinner fa-pulse"></i>
+    </div>
+  </>;
   // nft.error is an Error instance in case of error.
   if (error || !nft) return <>Error.</>;
 
@@ -59,8 +63,7 @@ function HotNft({ tokenId }) {
 
     axios
       .get(
-        `${
-          process.env.REACT_APP_BACKEND_API
+        `${process.env.REACT_APP_BACKEND_API
         }/api/profile/${ethers.utils.getAddress(nft.owner)}`
       )
       .then((res) => {
@@ -68,7 +71,7 @@ function HotNft({ tokenId }) {
         setOwnerName(res.data[0]?.name);
         setCoverImage(res.data[0].coverImg)
       });
-  } catch (err) {}
+  } catch (err) { }
 
   if (nft?.owner === AUCTION_ADDRESS) {
     nft.owner = seller;
@@ -102,16 +105,16 @@ function HotNft({ tokenId }) {
             coverImage={coverImage}
           />
         ) : contentType && contentType.includes('image') && (
-        <HotAuction
-          profileImg={nftavatar}
-          ownername={ownername}
-          nft={nft}
-          buyprice={buynowprice}
-          highestBid={highestBid}
-          downtime={downtime}
-          isImage={true}
-          coverImage={coverImage}
-        />
+          <HotAuction
+            profileImg={nftavatar}
+            ownername={ownername}
+            nft={nft}
+            buyprice={buynowprice}
+            highestBid={highestBid}
+            downtime={downtime}
+            isImage={true}
+            coverImage={coverImage}
+          />
         )
       }
     </Link>
