@@ -61,7 +61,7 @@ export const NftTokenID = (offset, limit) => (dispatch, getState) => {
       )
       .then((res) => {
         if (res.status != 200) return;
-        let midArr = getState()?.data?.token_ids || []
+        let midArr = []
         res.data.result.map((item) => {
           midArr.push(item.token_id);
         });

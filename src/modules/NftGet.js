@@ -26,22 +26,24 @@ function Nft({ tokenId, category, searchText = "" }) {
         tokenId
       );
       setSeller(auction.nftSeller);
-    } catch (err) {}
+    } catch (err) { }
   }, []);
 
   useEffect(async () => {
-    if(nft?.image) {
+    if (nft?.image) {
       try {
         const result = await axios.get(nft?.image)
         setContentType(result.headers['content-type'])
-      } catch(err) {
+      } catch (err) {
         console.log(err)
       }
     }
   });
 
   // nft.loading is true during load.
-  if (loading) return <>Loading</>;
+  if (loading) return <><div class="fa-3x">
+    <i class="fas fa-spinner fa-pulse"></i>
+  </div></>;
   // nft.error is an Error instance in case of error.
   if (error || !nft) return <>Error</>;
 
@@ -54,8 +56,7 @@ function Nft({ tokenId, category, searchText = "" }) {
 
     axios
       .get(
-        `${
-          process.env.REACT_APP_BACKEND_API
+        `${process.env.REACT_APP_BACKEND_API
         }/api/profile/${ethers.utils.getAddress(nft.owner)}`
       )
       .then((res) => {
@@ -63,7 +64,7 @@ function Nft({ tokenId, category, searchText = "" }) {
         setOwnerName(res.data[0]?.name);
         setCoverImage(res.data[0].coverImg)
       });
-  } catch (err) {}
+  } catch (err) { }
 
   if (nft?.owner === AUCTION_ADDRESS) {
     nft.owner = seller;
@@ -94,29 +95,29 @@ function Nft({ tokenId, category, searchText = "" }) {
             },
           }}
         >{
-          contentType && (contentType.includes('audio') || contentType.includes('video')) ? (
-            <>
+            contentType && (contentType.includes('audio') || contentType.includes('video')) ? (
+              <>
+                <ExploreImage
+                  profileImg={nftavatar}
+                  ownername={ownername}
+                  nft={nft}
+                  buyprice={buynowprice}
+                  isImage={false}
+                  coverImage={coverImage}
+                />
+              </>
+            ) : contentType && contentType.includes('image') && (
               <ExploreImage
                 profileImg={nftavatar}
                 ownername={ownername}
                 nft={nft}
                 buyprice={buynowprice}
-                isImage={false}
+                isImage={true}
                 coverImage={coverImage}
               />
-            </>
-          ) : contentType && contentType.includes('image') && (
-            <ExploreImage
-              profileImg={nftavatar}
-              ownername={ownername}
-              nft={nft}
-              buyprice={buynowprice}
-              isImage={true}
-              coverImage={coverImage}
-            />
-          )
-        }
-          
+            )
+          }
+
         </Link>
       );
     }
