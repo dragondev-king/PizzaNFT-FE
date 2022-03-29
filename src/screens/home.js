@@ -33,6 +33,15 @@ const options = [
   "trading cards",
   "utilities",
   "virtual worlds",
+  "food",
+  "wine and drinks",
+  "animals and pets",
+  "fashion",
+  "guns and rifles",
+  "cars and motorcycles",
+  "architecture",
+  "technology",
+  "games",
 ];
 
 const Home = () => {
