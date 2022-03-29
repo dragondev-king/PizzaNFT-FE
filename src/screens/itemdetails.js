@@ -88,6 +88,8 @@ const ItemDetails = () => {
   const [contentType, setContentType] = useState()
   const [coverImage, setCoverImage] = useState()
 
+
+  console.log(history.location, 'location')
   useEffect(() => {
     if(state?.nft?.owner === account) {
       setOwner(true)

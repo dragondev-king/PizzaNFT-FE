@@ -85,7 +85,7 @@ function Nft({ tokenId, category, searchText = "" }) {
       return (
         <Link
           to={{
-            pathname: "/details",
+            pathname: `/details/?tid=${tokenId}&profileImg=${nftavatar}&ownername=${ownername}&buynowprice=${buynowprice}`,
             state: {
               profileImg: nftavatar,
               ownername: ownername,
