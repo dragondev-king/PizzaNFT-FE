@@ -78,7 +78,6 @@ function HotNft({ tokenId }) {
   }
 
   // You can now display the NFT metadata.
-  console.log(contentType)
   return (
     <Link
       to={{
