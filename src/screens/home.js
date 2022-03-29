@@ -212,11 +212,11 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="faq-container">
+      {/* <div className="faq-container">
         <div className="container">
           <a href="http://www.nftsmarket.cc/" target="_blank"><h2>FAQ</h2></a>
         </div>
-      </div>
+      </div> */}
 
       <ScrollTop />
     </>
