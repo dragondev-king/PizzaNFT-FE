@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { ethers } from "ethers";
@@ -8,6 +8,7 @@ import Breadcrumb from "../components/breadcrumb/Breadcrumb";
 import ProfileHeader from "../components/profileheader/ProfileHeader";
 import Nft from "../modules/NftGet";
 import { rpc_provider } from "../config/contractConnect";
+import Paginate from "../components/paginate/Paginate";
 
 const options = [
   "All",
@@ -35,6 +36,7 @@ const Profile = () => {
   const [currentPage, setCurrentPage] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
   const [limit, setLimit] = useState(8)
+  const [pageCount, setPageCount] = useState(0)
   useEffect(() => {
     let midArr = [];
     try {
@@ -53,10 +55,11 @@ const Profile = () => {
           res.data.result.map((item) => {
             midArr.push(item.token_id);
           });
-          setIds([...ids, ...midArr]);
+          setIds([...midArr]);
           setPageSize(res.data.page_size)
           setTotalCount(res.data.total)
           setCurrentPage(res.data.page)
+          setPageCount(Math.ceil(res.data.total / limit))
         });
     } catch (err) {}
   }, [limit, offset]);
@@ -73,6 +76,12 @@ const Profile = () => {
     });
     setCategory(flag);
   };
+
+  const handlePageChange = useCallback((event) => {
+    const newOffset = event.selected * limit
+    setOffset(newOffset)
+  }, [setOffset, limit])
+
   return (
     <>
       <Breadcrumb name="Profile" />
@@ -105,10 +114,13 @@ const Profile = () => {
                 </NftProvider>
               </div>
             </div>
+            <div id="react-paginate">
+              <Paginate onPageChange={handlePageChange} pageCount={pageCount} />
+            </div>
           </div>
-          <div className="loadmore-button">
+          {/* <div className="loadmore-button">
               {((currentPage + 1 ) * pageSize < totalCount) && <button onClick={() => setOffset(offset + pageSize)}>Load More <i className="fas fa-arrow-right"></i></button>}
-          </div>
+          </div> */}
         </div>
       </div>
     </>
