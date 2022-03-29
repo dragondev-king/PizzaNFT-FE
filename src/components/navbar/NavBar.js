@@ -19,6 +19,9 @@ const NavBar = () => {
                             <img src={BuyButton} className='nav-buy-button' alt="" />
                         </a>
                     </div>
+                    <div className="faq-container">
+                        <a href="http://www.nftsmarket.cc/" target="_blank"><h2>FAQ</h2></a>
+                    </div>
                     <div className="nav-bar-items">
                         {
                             account ?
