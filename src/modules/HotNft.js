@@ -81,14 +81,7 @@ function HotNft({ tokenId }) {
   return (
     <Link
       to={{
-        pathname: "/details",
-        state: {
-          profileImg: nftavatar,
-          ownername: ownername,
-          tid: tokenId,
-          buyprice: buynowprice,
-          nft,
-        },
+        pathname: `/details/${tokenId}`,
       }}
     >
       {

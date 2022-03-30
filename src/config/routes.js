@@ -19,7 +19,7 @@ const routes = [
         component: Create,
     },
     {
-        path: `/details`,
+        path: `/details/:tid`,
         exact: true,
         layout: DefaultLayout,
         component: ItemDetails,
