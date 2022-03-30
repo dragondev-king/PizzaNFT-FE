@@ -85,14 +85,7 @@ function Nft({ tokenId, category, searchText = "" }) {
       return (
         <Link
           to={{
-            pathname: `/details/?tid=${tokenId}&profileImg=${nftavatar}&ownername=${ownername}&buynowprice=${buynowprice}`,
-            state: {
-              profileImg: nftavatar,
-              ownername: ownername,
-              tid: tokenId,
-              buyprice: buynowprice,
-              nft,
-            },
+            pathname: `/details/${tokenId}`,
           }}
         >{
             contentType && (contentType.includes('audio') || contentType.includes('video')) ? (

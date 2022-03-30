@@ -9,7 +9,7 @@ const Footer = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-4">
-                            <a href="https://pizanft.studio"><img src={Logo} alt="Logo" /></a>
+                            <a href="http://pizzanft.studio"><img src={Logo} alt="Logo" /></a>
                             <h3>FOLLOW US ON</h3>
                             <div className="footer-social-icons">
                                 <a target="_blank" href="https://www.facebook.com/PizzaNFT/" className="social-icon"><i className="fab fa-facebook-f"></i></a>
@@ -24,7 +24,7 @@ const Footer = () => {
 
                         <div className="col-md-5">
                             <h3>INFORMATION</h3>
-                            <a href="https://pizza-nft.com/home/#contactus" target="_blank">Contact Us</a>
+                            <a href="https://contact.pizza-nft.com/" target="_blank">Contact Us</a>
                             <a href="https://medium.com/@PIZZANFTOFFICIAL" target="_blank">Newsletter</a>
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSc7F6Xt4TL151brnUyW6cUjKwP0TDiAeW3iUQllrVnwQQ6Y2Q/viewform" target="_blank">Subscriptions</a>
                         </div>
