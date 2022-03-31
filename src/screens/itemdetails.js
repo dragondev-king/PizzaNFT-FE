@@ -85,13 +85,9 @@ const ItemDetails = () => {
   const [coverImage, setCoverImage] = useState()
 
   const { loading, error, nft } = useNft(NFT_ADDRESS, params?.tid);
-  const [state, setState] = useState(
-    {
-      nft: {},
-      profileImg: '',
-      ownername: ''
-    }
-  )
+  const [ nftItem, setNftItem ] = useState({})
+  const [profileImg, setProfileImg] = useState("")
+  const [ownerName, setOwnerName] = useState("")
 
   useEffect(() => {
     if(nft?.owner === account) {
@@ -115,8 +111,8 @@ const ItemDetails = () => {
 
   // if (nft) setState({...state, nft})
   useEffect(() => {
-    if(nft) setState({...state, nft})
-  }, [nft])
+    if(nft) setNftItem(nft)
+  }, [nft, setNftItem])
   // nft.error is an Error instance in case of error.
   if (error) history.push('/')
 
@@ -127,16 +123,13 @@ const ItemDetails = () => {
           `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(nft?.owner)}`
         )
         .then((res) => {
-          setState({
-            ...state,
-            profileImg: res.data[0]?.profileImg,
-            ownername: res.data[0].name
-          })
+          setProfileImg(res.data[0]?.profileImg)
+          setOwnerName(res.data[0]?.name)
           setCoverImage(res.data[0]?.coverImg)
         });
       } catch (err) {}
     }
-  }, [setState, setCoverImage, nft?.owner])
+  }, [setProfileImg, setOwnerName, setCoverImage, nft?.owner])
   
 
   useEffect( async() => {
@@ -145,11 +138,11 @@ const ItemDetails = () => {
       const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, params?.tid);
       if(ownerAddress === AUCTION_ADDRESS) {
         // state.nft.owner = auction.nftSeller;
-        setState({...state, nft: {...nft, owner: auction.nftSeller}})
+        setNftItem({...nftItem, owner: auction.nftSeller})
         
       } else {
         // state.nft.owner = ownerAddress
-        setState({...state, nft: {...nft, owner: ownerAddress}})
+        setNftItem({...nftItem, owner: ownerAddress})
       }
 
       if (auction?.nftSeller !== ethers.constants.AddressZero) {
@@ -176,7 +169,7 @@ const ItemDetails = () => {
     } catch(err) {
       console.log(err)
     }
-  }, [params.tid,nft?.owner,bidFindAll, setNftOwner, setAuctionCreated, setNftHighestBid, setNftHighestBider, setAuctionDuration, setAuctionCreatedAt, setAuctionOngoing])
+  }, [params.tid,nft?.owner, setNftItem, bidFindAll, setNftOwner, setAuctionCreated, setNftHighestBid, setNftHighestBider, setAuctionDuration, setAuctionCreatedAt, setAuctionOngoing])
 
   useEffect( async() => {
     try {
@@ -254,27 +247,17 @@ const ItemDetails = () => {
       axios
         .get(`${process.env.REACT_APP_BACKEND_API}/api/profile/${addr}`)
         .then((res) => {
-          setState({
-            ...state,
-            profileImg: res.data[0]?.profileImg,
-            ownername: res.data[0]?.name
-          })
+          setProfileImg(res.data[0]?.profileImg)
+          setOwnerName(res.data[0]?.name)
         });
     } catch (err) {}
 
-    if (addr === AUCTION_ADDRESS) {
-      addr = ownerAddr;
-    }
+    // if (addr === AUCTION_ADDRESS) {
+    //   addr = ownerAddr;
+    // }
     // state.nft.owner = addr;
     // state.profileImg = nftavatar;
     // state.ownername = ownername;
-    setState({
-      ...state,
-      nft: {
-        ...nft,
-        owner: addr
-      },
-    })
     window.location.reload()
     setRegetFlag(!regetflag);
   };
@@ -405,7 +388,6 @@ const ItemDetails = () => {
   // // nft.error is an Error instance in case of error.
   // if (error || !nft) return <>Error</>;
 
-  console.log(state, 'STATE')
   return (
     <>
       <Breadcrumb name="Item Details" />
@@ -481,7 +463,7 @@ const ItemDetails = () => {
                               >
                                 <Transfer
                                   setIsOpen={setTransferIsOpen}
-                                  state={state}
+                                  state={{nft: nftItem, profileImg, ownername: ownerName}}
                                   regetflag={regetflag}
                                   setRegetFlag={setRegetFlag}
                                 />
@@ -500,7 +482,7 @@ const ItemDetails = () => {
                               >
                                 <UpdatePrice
                                   setIsOpen={setUpdatePriceIsOpen}
-                                  state={state}
+                                  state={{nft: nftItem, profileImg, ownername: ownerName}}
                                   setBuyNowPrice={setBuyNowPrice}
                                   buynowprice={buynowprice}
                                 />
@@ -527,7 +509,7 @@ const ItemDetails = () => {
                                   >
                                     <CreateAuction
                                       setIsOpen={setAuctionCreateSetIsOpen}
-                                      state={state}
+                                      state={{nft: nftItem, profileImg, ownername: ownerName}}
                                       startPrice={buynowprice}
                                       AUCTIONcontract={AUCTIONcontract}
                                       setAcutionCreate={setAuctionCreated}
@@ -666,7 +648,7 @@ const ItemDetails = () => {
                         >
                           <Transfer
                             setIsOpen={setTransferIsOpen}
-                            state={state}
+                            state={{nft: nftItem, profileImg, ownername: ownerName}}
                             regetflag={regetflag}
                             setRegetFlag={setRegetFlag}
                           />
@@ -717,7 +699,7 @@ const ItemDetails = () => {
                       </div>
                       <div id="menu1" className="tab-pane fade">
                         <div className="bidders-div">
-                          <Owner state={state} coverImage={coverImage}/>
+                          <Owner state={{nft: nftItem, profileImg, ownername: ownerName}} coverImage={coverImage}/>
                         </div>
                       </div>
                       <div id="menu2" className="tab-pane fade">
