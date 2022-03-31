@@ -9,7 +9,7 @@ const Footer = () => {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-4">
-                            <a href="http://pizzanft.studio"><img src={Logo} alt="Logo" /></a>
+                            <a href="https://pizzanft.studio/"><img src={Logo} alt="Logo" /></a>
                             <h3>FOLLOW US ON</h3>
                             <div className="footer-social-icons">
                                 <a target="_blank" href="https://www.facebook.com/PizzaNFT/" className="social-icon"><i className="fab fa-facebook-f"></i></a>
