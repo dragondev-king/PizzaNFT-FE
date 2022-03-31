@@ -78,18 +78,10 @@ function HotNft({ tokenId }) {
   }
 
   // You can now display the NFT metadata.
-  console.log(contentType)
   return (
     <Link
       to={{
-        pathname: "/details",
-        state: {
-          profileImg: nftavatar,
-          ownername: ownername,
-          tid: tokenId,
-          buyprice: buynowprice,
-          nft,
-        },
+        pathname: `/details/${tokenId}`,
       }}
     >
       {
