@@ -488,6 +488,13 @@ export const nftUpdatePrice =
             type: UPDATE_PRICE,
             payload: { price: currPrice },
           });
+          showNotification({
+            title: 'Success',
+            message: 'price updated successfully',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          })
         });
     } catch (error) {
       console.log("Update Price ", error);
@@ -540,6 +547,13 @@ export const nftTransfer =
             type: UPDATE_PRICE,
             payload: res.data,
           });
+          showNotification({
+            title: 'Success',
+            message: 'NFT successfully transferred',
+            type: 'success',
+            insert: 'top',
+            container: 'top-right'
+          })
         });
     } catch (error) {
       console.log("Transfer ", error);

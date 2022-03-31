@@ -463,7 +463,7 @@ const ItemDetails = () => {
                               >
                                 <Transfer
                                   setIsOpen={setTransferIsOpen}
-                                  state={{nft: nftItem, profileImg, ownername: ownerName}}
+                                  state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
                                   regetflag={regetflag}
                                   setRegetFlag={setRegetFlag}
                                 />
@@ -482,7 +482,7 @@ const ItemDetails = () => {
                               >
                                 <UpdatePrice
                                   setIsOpen={setUpdatePriceIsOpen}
-                                  state={{nft: nftItem, profileImg, ownername: ownerName}}
+                                  state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
                                   setBuyNowPrice={setBuyNowPrice}
                                   buynowprice={buynowprice}
                                 />
@@ -509,7 +509,7 @@ const ItemDetails = () => {
                                   >
                                     <CreateAuction
                                       setIsOpen={setAuctionCreateSetIsOpen}
-                                      state={{nft: nftItem, profileImg, ownername: ownerName}}
+                                      state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
                                       startPrice={buynowprice}
                                       AUCTIONcontract={AUCTIONcontract}
                                       setAcutionCreate={setAuctionCreated}
@@ -648,7 +648,7 @@ const ItemDetails = () => {
                         >
                           <Transfer
                             setIsOpen={setTransferIsOpen}
-                            state={{nft: nftItem, profileImg, ownername: ownerName}}
+                            state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
                             regetflag={regetflag}
                             setRegetFlag={setRegetFlag}
                           />

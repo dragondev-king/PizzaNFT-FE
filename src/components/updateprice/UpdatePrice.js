@@ -25,6 +25,7 @@ const UpdatePrice = ({setIsOpen, state, setBuyNowPrice, buynowprice }) => {
             setBuyNowPrice( ethers.utils.parseEther(updatePrice) );
             setPending(false);
             closeModal();
+            window.location.reload(false);
         } catch (err) {
             setPending(false)
         }
