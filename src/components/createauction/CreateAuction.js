@@ -13,6 +13,7 @@ const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
   const { account, AUCTIONcontract, NFTcontract } = Common();
   const [reservedPrice, setReservedPrice] = useState(ethers.utils.formatEther(startPrice));
   const [pending, setPending] = useState(false);
+  const [period, setPeriod] = useState(0)
 
   const create_auction = async () => {
     try {
@@ -27,13 +28,14 @@ const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
             state?.tid,
             startPrice,
             rsvP,
-            0,
+            Number(period) * 3600,
             0
           );
          await creat_auction.wait();
           setAcutionCreate(true);
           dispatch(createAuction(account, state?.tid));
           setPending(false);
+          window.location.reload(false)
         } else {
           showNotification({
             title: 'Warning',
@@ -59,7 +61,7 @@ const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
 
   function closeModal() {
     setIsOpen(false);
-    history.push('/');
+    window.location.reload(false)
   }
   return (
     <>
@@ -85,6 +87,18 @@ const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
               id="itemname"
               onChange={(e) => setReservedPrice(e.target.value)}
               value={reservedPrice}
+            />
+          </div>
+        </div>
+        <div className="col-md-12">
+          <div className="form-group">
+            <label>Auction Period (hours)</label>
+            <input
+              className="form-control"
+              type="number"
+              id="itemname"
+              onChange={(e) => setPeriod(e.target.value)}
+              value={period}
             />
           </div>
         </div>
