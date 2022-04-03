@@ -90,12 +90,12 @@ const ItemDetails = () => {
   const [ownerName, setOwnerName] = useState("")
 
   useEffect(() => {
-    if(nft?.owner === account) {
+    if(nftOwner === account) {
       setOwner(true)
     } else {
       setOwner(false)
     }
-  }, [setOwner, nft?.owner, account])
+  }, [setOwner, nftOwner, account])
 
   useEffect(async () => {
     if(nft?.image) {
@@ -111,7 +111,9 @@ const ItemDetails = () => {
 
   // if (nft) setState({...state, nft})
   useEffect(() => {
-    if(nft) setNftItem(nft)
+    if(nft) {
+      setNftItem(nft)
+    }
   }, [nft, setNftItem])
   // nft.error is an Error instance in case of error.
   if (error) history.push('/')
@@ -120,6 +122,7 @@ const ItemDetails = () => {
     if(nft?.owner) {
       let accountAddress = nft?.owner
       if(nft.owner === AUCTION_ADDRESS) accountAddress = nftOwner
+      setNftOwner(accountAddress)
       try {
         await axios.get(
           `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(accountAddress)}`
@@ -162,9 +165,8 @@ const ItemDetails = () => {
           setNftHighestBider(nftHighestBidder);
           setAuctionDuration(parseInt(auctionPeriod, 10));
           setAuctionCreatedAt(parseInt(createdAt, 10));
-
           setAuctionOngoing(
-            Boolean((parseInt(auctionPeriod, 10) + parseInt(createdAt, 10) - getUTCTime().getTime() / 1000) > 0)
+            Boolean((parseInt(auctionPeriod, 10) * 1000   + getUTCTime(parseInt(createdAt, 10) * 1000).getTime() - getUTCTime().getTime()) > 0)
           );
           dispatch(bidFindAll(params?.tid));
         }
@@ -372,6 +374,7 @@ const ItemDetails = () => {
 
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
+      window.location.reload(false)
       return (<></>)
     } else {
       return (
