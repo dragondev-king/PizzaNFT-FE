@@ -90,12 +90,12 @@ const ItemDetails = () => {
   const [ownerName, setOwnerName] = useState("")
 
   useEffect(() => {
-    if(nft?.owner === account) {
+    if(nftOwner === account) {
       setOwner(true)
     } else {
       setOwner(false)
     }
-  }, [setOwner, nft?.owner, account])
+  }, [setOwner, nftOwner, account])
 
   useEffect(async () => {
     if(nft?.image) {
@@ -111,16 +111,21 @@ const ItemDetails = () => {
 
   // if (nft) setState({...state, nft})
   useEffect(() => {
-    if(nft) setNftItem(nft)
+    if(nft) {
+      setNftItem(nft)
+    }
   }, [nft, setNftItem])
   // nft.error is an Error instance in case of error.
   if (error) history.push('/')
 
   useEffect( async () => {
     if(nft?.owner) {
+      let accountAddress = nft?.owner
+      if(nft.owner === AUCTION_ADDRESS) accountAddress = nftOwner
+      setNftOwner(accountAddress)
       try {
         await axios.get(
-          `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(nft?.owner)}`
+          `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(accountAddress)}`
         )
         .then((res) => {
           setProfileImg(res.data[0]?.profileImg)
@@ -129,45 +134,45 @@ const ItemDetails = () => {
         });
       } catch (err) {}
     }
-  }, [setProfileImg, setOwnerName, setCoverImage, nft?.owner])
+  }, [setProfileImg, setOwnerName, setCoverImage, nft?.owner, nftOwner])
   
-
   useEffect( async() => {
-    try {
-      const ownerAddress = await NFTcontractRead.ownerOf(params?.tid)
-      const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, params?.tid);
-      if(ownerAddress === AUCTION_ADDRESS) {
-        // state.nft.owner = auction.nftSeller;
-        setNftItem({...nftItem, owner: auction.nftSeller})
-        
-      } else {
-        // state.nft.owner = ownerAddress
-        setNftItem({...nftItem, owner: ownerAddress})
+    if(nftItem) {
+      try {
+        const ownerAddress = await NFTcontractRead.ownerOf(params?.tid)
+        const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, params?.tid);
+        if(ownerAddress === AUCTION_ADDRESS) {
+          // state.nft.owner = auction.nftSeller;
+          setNftItem({...nftItem, owner: auction.nftSeller})
+          
+        } else {
+          // state.nft.owner = ownerAddress
+          setNftItem({...nftItem, owner: ownerAddress})
+        }
+
+        if (auction?.nftSeller !== ethers.constants.AddressZero) {
+          const {
+            nftSeller,
+            nftHighestBid,
+            nftHighestBidder,
+            auctionPeriod,
+            createdAt,
+          } = auction;
+
+          setNftOwner(nftSeller);
+          setAuctionCreated(true);
+          setNftHighestBid(nftHighestBid);
+          setNftHighestBider(nftHighestBidder);
+          setAuctionDuration(parseInt(auctionPeriod, 10));
+          setAuctionCreatedAt(parseInt(createdAt, 10));
+          setAuctionOngoing(
+            Boolean((parseInt(auctionPeriod, 10) * 1000   + getUTCTime(parseInt(createdAt, 10) * 1000).getTime() - getUTCTime().getTime()) > 0)
+          );
+          dispatch(bidFindAll(params?.tid));
+        }
+      } catch(err) {
+        console.log(err)
       }
-
-      if (auction?.nftSeller !== ethers.constants.AddressZero) {
-        const {
-          nftSeller,
-          nftHighestBid,
-          nftHighestBidder,
-          auctionPeriod,
-          createdAt,
-        } = auction;
-
-        setNftOwner(nftSeller);
-        setAuctionCreated(true);
-        setNftHighestBid(nftHighestBid);
-        setNftHighestBider(nftHighestBidder);
-        setAuctionDuration(parseInt(auctionPeriod, 10));
-        setAuctionCreatedAt(parseInt(createdAt, 10));
-
-        setAuctionOngoing(
-          Boolean((parseInt(auctionPeriod, 10) + parseInt(createdAt, 10) - getUTCTime().getTime() / 1000) > 0)
-        );
-        dispatch(bidFindAll(params?.tid));
-      }
-    } catch(err) {
-      console.log(err)
     }
   }, [params.tid,nft?.owner, setNftItem, bidFindAll, setNftOwner, setAuctionCreated, setNftHighestBid, setNftHighestBider, setAuctionDuration, setAuctionCreatedAt, setAuctionOngoing])
 
@@ -280,6 +285,7 @@ const ItemDetails = () => {
         BidCloseModal();
         dispatch(makeBid(params?.tid, nftOwner, account, bidprice, recipient));
         setRegetFlag(!regetflag);
+        window.location.reload(false)
       } else {
         showNotification({
           title: 'Warning',
@@ -311,14 +317,17 @@ const ItemDetails = () => {
       const auction= await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, params?.tid)
       const currentHighestBid = auction.nftHighestBid
       const reservePrice = auction.reservePrice
-      if( Number(currentHighestBid) >=Number(reservePrice)) {
+      const originPrice = auction.startPrice
+      if( Number(currentHighestBid) >=Number(reservePrice) && Number(originPrice) !== Number(currentHighestBid)) {
         let settle = await AUCTIONcontract.settleAuction(NFT_ADDRESS, params?.tid);
         await settle.wait();
-        dispatch(settleAuction(params?.tid, account, nft?.owner, recipient));
+        dispatch(settleAuction(params?.tid, account, nftOwner, recipient));
+        window.location.reload(false)
       } else {
         const withdraw = await AUCTIONcontract.withdrawAuction(NFT_ADDRESS, params?.tid);
         await withdraw.wait()
         dispatch(updateAuction(account, params?.tid, "cancel"));
+        window.location.reload(false)
       }
       setAuctionCreated(false);
       setAuctionOngoing(false)
@@ -365,6 +374,7 @@ const ItemDetails = () => {
 
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
+      window.location.reload(false)
       return (<></>)
     } else {
       return (
@@ -426,7 +436,7 @@ const ItemDetails = () => {
                     {auctionCreated  && ( auctionOngoing ? 
                     (
                       <Countdown
-                        date={auctionCreatedAt * 1000 + auctionDuration * 1000}
+                        date={Date.now() + auctionDuration * 1000}
                         renderer={renderer}
                       />
                     ) : (

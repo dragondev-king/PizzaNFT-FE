@@ -313,7 +313,7 @@ export const updateAuction =
           if (res.status == 200) {
             showNotification({
               title: 'Success',
-              message: 'Auction updated successfully',
+              message: 'Auction settled successfully',
               type: 'success',
               insert: 'top',
               container: 'top-right'
@@ -321,7 +321,7 @@ export const updateAuction =
           } else {
             showNotification({
               title: 'Warning',
-              message: 'Auction updating failed',
+              message: 'Auction settle failed',
               type: 'warning',
               insert: 'top',
               container: 'top-right'
