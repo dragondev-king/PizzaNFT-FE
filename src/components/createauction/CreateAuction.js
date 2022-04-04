@@ -61,7 +61,6 @@ const CreateAuction = ({ setIsOpen, state, startPrice, setAcutionCreate }) => {
 
   function closeModal() {
     setIsOpen(false);
-    window.location.reload(false)
   }
   return (
     <>
