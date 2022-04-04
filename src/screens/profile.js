@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import { ethers } from "ethers";
 import { NftProvider } from "use-nft";
@@ -35,6 +35,7 @@ const options = [
 ];
 
 const Profile = () => {
+  const params = useParams()
   const { state } = useLocation();
   const [ids, setIds] = useState([]);
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
@@ -46,12 +47,16 @@ const Profile = () => {
   const [totalCount, setTotalCount] = useState(0)
   const [limit, setLimit] = useState(8)
   const [pageCount, setPageCount] = useState(0)
+  const [profileImg, setProfileImg] = useState("")
+  const [ownerName, setOwnerName] = useState("")
+  const [coverImage, setCoverImage] = useState("")
+
   useEffect(() => {
     let midArr = [];
     try {
       axios
         .get(
-          `https://deep-index.moralis.io/api/v2/${state?.nft?.owner}/nft?chain=bsc&format=decimal&token_addresses=${process.env.REACT_APP_NFT_ADDRESS}&limit=${limit}&offset=${offset}`,
+          `https://deep-index.moralis.io/api/v2/${params?.account}/nft?chain=bsc&format=decimal&token_addresses=${process.env.REACT_APP_NFT_ADDRESS}&limit=${limit}&offset=${offset}`,
           {
             headers: {
               accept: "application/json",
@@ -72,6 +77,21 @@ const Profile = () => {
         });
     } catch (err) {}
   }, [limit, offset]);
+
+  useEffect( async () => {
+    if(params?.account) {
+      try {
+        await axios.get(
+          `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(params.account)}`
+        )
+        .then((res) => {
+          setProfileImg(res.data[0]?.profileImg)
+          setOwnerName(res.data[0]?.name)
+          setCoverImage(res.data[0]?.coverImg)
+        });
+      } catch (err) {}
+    }
+  }, [setProfileImg, setOwnerName, setCoverImage, params.account])
 
   const selectCategory = (item) => {
     let flag = [];
@@ -94,7 +114,7 @@ const Profile = () => {
   return (
     <>
       <Breadcrumb name="Profile" />
-      <ProfileHeader nft={state} />
+      <ProfileHeader data={{owner: params.account, coverImage, profileImg, ownername: ownerName, nft: {owner: params.account}}} />
       <div className="exclusive-drops">
         <div className="container">
           <div className="exclusive-drops-list">

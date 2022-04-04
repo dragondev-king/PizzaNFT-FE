@@ -25,7 +25,7 @@ const routes = [
         component: ItemDetails,
     },
     {
-        path: `/profile`,
+        path: `/profile/:account`,
         exact: true,
         layout: DefaultLayout,
         component: Profile,
