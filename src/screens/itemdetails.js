@@ -436,7 +436,7 @@ const ItemDetails = () => {
                     {auctionCreated  && ( auctionOngoing ? 
                     (
                       <Countdown
-                        date={auctionCreatedAt * 1000 + auctionDuration * 1000}
+                        date={Date.now() + auctionDuration * 1000}
                         renderer={renderer}
                       />
                     ) : (
