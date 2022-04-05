@@ -1,7 +1,7 @@
 import React from "react";
 import AvatarImage from "../avatarimage/AvatarImage";
 
-const Owner = ({ state, coverImage }) => {
+const Owner = ({ state }) => {
   return (
     (
       <>
@@ -9,9 +9,7 @@ const Owner = ({ state, coverImage }) => {
           <div className="bid-avatar-image">
             <AvatarImage
               profileImg={state?.profileImg}
-              ownername={state?.ownername}
               nft={state?.nft}
-              coverImage={coverImage}
             />
           </div>
           <div className="bid-description">

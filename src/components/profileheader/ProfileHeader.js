@@ -6,18 +6,18 @@ import { getFollow, addFollow } from "../../redux/actions";
 import CoverImage from "../../assets/images/cover-image.jpeg";
 import { showNotification } from "../../utils/helpers";
 
-const ProfileHeader = ({ nft }) => {
+const ProfileHeader = ({ data }) => {
   const dispatch = useDispatch();
   const [followState, setFollowState] = useState();
   const { account, followInfos } = Common();
   const [alertmessage, setAlertmessage] = useState("");
 
   useEffect(() => {
-    dispatch(getFollow(nft?.nft?.owner));
+    dispatch(getFollow(data?.owner));
   }, []);
 
   const copydata = () => {
-    navigator.clipboard.writeText(nft?.nft?.owner);
+    navigator.clipboard.writeText(data?.owner);
   };
   const allertdata = () => {
     setAlertmessage("Copied");
@@ -37,7 +37,7 @@ const ProfileHeader = ({ nft }) => {
         container: "top-right",
       });
     } else {
-      dispatch(addFollow(nft?.nft?.owner, account));
+      dispatch(addFollow(data?.owner, account));
     }
   };
 
@@ -45,21 +45,19 @@ const ProfileHeader = ({ nft }) => {
     <>
       <div className="container">
         <div className="cover-image-container">
-          <img src={nft?.coverImage} alt="" />
+          <img src={data?.coverImage} alt="" />
         </div>
         <div className="profile-avatar-image-container">
           <div className="profile-avatar">
             <div className="profile-image">
               <AvatarImage
-                profileImg={nft?.profileImg}
-                ownername={nft?.ownername}
-                nft={nft?.nft}
-                coverImage={nft?.coverImage}
+                profileImg={data?.profileImg}
+                nft={data?.nft}
               />
             </div>
             <div className="profile-image-details">
-              <h2>{nft?.ownername ? nft?.ownername : "unknown"}</h2>
-              {account !== nft?.nft?.owner && account ? (
+              <h2>{data?.ownername ? data?.ownername : "unknown"}</h2>
+              {account !== data?.owner && account ? (
                 <button onClick={addFollowAction}>Follow</button>
               ) : (
                 <></>
@@ -73,7 +71,7 @@ const ProfileHeader = ({ nft }) => {
             </div>
           </div>
           <div className="contract-container">
-            <h6>{nft?.nft?.owner}</h6>
+            <h6>{data?.owner}</h6>
             <button
               onClick={() => {
                 copydata();

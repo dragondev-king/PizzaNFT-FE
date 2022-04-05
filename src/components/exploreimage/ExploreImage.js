@@ -2,7 +2,7 @@ import React from "react";
 import ReactPlayer from "react-player";
 import AvatarImage from "../avatarimage/AvatarImage";
 
-const ExploreImage = ({ profileImg, ownername, nft, buyprice, isImage, coverImage }) => {
+const ExploreImage = ({ profileImg, ownername, nft, buyprice, isImage }) => {
   return (
     <>
       <div
@@ -39,10 +39,7 @@ const ExploreImage = ({ profileImg, ownername, nft, buyprice, isImage, coverImag
             <div className="auctionartist">
               <AvatarImage
                 profileImg={profileImg}
-                ownername={ownername}
                 nft={nft}
-                buyprice={buyprice}
-                coverImage={coverImage}
               />
             </div>
           </div>
