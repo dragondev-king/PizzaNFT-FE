@@ -24,11 +24,11 @@ const TransferOwnership = ({ setIsOpen, state, regetflag, setRegetFlag }) => {
       await send.wait();
       setPending(false);
       closeModal();
-      window.location.reload(false);
       dispatch(
         nftTransfer(state?.tid, state?.nft?.owner, state?.nft?.owner, toAddress)
       );
       setRegetFlag(!regetflag);
+      window.location.reload(false);
     } catch (err) {
       console.log(err);
     }
