@@ -233,6 +233,7 @@ const ItemDetails = () => {
           value: requiredPrice
         });
         await buynow.wait();
+        window.location.reload(false)
       } else {
         showNotification({
           title: 'Warning',
@@ -307,6 +308,7 @@ const ItemDetails = () => {
       setAuctionOngoing(false)
       dispatch(updateAuction(account, params?.tid, "cancel"));
       setRegetFlag(!regetflag);
+      window.location.reload(false)
     } catch (error) {
       console.log(error);
     }
