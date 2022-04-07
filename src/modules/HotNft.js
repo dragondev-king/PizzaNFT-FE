@@ -41,7 +41,7 @@ function HotNft({ tokenId }) {
       );
       setSeller(auction.nftSeller);
       setHighestBid(ethers.utils.formatEther(auction?.nftHighestBid));
-      setDownTime(auction.createdAt * 1000 + auction.auctionPeriod * 1000);
+      setDownTime((new Date((parseInt(auction.createdAt, 10) * 1000))).getTime() + auction.auctionPeriod * 1000);
     } catch (err) { }
   }, []);
 
