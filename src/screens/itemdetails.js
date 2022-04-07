@@ -233,6 +233,7 @@ const ItemDetails = () => {
           value: requiredPrice
         });
         await buynow.wait();
+        window.location.reload(false)
       } else {
         showNotification({
           title: 'Warning',
@@ -307,6 +308,7 @@ const ItemDetails = () => {
       setAuctionOngoing(false)
       dispatch(updateAuction(account, params?.tid, "cancel"));
       setRegetFlag(!regetflag);
+      window.location.reload(false)
     } catch (error) {
       console.log(error);
     }
@@ -722,10 +724,11 @@ const ItemDetails = () => {
                       <div id="menu3" className="tab-pane fade">
                         <div className="bidders-div">
                           <BidInfo id="NFT ID" name={params?.tid} />
-                          <BidInfo id="MINT TRANSACTION" name={minthash} />
+                          <BidInfo id="MINT TRANSACTION" name={minthash} prefix='tx' />
                           <BidInfo
                             id="CONTRACT ADDRESS"
                             name={process.env.REACT_APP_NFT_ADDRESS}
+                            prefix='address'
                           />
                         </div>
                       </div>
