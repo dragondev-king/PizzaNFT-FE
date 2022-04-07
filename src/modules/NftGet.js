@@ -41,8 +41,8 @@ function Nft({ tokenId, category, searchText = "" }) {
   });
 
   // nft.loading is true during load.
-  if (loading) return <><div class="fa-3x">
-    <i class="fas fa-spinner fa-pulse"></i>
+  if (loading) return <><div className="fa-3x">
+    <i className="fas fa-spinner fa-pulse"></i>
   </div></>;
   // nft.error is an Error instance in case of error.
   if (error || !nft) return <>Error</>;
