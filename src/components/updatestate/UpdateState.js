@@ -17,15 +17,12 @@ const UpdateState = ({ setIsOpen, state, regetflag, setRegetFlag, isSale, isAuct
     try {
       let event
       if (putOnSale) {
-        event = NFTcontract.updatePutOnSale(state?.tid)
-      }
-      if (buynowState) {
-        event = NFTcontract.updateBuynowState(state?.tid)
-      }
-      if (viewState) {
-        event = NFTcontract.updateNFTViewState(state?.tid)
-      }
-      else {
+        event = await  NFTcontract.updatePutonSale(state?.tid)
+      } else if (buynowState) {
+        event = await NFTcontract.updateBuynowState(state?.tid)
+      } else if (viewState) {
+        event = await NFTcontract.updateNFTViewState(state?.tid)
+      } else {
         showNotification({
           title: 'Warning',
           message: 'Please select a state',
