@@ -87,12 +87,12 @@ const ItemDetails = () => {
   const [coverImage, setCoverImage] = useState()
 
   const { loading, error, nft } = useNft(NFT_ADDRESS, params?.tid);
-  const [ nftItem, setNftItem ] = useState({})
+  const [nftItem, setNftItem] = useState({})
   const [profileImg, setProfileImg] = useState("")
   const [ownerName, setOwnerName] = useState("")
 
   useEffect(() => {
-    if(nftOwner === account) {
+    if (nftOwner === account) {
       setOwner(true)
     } else {
       setOwner(false)
@@ -100,11 +100,11 @@ const ItemDetails = () => {
   }, [setOwner, nftOwner, account])
 
   useEffect(async () => {
-    if(nft?.image) {
+    if (nft?.image) {
       try {
         const result = await axios.get(nft?.image)
         setContentType(result.headers['content-type'])
-      } catch(err) {
+      } catch (err) {
         console.log(err)
       }
     }
@@ -113,43 +113,43 @@ const ItemDetails = () => {
 
   // if (nft) setState({...state, nft})
   useEffect(() => {
-    if(nft) {
+    if (nft) {
       setNftItem(nft)
     }
   }, [nft, setNftItem])
   // nft.error is an Error instance in case of error.
   if (error) history.push('/')
 
-  useEffect( async () => {
-    if(nft?.owner) {
+  useEffect(async () => {
+    if (nft?.owner) {
       let accountAddress = nft?.owner
-      if(nft.owner === AUCTION_ADDRESS) accountAddress = nftOwner
+      if (nft.owner === AUCTION_ADDRESS) accountAddress = nftOwner
       setNftOwner(accountAddress)
       try {
         await axios.get(
           `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(accountAddress)}`
         )
-        .then((res) => {
-          setProfileImg(res.data[0]?.profileImg)
-          setOwnerName(res.data[0]?.name)
-          setCoverImage(res.data[0]?.coverImg)
-        });
-      } catch (err) {}
+          .then((res) => {
+            setProfileImg(res.data[0]?.profileImg)
+            setOwnerName(res.data[0]?.name)
+            setCoverImage(res.data[0]?.coverImg)
+          });
+      } catch (err) { }
     }
   }, [setProfileImg, setOwnerName, setCoverImage, nft?.owner, nftOwner])
-  
-  useEffect( async() => {
-    if(nftItem) {
+
+  useEffect(async () => {
+    if (nftItem) {
       try {
         const ownerAddress = await NFTcontractRead.ownerOf(params?.tid)
         const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, params?.tid);
-        if(ownerAddress === AUCTION_ADDRESS) {
+        if (ownerAddress === AUCTION_ADDRESS) {
           // state.nft.owner = auction.nftSeller;
-          setNftItem({...nftItem, owner: auction.nftSeller})
-          
+          setNftItem({ ...nftItem, owner: auction.nftSeller })
+
         } else {
           // state.nft.owner = ownerAddress
-          setNftItem({...nftItem, owner: ownerAddress})
+          setNftItem({ ...nftItem, owner: ownerAddress })
         }
 
         if (auction?.nftSeller !== ethers.constants.AddressZero) {
@@ -168,17 +168,17 @@ const ItemDetails = () => {
           setAuctionDuration(parseInt(auctionPeriod, 10));
           setAuctionCreatedAt(parseInt(createdAt, 10));
           setAuctionOngoing(
-            Boolean((parseInt(auctionPeriod, 10) * 1000   + getUTCTime(parseInt(createdAt, 10) * 1000).getTime() - getUTCTime().getTime()) > 0)
+            Boolean((parseInt(auctionPeriod, 10) * 1000 + getUTCTime(parseInt(createdAt, 10) * 1000).getTime() - getUTCTime().getTime()) > 0)
           );
           dispatch(bidFindAll(params?.tid));
         }
-      } catch(err) {
+      } catch (err) {
         console.log(err)
       }
     }
-  }, [params.tid,nft?.owner, setNftItem, bidFindAll, setNftOwner, setAuctionCreated, setNftHighestBid, setNftHighestBider, setAuctionDuration, setAuctionCreatedAt, setAuctionOngoing])
+  }, [params.tid, nft?.owner, setNftItem, bidFindAll, setNftOwner, setAuctionCreated, setNftHighestBid, setNftHighestBider, setAuctionDuration, setAuctionCreatedAt, setAuctionOngoing])
 
-  useEffect( async() => {
+  useEffect(async () => {
     try {
       const putOnSale = await NFTcontractRead.getPutOnSaleState(params.tid)
       const canBy = await NFTcontractRead.getCanBuyState(params.tid)
@@ -187,27 +187,27 @@ const ItemDetails = () => {
       setIsAuction(putOnSale)
       setIsSale(canBy)
       setIsMintOnly(onlyView)
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }, [setIsAuction, setIsSale, setIsMintOnly, params.tid])
 
-  useEffect( async() => {
-    try{
+  useEffect(async () => {
+    try {
       await axios.get(
-          `https://deep-index.moralis.io/api/v2/nft/${NFT_ADDRESS}/${params?.tid}/transfers?chain=bsc&format=decimal&offset=0&limit=1`,
-          {
-            headers: {
-              accept: "application/json",
-              "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
-            },
-          }
-        )
+        `https://deep-index.moralis.io/api/v2/nft/${NFT_ADDRESS}/${params?.tid}/transfers?chain=bsc&format=decimal&offset=0&limit=1`,
+        {
+          headers: {
+            accept: "application/json",
+            "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
+          },
+        }
+      )
         .then((res) => {
           if (res.status != 200) return;
           setMintHash(res.data.result[0].transaction_hash);
         });
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }, [NFT_ADDRESS, params?.tid, setMintHash])
@@ -217,7 +217,7 @@ const ItemDetails = () => {
       const buyNowPrice = await NFTcontractRead.prices(params?.tid);
       const trFee = await NFTcontractRead.getFee(buyNowPrice)
       const rlFee = await NFTcontractRead.getRoyaltyFee(params?.tid)
-      
+
       setBuyNowPrice(buyNowPrice);
       setTradeFee(parseInt(trFee, 10))
       setRoyaltyFee(parseInt(rlFee, 10))
@@ -230,7 +230,7 @@ const ItemDetails = () => {
   const buy_it = async () => {
     try {
       if (account) {
-        const requiredPrice = buynowprice * (10000 + royaltyFee + tradeFee ) / 10000
+        const requiredPrice = buynowprice * (10000 + royaltyFee + tradeFee) / 10000
         let buynow = await NFTcontract.buynow(params?.tid, {
           value: requiredPrice
         });
@@ -258,7 +258,7 @@ const ItemDetails = () => {
           setProfileImg(res.data[0]?.profileImg)
           setOwnerName(res.data[0]?.name)
         });
-    } catch (err) {}
+    } catch (err) { }
 
     // if (addr === AUCTION_ADDRESS) {
     //   addr = ownerAddr;
@@ -274,7 +274,7 @@ const ItemDetails = () => {
     try {
       if (account) {
         const bidPrice = ethers.utils.parseEther(bidprice.toString());
-        const requiredPrice = bidPrice * (10000 + royaltyFee + tradeFee ) / 10000
+        const requiredPrice = bidPrice * (10000 + royaltyFee + tradeFee) / 10000
         setPending(true);
         const make_bid = await AUCTIONcontract.makeBid(
           NFT_ADDRESS,
@@ -318,11 +318,11 @@ const ItemDetails = () => {
 
   const settle_auction = async () => {
     try {
-      const auction= await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, params?.tid)
+      const auction = await AUCTIONcontractRead.pizzaAuctions(NFT_ADDRESS, params?.tid)
       const currentHighestBid = auction.nftHighestBid
       const reservePrice = auction.reservePrice
       const originPrice = auction.startPrice
-      if( Number(currentHighestBid) >=Number(reservePrice) && Number(originPrice) !== Number(currentHighestBid)) {
+      if (Number(currentHighestBid) >= Number(reservePrice) && Number(originPrice) !== Number(currentHighestBid)) {
         let settle = await AUCTIONcontract.settleAuction(NFT_ADDRESS, params?.tid);
         await settle.wait();
         dispatch(settleAuction(params?.tid, account, nftOwner, recipient));
@@ -354,7 +354,7 @@ const ItemDetails = () => {
         container: 'top-right'
       })
       setRegetFlag(!regetflag);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   function AuctionCreateOpenModal() {
@@ -441,24 +441,24 @@ const ItemDetails = () => {
                     {auctionCreated && (Number(highestBid) === Number(buynowprice)) && (
                       <p>No Bid</p>
                     )}
-                    {auctionCreated  && ( auctionOngoing ? 
-                    (
-                      <Countdown
-                        date={(new Date(auctionCreatedAt * 1000)).getTime() + auctionDuration * 1000}
-                        renderer={renderer}
-                      />
-                    ) : (
-                      nftOwner === account ? 
-                        (
-                          <>
-                            <p>Auction is ended</p>
-                            <button className="buy-it-button" onClick={settle_auction}>
-                              Settle Auction
-                            </button>
-                          </>
-                        ) : (
-                        <><p>Auction is ended</p></>
-                        )
+                    {auctionCreated && (auctionOngoing ?
+                      (
+                        <Countdown
+                          date={(new Date(auctionCreatedAt * 1000)).getTime() + auctionDuration * 1000}
+                          renderer={renderer}
+                        />
+                      ) : (
+                        nftOwner === account ?
+                          (
+                            <>
+                              <p>Auction is ended</p>
+                              <button className="buy-it-button" onClick={settle_auction}>
+                                Settle Auction
+                              </button>
+                            </>
+                          ) : (
+                            <><p>Auction is ended</p></>
+                          )
                       )
                     )}
                   </div>
@@ -481,9 +481,30 @@ const ItemDetails = () => {
                               >
                                 <Transfer
                                   setIsOpen={setTransferIsOpen}
-                                  state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
+                                  state={{ nft: nftItem, profileImg, ownername: ownerName, tid: params.tid }}
                                   regetflag={regetflag}
                                   setRegetFlag={setRegetFlag}
+                                />
+                              </Modal>
+                              <button
+                                onClick={handleUpdateStateClick}
+                                className='place-a-bid-button'
+                              >
+                                Update State
+                              </button>
+                              <Modal
+                                isOpen={updateStateIsOpen}
+                                style={customStyles}
+                                contentLabel="Update State"
+                              >
+                                <UpdateState
+                                  setIsOpen={setUpdateStateIsOpen}
+                                  state={{ nft: nftItem, profileImg, ownername: ownerName, tid: params.tid }}
+                                  regetflag={regetflag}
+                                  setRegetFlag={setRegetFlag}
+                                  isSale={isSale}
+                                  isAuction={isAuction}
+                                  isMintOnly={isMintOnly}
                                 />
                               </Modal>
 
@@ -500,7 +521,7 @@ const ItemDetails = () => {
                               >
                                 <UpdatePrice
                                   setIsOpen={setUpdatePriceIsOpen}
-                                  state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
+                                  state={{ nft: nftItem, profileImg, ownername: ownerName, tid: params.tid }}
                                   setBuyNowPrice={setBuyNowPrice}
                                   buynowprice={buynowprice}
                                 />
@@ -515,6 +536,27 @@ const ItemDetails = () => {
                               {!auctionCreated ? (
                                 <>
                                   <button
+                                    onClick={handleUpdateStateClick}
+                                    className='place-a-bid-button'
+                                  >
+                                    Update State
+                                  </button>
+                                  <Modal
+                                    isOpen={updateStateIsOpen}
+                                    style={customStyles}
+                                    contentLabel="Update State"
+                                  >
+                                    <UpdateState
+                                      setIsOpen={setUpdateStateIsOpen}
+                                      state={{ nft: nftItem, profileImg, ownername: ownerName, tid: params.tid }}
+                                      regetflag={regetflag}
+                                      setRegetFlag={setRegetFlag}
+                                      isSale={isSale}
+                                      isAuction={isAuction}
+                                      isMintOnly={isMintOnly}
+                                    />
+                                  </Modal>
+                                  <button
                                     className="create-auction-button"
                                     onClick={AuctionCreateOpenModal}
                                   >
@@ -527,7 +569,7 @@ const ItemDetails = () => {
                                   >
                                     <CreateAuction
                                       setIsOpen={setAuctionCreateSetIsOpen}
-                                      state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
+                                      state={{ nft: nftItem, profileImg, ownername: ownerName, tid: params.tid }}
                                       startPrice={buynowprice}
                                       AUCTIONcontract={AUCTIONcontract}
                                       setAcutionCreate={setAuctionCreated}
@@ -536,7 +578,7 @@ const ItemDetails = () => {
                                 </>
                               ) : (
                                 <>
-                                  { auctionCreated && auctionOngoing ? (
+                                  {auctionCreated && auctionOngoing ? (
                                     <button
                                       className="create-auction-button"
                                       onClick={cancelAuction}
@@ -559,7 +601,7 @@ const ItemDetails = () => {
                         ) : (
                           <>
                             {highestBider !== account ? (
-                              ( auctionCreated && nftOwner != account && auctionOngoing ?
+                              (auctionCreated && nftOwner != account && auctionOngoing ?
                                 <>
                                   <button
                                     className="place-a-bid-button"
@@ -652,7 +694,7 @@ const ItemDetails = () => {
                         )}
                       </div>
                     ) : (
-                      owner &&<>
+                      owner && <>
                         <button
                           onClick={handleUpdateStateClick}
                           className='place-a-bid-button'
@@ -666,7 +708,7 @@ const ItemDetails = () => {
                         >
                           <UpdateState
                             setIsOpen={setUpdateStateIsOpen}
-                            state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
+                            state={{ nft: nftItem, profileImg, ownername: ownerName, tid: params.tid }}
                             regetflag={regetflag}
                             setRegetFlag={setRegetFlag}
                             isSale={isSale}
@@ -687,7 +729,7 @@ const ItemDetails = () => {
                         >
                           <Transfer
                             setIsOpen={setTransferIsOpen}
-                            state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
+                            state={{ nft: nftItem, profileImg, ownername: ownerName, tid: params.tid }}
                             regetflag={regetflag}
                             setRegetFlag={setRegetFlag}
                           />
@@ -738,7 +780,7 @@ const ItemDetails = () => {
                       </div>
                       <div id="menu1" className="tab-pane fade">
                         <div className="bidders-div">
-                          <Owner state={{nft: nftItem, profileImg, ownername: ownerName}} coverImage={coverImage}/>
+                          <Owner state={{ nft: nftItem, profileImg, ownername: ownerName }} coverImage={coverImage} />
                         </div>
                       </div>
                       <div id="menu2" className="tab-pane fade">
@@ -766,7 +808,7 @@ const ItemDetails = () => {
               <div className="col-md-6">
                 <div className="main-item-right-container">
                   {
-                    contentType && (contentType.includes('audio') ||contentType.includes('video') ) ? (
+                    contentType && (contentType.includes('audio') || contentType.includes('video')) ? (
                       <ReactPlayer
                         width="100%"
                         height="300px"
@@ -781,7 +823,7 @@ const ItemDetails = () => {
                         }}
                         controls
                       />
-                    ) : contentType ? contentType.includes('image') &&(
+                    ) : contentType ? contentType.includes('image') && (
                       <MainImage nftImg={nft?.image} />
                     ) : <></>
                   }
