@@ -18,6 +18,7 @@ import BidInfo from "../components/bidinfo/BidInfo";
 import CreateAuction from "../components/createauction/CreateAuction";
 import UpdatePrice from "../components/updateprice/UpdatePrice";
 import Transfer from "../components/transfer/Transfer";
+import UpdateState from '../components/updatestate'
 import { Common } from "../redux/common";
 import {
   AUCTIONcontractRead,
@@ -72,6 +73,7 @@ const ItemDetails = () => {
   const [bidModalIsOpen, setBidModalIsOpen] = useState();
   const [updatePriceIsOpen, setUpdatePriceIsOpen] = useState();
   const [transferIsOpen, setTransferIsOpen] = useState();
+  const [updateStateIsOpen, setUpdateStateIsOpen] = useState(false)
   const [pending, setPending] = useState();
   const [bidprice, setBidPrice] = useState(0);
   const [recipient, setRecipient] = useState(ethers.constants.AddressZero);
@@ -374,6 +376,10 @@ const ItemDetails = () => {
     setTransferIsOpen(true);
   }
 
+  function handleUpdateStateClick() {
+    setUpdateStateIsOpen(true)
+  }
+
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
       window.location.reload(false)
@@ -647,6 +653,27 @@ const ItemDetails = () => {
                       </div>
                     ) : (
                       owner &&<>
+                        <button
+                          onClick={handleUpdateStateClick}
+                          className='place-a-bid-button'
+                        >
+                          Update State
+                        </button>
+                        <Modal
+                          isOpen={updateStateIsOpen}
+                          style={customStyles}
+                          contentLabel="Update State"
+                        >
+                          <UpdateState
+                            setIsOpen={setUpdateStateIsOpen}
+                            state={{nft: nftItem, profileImg, ownername: ownerName, tid: params.tid}}
+                            regetflag={regetflag}
+                            setRegetFlag={setRegetFlag}
+                            isSale={isSale}
+                            isAuction={isAuction}
+                            isMintOnly={isMintOnly}
+                          />
+                        </Modal>
                         <button
                           className="buy-it-button"
                           onClick={TransferOpenModal}

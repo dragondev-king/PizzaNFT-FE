@@ -1961,3 +1961,11 @@ color: #000 !important;
   background: rgb(224, 224, 224);
   outline: none;
 }
+
+.btn-full-width {
+  width: 100%;
+}
+
+.btn-full-width span:hover {
+  background-color: rebeccapurple;
+}
