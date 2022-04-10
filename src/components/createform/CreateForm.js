@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { create } from "ipfs-http-client";
 import { ethers } from "ethers";
 import Dropdown from "react-dropdown";
-import { CirclesWithBar } from 'react-loader-spinner'
+import { Rings } from 'react-loader-spinner'
 
 import Size from "../size/Size";
 import "react-dropdown/style.css";
@@ -149,13 +149,13 @@ const CreateForm = () => {
 
   return (
     itempending ? (
-      <div style={{position: 'absolute'}}>
-        <div style={{position: 'relative'}}>
-          <CirclesWithBar
-            height="100%"
+      <div style={{position: 'relative'}}>
+        <div style={{position: 'absolute', left: '20%', bottom: '-136px', display: 'contents'}}>
+          <Rings
+            height="70%"
             width="100%"
             color='white'
-            ariaLabel='minting'
+            ariaLabel='Minting'
           />
         </div>
       </div>
