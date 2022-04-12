@@ -422,17 +422,24 @@ const ItemDetails = () => {
                   {auctionCreated && (Number(highestBid) > Number(buynowprice)) ? (
                     <>
                       <h3>
-                        Original Price: <span>{ethers.utils.formatEther(buynowprice)} BNB</span>
+                        Original Price: <span>{ethers.utils.formatEther(buynowprice).toString()} BNB</span>
                       </h3>
                       <h3>
-                        Highest Bid: <span>{ethers.utils.formatEther(highestBid)} BNB</span>
+                        Highest Bid: <span>{ethers.utils.formatEther(highestBid).toString()} BNB</span>
                       </h3>
                     </>
                   ) : (
-                    <h3>
-                      Buy Now Price:{" "}
-                      <span>{ethers.utils.formatEther(buynowprice)} BNB</span>
-                    </h3>
+                    isMintOnly ? (
+                      <>
+                        <h3>this item is not for sale</h3>
+                        <h3>Price: {" "}<span>{ethers.utils.formatEther(buynowprice).toString()} BNB</span></h3>
+                      </>
+                    ) : (
+                      <h3>
+                        Buy Now Price:{" "}
+                        <span>{ethers.utils.formatEther(buynowprice).toString()} BNB</span>
+                      </h3>
+                    )
                   )}
 
                   <div className="item-description">
