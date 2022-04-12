@@ -429,10 +429,17 @@ const ItemDetails = () => {
                       </h3>
                     </>
                   ) : (
-                    <h3>
-                      Buy Now Price:{" "}
-                      <span>{ethers.utils.formatEther(buynowprice)} BNB</span>
-                    </h3>
+                    isMintOnly ? (
+                      <>
+                        <h3>this item is not for sale</h3>
+                        <h3>Price: {" "}<span>{ethers.utils.formatEther(buynowprice)} BNB</span></h3>
+                      </>
+                    ) : (
+                      <h3>
+                        Buy Now Price:{" "}
+                        <span>{ethers.utils.formatEther(buynowprice)} BNB</span>
+                      </h3>
+                    )
                   )}
 
                   <div className="item-description">
