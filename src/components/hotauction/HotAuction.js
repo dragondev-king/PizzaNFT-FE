@@ -62,9 +62,9 @@ const HotAuction = ({
             <h2>{nft?.name}</h2>
             {
               (Number(highestBid) > Number(buyprice))? (
-                <h3>Highest Bid: {Number(highestBid).toFixed(5).toString()} BNB</h3>
+                <h3>Highest Bid: {Number(highestBid)} BNB</h3>
               ) : (
-                <h3>Buy Price: {Number(buyprice).toFixed(5).toString()} BNB</h3>
+                <h3>Buy Price: {Number(buyprice)} BNB</h3>
               )
             }
             <h3>{ownername ? ownername : "Unknown"}</h3>
