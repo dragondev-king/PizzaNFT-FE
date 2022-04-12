@@ -31,7 +31,7 @@ const ExploreImage = ({ profileImg, ownername, nft, buyprice, isImage }) => {
         )}
         <div className="details-container">
           <div className="name-details">
-            <h3>{Number(buyprice).toFixed(5).toString()} BNB</h3>
+            <h3>{Number(buyprice)} BNB</h3>
             <h2>{nft?.name}</h2>
             <h3>{ownername ? ownername : "unknown"}</h3>
           </div>
