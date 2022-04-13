@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { create } from "ipfs-http-client";
 import { ethers } from "ethers";
 import Dropdown from "react-dropdown";
+import { Rings } from 'react-loader-spinner'
 
 import Size from "../size/Size";
 import "react-dropdown/style.css";
@@ -116,7 +117,6 @@ const CreateForm = () => {
           });
           setItemPending(false);
         } catch (err) {
-          history.push('/')
           setItemPending(false);
         }
       } else if (!client) {
@@ -148,7 +148,18 @@ const CreateForm = () => {
   };
 
   return (
-    <>
+    itempending ? (
+      <div style={{position: 'relative'}}>
+        <div style={{position: 'absolute', left: '20%', bottom: '-136px', display: 'contents'}}>
+          <Rings
+            height="70%"
+            width="100%"
+            color='white'
+            ariaLabel='Minting'
+          />
+        </div>
+      </div>
+    ) : (
       <div className="row">
         <div className="col-md-12">
           <div className="form-group">
@@ -300,19 +311,13 @@ const CreateForm = () => {
           </div>
         </div>
         <div className="col-md-12">
-          {!itempending ? (
-            <button className="btn btn-default" onClick={createItem}>
-              Create Item
-            </button>
-          ) : (
-            <button className="btn btn-default" disabled>
-              Create Item
-            </button>
-          )}
+          <button className="btn btn-default" onClick={createItem}>
+            Create Item
+          </button>
         </div>
       </div>
-    </>
-  );
-};
+    )
+  )
+}
 
 export default CreateForm;
