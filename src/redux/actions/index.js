@@ -115,6 +115,7 @@ export const topOwner = () => (dispatch, getState) => {
               let coverImg
               let email
               let facebook
+              let bio
 
               try {
                 await axios
@@ -129,7 +130,8 @@ export const topOwner = () => (dispatch, getState) => {
                     name = res.data[0]?.name;
                     coverImg = res.data[0]?.coverImg
                     email = res.data[0]?.email
-                    facebook = res.data[0].facebook
+                    facebook = res.data[0].facebook,
+                    bio = res.data[0].bio
                   });
               } catch (err) {}
 
@@ -141,7 +143,8 @@ export const topOwner = () => (dispatch, getState) => {
                 name: name,
                 coverImg,
                 email,
-                facebook
+                facebook,
+                bio
               };
             } else {
               owner_info[item.owner_of].count++;
@@ -182,7 +185,7 @@ export const selectedUserInfo = (account) => (dispatch, getState) => {
 };
 
 export const updateUserInfo =
-  (account, name, profileImg, profileUrl, coverImg, email, facebook) => (dispatch, getState) => {
+  (account, name, profileImg, profileUrl, coverImg, email, facebook, bio) => (dispatch, getState) => {
     try {
       const formData = new FormData();
       if(typeof(profileImg) === 'object') formData.append("profileImg", profileImg)
@@ -191,6 +194,7 @@ export const updateUserInfo =
       formData.append("profileUrl", profileUrl);
       formData.append("email", email)
       formData.append("facebook", facebook)
+      formData.append("bio", bio)
       
       axios({
         method: 'put',
@@ -208,7 +212,8 @@ export const updateUserInfo =
               profileUrl,
               coverImg,
               email,
-              facebook
+              facebook,
+              bio
             },
           });
           showNotification({
