@@ -9,6 +9,7 @@ import ProfileHeader from "../components/profileheader/ProfileHeader";
 import Nft from "../modules/NftGet";
 import { rpc_provider } from "../config/contractConnect";
 import Paginate from "../components/paginate/Paginate";
+import { Common } from "../redux/common";
 
 const options = [
   "All",
@@ -36,6 +37,7 @@ const options = [
 
 const Profile = () => {
   const params = useParams()
+  const { account } = Common()
   const { state } = useLocation();
   const [ids, setIds] = useState([]);
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
@@ -150,6 +152,12 @@ const Profile = () => {
             </article>
           </div>
         </div>
+        {
+          ( account && account === params?.account ) && 
+            <div style={{textAlign: 'center'}}>
+              <button className="btn btn-default"><a href="/edit" style={{textDecoration: 'none'}}>Edit profile</a></button>
+            </div>
+        }
       </div>
       <div className="exclusive-drops">
         <div className="container">
