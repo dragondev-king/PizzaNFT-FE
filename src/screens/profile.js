@@ -9,6 +9,7 @@ import ProfileHeader from "../components/profileheader/ProfileHeader";
 import Nft from "../modules/NftGet";
 import { rpc_provider } from "../config/contractConnect";
 import Paginate from "../components/paginate/Paginate";
+import { Common } from "../redux/common";
 
 const options = [
   "All",
@@ -36,6 +37,7 @@ const options = [
 
 const Profile = () => {
   const params = useParams()
+  const { account } = Common()
   const { state } = useLocation();
   const [ids, setIds] = useState([]);
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
@@ -50,6 +52,10 @@ const Profile = () => {
   const [profileImg, setProfileImg] = useState("")
   const [ownerName, setOwnerName] = useState("")
   const [coverImage, setCoverImage] = useState("")
+  const [profileUrl, setProfileUrl] = useState("")
+  const [email, setEmail] = useState("")
+  const [facebook, setFacebook] = useState("")
+  const [bio, setBio] = useState("")
 
   useEffect(() => {
     let midArr = [];
@@ -75,21 +81,25 @@ const Profile = () => {
           setCurrentPage(res.data.page)
           setPageCount(Math.ceil(res.data.total / limit))
         });
-    } catch (err) {}
+    } catch (err) { }
   }, [limit, offset]);
 
-  useEffect( async () => {
-    if(params?.account) {
+  useEffect(async () => {
+    if (params?.account) {
       try {
         await axios.get(
           `${process.env.REACT_APP_BACKEND_API}/api/profile/${ethers.utils.getAddress(params.account)}`
         )
-        .then((res) => {
-          setProfileImg(res.data[0]?.profileImg)
-          setOwnerName(res.data[0]?.name)
-          setCoverImage(res.data[0]?.coverImg)
-        });
-      } catch (err) {}
+          .then((res) => {
+            setProfileImg(res.data[0]?.profileImg)
+            setOwnerName(res.data[0]?.name)
+            setCoverImage(res.data[0]?.coverImg)
+            setProfileUrl(res.data[0]?.profileUrl)
+            setEmail(res.data[0]?.email)
+            setFacebook(res.data[0]?.facebook)
+            setBio(res.data[0]?.bio)
+          });
+      } catch (err) { }
     }
   }, [setProfileImg, setOwnerName, setCoverImage, params.account])
 
@@ -114,7 +124,41 @@ const Profile = () => {
   return (
     <>
       <Breadcrumb name="Profile" />
-      <ProfileHeader data={{owner: params.account, coverImage, profileImg, ownername: ownerName, nft: {owner: params.account}}} />
+      <ProfileHeader data={{ owner: params.account, coverImage, profileImg, ownername: ownerName, nft: { owner: params.account } }} />
+      <div className="container">
+        <div className="row" style={{ color: 'white', textAlign: 'center' }}>
+          <div className="col-md-6">
+            <article>
+              <h4>Profile URL</h4>
+              <i>{profileUrl}</i>
+            </article>
+          </div>
+          <div className="col-md-6">
+            <article>
+              <h4>Email</h4>
+              <i>{email}</i>
+            </article>
+          </div>
+          <div className="col-md-6">
+            <article>
+              <h4>Facebook</h4>
+              <i>{facebook}</i>
+            </article>
+          </div>
+          <div className="col-md-6">
+            <article>
+              <h4>Bio</h4>
+              <i>{bio}</i>
+            </article>
+          </div>
+        </div>
+        {
+          ( account && account === params?.account ) && 
+            <div style={{textAlign: 'center'}}>
+              <button className="btn btn-edit-profile"><a href="/edit" style={{textDecoration: 'none', color: 'white'}}>Edit profile</a></button>
+            </div>
+        }
+      </div>
       <div className="exclusive-drops">
         <div className="container">
           <div className="exclusive-drops-list">
