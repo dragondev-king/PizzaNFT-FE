@@ -155,7 +155,7 @@ const Profile = () => {
         {
           ( account && account === params?.account ) && 
             <div style={{textAlign: 'center'}}>
-              <button className="btn btn-default"><a href="/edit" style={{textDecoration: 'none'}}>Edit profile</a></button>
+              <button className="btn btn-edit-profile"><a href="/edit" style={{textDecoration: 'none', color: 'white'}}>Edit profile</a></button>
             </div>
         }
       </div>
