@@ -125,7 +125,7 @@ const ProfileForm = () => {
           <div className="col-md-12">
             <div className="form-group">
               <label htmlFor="itemname">Bio</label>
-              <textarea className="form-control" type="text" id='bio' onChange={(e) => setUpdateBio(e.target.value)} value={updateBio} />
+              <textarea style={{height: '100px'}} className="form-control" type="text" id='bio' onChange={(e) => setUpdateBio(e.target.value)} value={updateBio} />
             </div>
           </div>
           <div className="col-md-12">

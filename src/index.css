@@ -1968,3 +1968,12 @@ color: #000 !important;
 .btn-full-width span:hover {
   background-color: rebeccapurple;
 }
+
+.btn-edit-profile {
+  background-color: #f61eff;
+  color: #fff;
+}
+
+.btn-edit-profile:hover {
+  background-color: #2ca8ff !important;
+}
