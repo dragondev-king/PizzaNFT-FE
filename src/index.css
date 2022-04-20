@@ -33,6 +33,21 @@ h2 {
   width: 100%;
 }
 
+.profile-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-social-icons a{
+  color: #fff;
+  margin: 5px;
+}
+
+.profile-social-icons i{
+  font-size: 20px;
+}
+
 .pagination>li>a, .pagination>li>span{
   color: #f61eff !important;
   background: transparent !important;
@@ -1634,6 +1649,14 @@ color: #000 !important;
 }
 
 @media (max-width:768px){
+
+  .profile-header{
+    display: block;
+  }
+
+  .profile-social-icons{
+    margin-top: 10px;
+  }
 
   .nav-buy-button{
     max-height: 40px !important;

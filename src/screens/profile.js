@@ -10,6 +10,7 @@ import Nft from "../modules/NftGet";
 import { rpc_provider } from "../config/contractConnect";
 import Paginate from "../components/paginate/Paginate";
 import { Common } from "../redux/common";
+import ProfileBreadcrumb from "../components/profilebreadcrumb/ProfileBreadcrumb";
 
 const options = [
   "All",
@@ -123,7 +124,7 @@ const Profile = () => {
 
   return (
     <>
-      <Breadcrumb name="Profile" />
+      <ProfileBreadcrumb name="Profile" />
       <ProfileHeader data={{ owner: params.account, coverImage, profileImg, ownername: ownerName, nft: { owner: params.account } }} />
       <div className="container">
         <div className="row" style={{ color: 'white', textAlign: 'center' }}>
@@ -153,10 +154,10 @@ const Profile = () => {
           </div>
         </div>
         {
-          ( account && account === params?.account ) && 
-            <div style={{textAlign: 'center'}}>
-              <button className="btn btn-edit-profile"><a href="/edit" style={{textDecoration: 'none', color: 'white'}}>Edit profile</a></button>
-            </div>
+          (account && account === params?.account) &&
+          <div style={{ textAlign: 'center' }}>
+            <button className="btn btn-edit-profile"><a href="/edit" style={{ textDecoration: 'none', color: 'white' }}>Edit profile</a></button>
+          </div>
         }
       </div>
       <div className="exclusive-drops">
