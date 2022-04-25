@@ -1645,6 +1645,14 @@ color: #000 !important;
   margin-left: 25px !important;
 }
 
+.bio-container{
+  padding-top: 20px;
+}
+
+.bio-container p{
+  color: #bdbdbd;
+}
+
 @media (min-width: 769px) and (max-width: 1200px) {
 }
 
