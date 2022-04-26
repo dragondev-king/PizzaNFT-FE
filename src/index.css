@@ -1112,7 +1112,7 @@ h2 {
   justify-content: center;
   position: relative;
   z-index: 10;
-  padding-top: 60px;
+  padding-top: 20px;
 }
 
 @keyframes animStar {
@@ -1653,6 +1653,17 @@ color: #000 !important;
   color: #bdbdbd;
 }
 
+.hero-text.homepage h1{
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.hero-text.homepage h4{
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
 @media (min-width: 769px) and (max-width: 1200px) {
 }
 
@@ -1721,6 +1732,7 @@ color: #000 !important;
 
 #title,.starparalax{
   min-height: 65vh;
+  padding-bottom:20px;
 }
 
 
