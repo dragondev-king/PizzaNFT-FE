@@ -49,12 +49,9 @@ const Home = () => {
 
   const [category, setCategory] = useState(["active"]);
   const [chooseCategory, setChooseCategory] = useState("All");
-  const { token_ids, page, page_size, total, top_owners, hots, searchText } = Common();
+  const { token_ids, total, top_owners, hots, searchText } = Common();
   
   const [offset, setOffset] = useState(0)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [pageSize, setPageSize] = useState(0)
-  const [totalCount, setTotalCount] = useState(0)
   const [limit, setLimit] = useState(8)
   const [pageCount, setPageCount] = useState(0)
   
@@ -66,11 +63,8 @@ const Home = () => {
   }, [offset, limit]);
 
   useEffect(() => {
-    setCurrentPage(page)
-    setPageSize(page_size)
-    setTotalCount(total)
     setPageCount(Math.ceil(total / limit))
-  }, [page, page_size, total, limit])
+  }, [ total, limit])
 
 
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
