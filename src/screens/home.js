@@ -50,14 +50,14 @@ const Home = () => {
   const [category, setCategory] = useState(["active"]);
   const [chooseCategory, setChooseCategory] = useState("All");
   const { token_ids, page, page_size, total, top_owners, hots, searchText } = Common();
-  
+
   const [offset, setOffset] = useState(0)
   const [currentPage, setCurrentPage] = useState(0)
   const [pageSize, setPageSize] = useState(0)
   const [totalCount, setTotalCount] = useState(0)
   const [limit, setLimit] = useState(8)
   const [pageCount, setPageCount] = useState(0)
-  
+
 
   useEffect(() => {
     dispatch(NftTokenID(offset, limit));
@@ -217,6 +217,40 @@ const Home = () => {
           <a href="http://www.nftsmarket.cc/" target="_blank"><h2>FAQ</h2></a>
         </div>
       </div> */}
+      <div className="container">
+        <div className="help-content-container">
+          <div className="help-content">
+            <h4>Setting Your Wallet</h4>
+            <p>
+              Best to setup your wallet, either Metamask or Trust Wallet app. Then connect it to PizzaNFT.studio Marketplace.  Click on FAQ for more help. Learn about Wallets Connection Tutorial
+            </p>
+          </div>
+          <div className="help-content">
+            <h4>Artists, Create Your Great Collection</h4>
+            <p>
+              Just click Create, then set up your collection to mint only (NFT not for sale), sell as buy now (NFT for sell with Buy price) or sell as auction (NFT selling with bid and reserves).  Add royalties to your collection. Add your social links. Add a description.  Add your avatar profile image & banner images (1478px x200px).  Cost to Sell NFT is $5 (in $PIZZA TOKEN), you must have $PIZZA token to sell. See above BUY link to get $PIZZA native token to Sell.  Set your Selling price in BNB’s. Get Paid in BNBs (Binance smart chain)
+            </p>
+          </div>
+          <div className="help-content">
+            <h4>Adding Your NFT’s</h4>
+            <p>
+              You can upload your original works such as an image, a video, an audio file or a 3D art.  Add title name and then write a description.  Cost to Sell NFT is $5 (in $PIZZA TOKEN), you must have $PIZZA token to sell. See above BUY link to get $PIZZA native token to Sell. You can add up to 20% for Royalties on your NFTs.
+            </p>
+          </div>
+          <div className="help-content">
+            <h4>Listing Your NFTs For Sale</h4>
+            <p>
+              There are choices of auctions or a fixed-price selling price listings.  Or you can mint only and decline to sell with a price listed.  You can choose what you want to sell your NFTs.  We can assist any questions, check in FAQ above links. Cost to Sell NFT is $5 (in $PIZZA TOKEN), you must have $PIZZA token to sell. See above BUY link to get $PIZZA native token to Sell.
+            </p>
+          </div>
+          <div className="help-content">
+            <h4>Here To Explore NFT’s And Buy An NFT Collection</h4>
+            <p>
+              Connect your Metamask or Trust Wallet.  Make sure you have BNB (Smart Chain as network). You will need BNB smart chain crypto currency to buy any NFTs. Make sure you have extra NFTs for gas and transaction fees.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <ScrollTop />
     </>
