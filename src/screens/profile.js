@@ -45,7 +45,7 @@ const Profile = () => {
   const [category, setCategory] = useState(["active"]);
   const [chooseCategory, setChooseCategory] = useState("All");
   const [offset, setOffset] = useState(0)
-  const [limit, setLimit] = useState(8)
+  const [limit, setLimit] = useState(4)
   const [pageCount, setPageCount] = useState(0)
   const [profileImg, setProfileImg] = useState("")
   const [ownerName, setOwnerName] = useState("")
