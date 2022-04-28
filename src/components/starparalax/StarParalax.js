@@ -20,10 +20,10 @@ const StarParalax = () => {
                         <div className="col-md-8">
                             <div className="hero-text homepage">
                                 <h1>Explore our Pizza NFT Marketplace on the Binance Blockchain.</h1>
-                                <h4>
+                                {/* <h4>
                                     Mint Only for validation on BSC Blockchain. Creators: Chose Status of NFTs to Buy Now Price or NFTs for bidding in Auction. Creators Add up to 20% Royalties. Buyers: Collect any NFTS using BNB (smart chain bep20) as payment. Creators can Mint for as low as $5usdt value (4.5M $Pizza* native tokens). See FAQ.
-                                </h4>
-                                <img src={HowToVidoes} className='how-to-video-img' alt="" />
+                                </h4> */}
+                                {/* <img src={HowToVidoes} className='how-to-video-img' alt="" /> */}
                                 <a href="https://www.youtube.com/channel/UCDlGQA5bzWvL994MdGLTu_g/videos" target="_blank"><img src={Mint} alt="" /></a>
                                 <a href="https://www.youtube.com/channel/UCDlGQA5bzWvL994MdGLTu_g/videos" target="_blank"><img src={Buy} alt="" /></a>
                                 <a href="https://www.youtube.com/channel/UCDlGQA5bzWvL994MdGLTu_g/videos" target="_blank"><img src={Bid} alt="" /></a>
