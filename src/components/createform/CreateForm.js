@@ -4,12 +4,14 @@ import { create } from "ipfs-http-client";
 import { ethers } from "ethers";
 import Dropdown from "react-dropdown";
 import { Rings } from 'react-loader-spinner'
+import { FileUploader } from "react-drag-drop-files"
 
 import Size from "../size/Size";
 import "react-dropdown/style.css";
 import { Common } from "../../redux/common";
 import { NFT_ADDRESS, FT_ADDRESS } from "../../config/contract";
 import { showNotification } from "../../utils/helpers";
+import { nftFileTypes } from '../../config/constants'
 
 let client;
 try {
@@ -61,8 +63,7 @@ const CreateForm = () => {
   const [height, setHeight] = useState(0);
   const [capacity, setCapacity] = useState(0);
 
-  const handleChange = (e) => {
-    const file = e.target.files[0];
+  const handleChange = (file) => {
     setItemFile(file);
   };
 
@@ -94,6 +95,7 @@ const CreateForm = () => {
           const blob = new Blob([metadataJson], { type: "application/json" });
           const metadataAdd = await client.add(blob);
           const ipfsMeta = `https://ipfs.infura.io/ipfs/${metadataAdd.path}`;
+          console.log(ipfsMeta, 'ipfsMeta')
   
           let cost_pay = await FTcontract.approve(NFT_ADDRESS, mintPrice);
           await cost_pay.wait();
@@ -118,6 +120,7 @@ const CreateForm = () => {
           setItemPending(false);
         } catch (err) {
           setItemPending(false);
+          console.log('error occured')
         }
       } else if (!client) {
         showNotification({
@@ -147,6 +150,16 @@ const CreateForm = () => {
     }
   };
 
+  const handleError = (err) => {
+    showNotification({
+      title: "Warning",
+      message: err,
+      type: "danger",
+      insert: "top",
+      container: "top-right",
+    });
+  }
+
   return (
     itempending ? (
       <div style={{position: 'relative'}}>
@@ -173,15 +186,14 @@ const CreateForm = () => {
           </div>
         </div>
         <div className="col-md-12">
-          <div className="form-group">
-            <label htmlFor="fileupload">Upload File</label>
-            <input
-              type="file"
-              className="form-control-file"
-              id="fileupload"
-              onChange={handleChange}
-            />
-          </div>
+          <FileUploader
+            handleChange={handleChange}
+            name="file"
+            multiple={false}
+            label="Upload or drop a file right here"
+            types={nftFileTypes}
+            onTypeError={handleError}
+          />
         </div>
         <div className="col-md-12">
           <div className="form-group">
