@@ -44,11 +44,8 @@ const Profile = () => {
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
   const [category, setCategory] = useState(["active"]);
   const [chooseCategory, setChooseCategory] = useState("All");
-  const [pageSize, setPageSize] = useState(0)
   const [offset, setOffset] = useState(0)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [totalCount, setTotalCount] = useState(0)
-  const [limit, setLimit] = useState(8)
+  const [limit, setLimit] = useState(4)
   const [pageCount, setPageCount] = useState(0)
   const [profileImg, setProfileImg] = useState("")
   const [ownerName, setOwnerName] = useState("")
@@ -60,30 +57,21 @@ const Profile = () => {
 
   useEffect(() => {
     let midArr = [];
-    try {
-      axios
-        .get(
-          `https://deep-index.moralis.io/api/v2/${params?.account}/nft?chain=bsc&format=decimal&token_addresses=${process.env.REACT_APP_NFT_ADDRESS}&limit=${limit}&offset=${offset}`,
-          {
-            headers: {
-              accept: "application/json",
-              "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
-            },
-          }
-        )
+    if(params?.account) {
+      try {
+        axios
+        .get(`${process.env.REACT_APP_BACKEND_API}/api/nfts/${params?.account}?offset=${offset}&limit=${limit}`)
         .then((res) => {
           if (res.status != 200) return;
-          res.data.result.map((item) => {
-            midArr.push(item.token_id);
+          res.data.nftIDs.map((item) => {
+            midArr.push(item.tokenId);
           });
           setIds([...midArr]);
-          setPageSize(res.data.page_size)
-          setTotalCount(res.data.total)
-          setCurrentPage(res.data.page)
           setPageCount(Math.ceil(res.data.total / limit))
         });
-    } catch (err) { }
-  }, [limit, offset]);
+      } catch (err) { }
+    }
+  }, [limit, offset, account]);
 
   useEffect(async () => {
     if (params?.account) {

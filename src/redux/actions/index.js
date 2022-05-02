@@ -50,35 +50,23 @@ export const userInfo = (account) => (dispatch, getState) => {
 export const NftTokenID = (offset, limit) => (dispatch, getState) => {
   try {
     axios
-      .get(
-        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}?chain=bsc&format=decimal&limit=${limit}&offset=${offset}`,
-        {
-          headers: {
-            accept: "application/json",
-            "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
-          },
-        }
-      )
-      .then((res) => {
-        if (res.status != 200) return;
-        let midArr = []
-        res.data.result.map((item) => {
-          midArr.push(item.token_id);
-        });
-        const total = res.data.total
-        const page_size = res.data.page_size
-        const page = res.data.page
-
-        dispatch({
-          type: GET_NFT_ID,
-          payload: {
-            total,
-            page_size,
-            page,
-            token_ids: midArr,
-          },
-        });
+    .get(`${BACKEND_API}/nfts?offset=${offset}&limit=${limit}`)
+    .then((res) => {
+      if (res.status != 200) return;
+      let midArr = []
+      res.data.nftIDs.map((item) => {
+        midArr.push(item.tokenId);
       });
+      const total = res.data.total
+
+      dispatch({
+        type: GET_NFT_ID,
+        payload: {
+          total,
+          token_ids: midArr,
+        },
+      });
+    });
   } catch (error) {
     console.log("Get NFT Token IDS ", error);
   }
@@ -87,29 +75,22 @@ export const NftTokenID = (offset, limit) => (dispatch, getState) => {
 export const topOwner = () => (dispatch, getState) => {
   try {
     axios
-      .get(
-        `https://deep-index.moralis.io/api/v2/nft/${process.env.REACT_APP_NFT_ADDRESS}/owners?chain=bsc&format=decimal`,
-        {
-          headers: {
-            accept: "application/json",
-            "X-API-Key": process.env.REACT_APP_MORALIS_KEY,
-          },
-        }
-      )
+      .get(`${BACKEND_API}/owners`)
       .then(async (res) => {
         if (res.status != 200) return;
         let owner_info = [];
 
-        for (let i = 0; i < res.data.result.length; i++) {
-          const item = res.data.result[i];
+        for (let i = 0; i < res.data.total; i++) {
+          const item = res.data.owners[i];
+          const ownerAddress = ethers.utils.getAddress(item.ownerOf)
 
           if (
-            ethers.utils.getAddress(item.token_address) ===
-            ethers.utils.getAddress(process.env.REACT_APP_NFT_ADDRESS)
+            ethers.utils.getAddress(item.tokenAddress) ===
+            ethers.utils.getAddress(process.env.REACT_APP_NFT_ADDRESS.toLocaleLowerCase())
           ) {
-            let price = await NFTcontractRead.prices(item.token_id);
+            let price = await NFTcontractRead.prices(item.tokenId);
 
-            if (owner_info[item.owner_of] === undefined) {
+            if (owner_info[ownerAddress] === undefined) {
               let profileImg = "";
               let name = "";
               let coverImg
@@ -120,9 +101,7 @@ export const topOwner = () => (dispatch, getState) => {
               try {
                 await axios
                   .get(
-                    `${BACKEND_API}/profile/${ethers.utils.getAddress(
-                      item.owner_of
-                    )}`
+                    `${BACKEND_API}/profile/${ownerAddress}`
                   )
                   .then((res) => {
                     if (res.status != 200) return;
@@ -135,9 +114,9 @@ export const topOwner = () => (dispatch, getState) => {
                   });
               } catch (err) {}
 
-              owner_info[item.owner_of] = {
+              owner_info[ownerAddress] = {
                 count: 1,
-                tokens: [item.token_id],
+                tokens: [item.tokenId],
                 price: +ethers.utils.formatEther(price),
                 profileImg: profileImg,
                 name: name,
@@ -147,9 +126,9 @@ export const topOwner = () => (dispatch, getState) => {
                 bio
               };
             } else {
-              owner_info[item.owner_of].count++;
-              owner_info[item.owner_of].tokens.push(item.token_id);
-              owner_info[item.owner_of].price +=
+              owner_info[ownerAddress].count++;
+              owner_info[ownerAddress].tokens.push(item.tokenId);
+              owner_info[ownerAddress].price +=
                 +ethers.utils.formatEther(price);
             }
           }

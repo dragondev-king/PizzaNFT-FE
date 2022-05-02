@@ -122,10 +122,29 @@ const ProfileForm = () => {
               <input className="form-control" type="text" id='facebook' onChange={(e) => setUpdateFacebook(e.target.value)} value={updateFacebook} />
             </div>
           </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="itemname">Instagram</label>
+              <input className="form-control" type="text" id='instagram' />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="itemname">Discord</label>
+              <input className="form-control" type="text" id='discord' />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="itemname">Twitter</label>
+              <input className="form-control" type="text" id='twitter' />
+            </div>
+          </div>
+
           <div className="col-md-12">
             <div className="form-group">
               <label htmlFor="itemname">Bio</label>
-              <textarea style={{height: '100px'}} className="form-control" type="text" id='bio' onChange={(e) => setUpdateBio(e.target.value)} value={updateBio} />
+              <textarea style={{ height: '100px' }} className="form-control" type="text" id='bio' onChange={(e) => setUpdateBio(e.target.value)} value={updateBio} />
             </div>
           </div>
           <div className="col-md-12">
