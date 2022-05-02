@@ -1715,6 +1715,18 @@ color: #000 !important;
 
 @media (max-width:768px){
 
+  .contract-container h6 {
+    color: #fff;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
   .help-content-container{
     display: block;
   }
