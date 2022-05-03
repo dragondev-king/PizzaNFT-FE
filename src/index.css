@@ -311,21 +311,24 @@ h2 {
 }
 
 .profile-avatar{
-  background: #00000057;
+  /* background: #00000057; */
     padding: 10PX;
     border-radius: 5px;
+    display: table;
+    margin: auto;
 }
 
 .profile-avatar-image-container {
-  display: flex;
+  display: block;
     justify-content: space-between;
     padding-top: 20px;
     padding-bottom: 15px;
     border-bottom: 1px solid;
     align-items: end;
-    margin-top: -75px;
+    margin-top: -90px;
     padding-left: 15px;
     padding-right: 15px;
+    text-align: center;
 }
 
 .profile-image img {
@@ -337,20 +340,27 @@ h2 {
 
 .profile-image,
 .profile-image-details {
-  display: inline-block;
+  display: block;
   vertical-align: top;
+  text-align: center;
 }
 
-.profile-image-details {
-  padding-left: 20px;
+.profile-image {
+ margin-bottom: 10px; 
 }
 
 .profile-image-details h2 {
   font-family: Manrope;
-  font-size: 24px;
+  font-size: 42px;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 20px !important;
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+.profile-image-details button,.profile-image-details h2{
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .profile-image-details button {
@@ -371,21 +381,27 @@ h2 {
 
 .contract-container h6 {
   color: #fff;
-  font-size: 24px;
+  font-size: 14px;
   margin-top: 0;
   margin-bottom: 0;
   margin-right: 15px;
-  white-space: nowrap;
+  /* white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 180px;
+  max-width: 180px; */
 }
+
+
 
 .contract-container {
   padding: 10px 20px;
   border: 1px solid;
   border-radius: 100px;
   position: relative;
+  display: table;
+  margin: auto;
+  display: inline-flex;
+  align-items: center;
 }
 
 .contract-container span {
@@ -403,6 +419,18 @@ h2 {
 
 .buy-it-button {
   background: #76c5e0;
+}
+
+.bio-container{
+  padding-top: 20px;
+  max-width: 600px;
+  display: table;
+  margin: auto;
+  text-align: center;
+}
+
+.bio-container p{
+  color: #bdbdbd;
 }
 
 .place-a-bid-button {
@@ -1645,13 +1673,7 @@ color: #000 !important;
   margin-left: 25px !important;
 }
 
-.bio-container{
-  padding-top: 20px;
-}
 
-.bio-container p{
-  color: #bdbdbd;
-}
 
 .hero-text.homepage h1{
   /* font-size: 18px; */
@@ -1692,6 +1714,18 @@ color: #000 !important;
 }
 
 @media (max-width:768px){
+
+  .contract-container h6 {
+    color: #fff;
+    font-size: 14px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
 
   .help-content-container{
     display: block;
