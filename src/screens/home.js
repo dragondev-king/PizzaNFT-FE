@@ -64,7 +64,7 @@ const Home = () => {
 
   useEffect(() => {
     setPageCount(Math.ceil(total / limit))
-  }, [ total, limit])
+  }, [total, limit])
 
 
   const fetcher = ["ethers", { ethers, provider: rpc_provider }];
