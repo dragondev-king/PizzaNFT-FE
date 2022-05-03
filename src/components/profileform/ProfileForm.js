@@ -7,7 +7,7 @@ import { showNotification } from '../../utils/helpers';
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
-  const { profileImg, name, profileUrl, account, coverImg, email, facebook, bio } = Common();
+  const { profileImg, name, profileUrl, account, coverImg, email, facebook, bio, instagram, discord, twitter } = Common();
   const [profileImgUrl, setProfileImgUrl] = useState("");
   const [coverImgUrl, setCoverImgUrl] = useState("")
   const [updateName, setUpdateName] = useState("");
@@ -17,7 +17,9 @@ const ProfileForm = () => {
   const [updateEmail, setUpdateEmail] = useState("")
   const [updateFacebook, setUpdateFacebook] = useState("")
   const [updateBio, setUpdateBio] = useState("")
-
+  const [updateInstagram, setUpdateInstagram] = useState("")
+  const [updateDiscord, setUpdateDiscord] = useState("")
+  const [updateTwitter, setUpdateTwitter] = useState("")
 
   useEffect(() => {
     if (!account) {
@@ -34,9 +36,11 @@ const ProfileForm = () => {
       setUpdateEmail(email ? email : "")
       setUpdateFacebook(facebook ? facebook : "")
       setUpdateBio(bio ? bio : "")
-
+      setUpdateInstagram(instagram ? instagram : "")
+      setUpdateDiscord(discord ? discord : "")
+      setUpdateTwitter(twitter ? twitter : "")
     }
-  }, [profileImg, name, profileUrl, account, coverImg, email, facebook, bio])
+  }, [profileImg, name, profileUrl, account, coverImg, email, facebook, bio, instagram, discord, twitter])
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
@@ -54,7 +58,7 @@ const ProfileForm = () => {
   const update = (e) => {
     e.preventDefault();
     if (account) {
-      dispatch(updateUserInfo(account, updateName, updateProfileImg, updateProfileUrl, updateCoverImg, updateEmail, updateFacebook, updateBio))
+      dispatch(updateUserInfo(account, updateName, updateProfileImg, updateProfileUrl, updateCoverImg, updateEmail, updateFacebook, updateBio, updateInstagram, updateDiscord, updateTwitter))
       window.location.reload(false)
     } else {
       showNotification({
@@ -125,19 +129,19 @@ const ProfileForm = () => {
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="itemname">Instagram</label>
-              <input className="form-control" type="text" id='instagram' />
+              <input className="form-control" type="text" id='instagram' onChange={(e) => setUpdateInstagram(e.target.value)} value={updateInstagram} />
             </div>
           </div>
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="itemname">Discord</label>
-              <input className="form-control" type="text" id='discord' />
+              <input className="form-control" type="text" id='discord' onChange={(e) => setUpdateDiscord(e.target.value)} value={updateDiscord} />
             </div>
           </div>
           <div className="col-md-6">
             <div className="form-group">
               <label htmlFor="itemname">Twitter</label>
-              <input className="form-control" type="text" id='twitter' />
+              <input className="form-control" type="text" id='twitter' onChange={(e) => setUpdateTwitter(e.target.value)} value={updateTwitter} />
             </div>
           </div>
 

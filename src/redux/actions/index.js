@@ -97,6 +97,9 @@ export const topOwner = () => (dispatch, getState) => {
               let email
               let facebook
               let bio
+              let instagram
+              let discord
+              let twitter
 
               try {
                 await axios
@@ -111,6 +114,9 @@ export const topOwner = () => (dispatch, getState) => {
                     email = res.data[0]?.email
                     facebook = res.data[0].facebook,
                     bio = res.data[0].bio
+                    instagram = res.data[0].instagram
+                    discord = res.data[0].discord
+                    twitter = res.data[0].twitter
                   });
               } catch (err) {}
 
@@ -123,7 +129,10 @@ export const topOwner = () => (dispatch, getState) => {
                 coverImg,
                 email,
                 facebook,
-                bio
+                bio,
+                instagram,
+                discord,
+                twitter
               };
             } else {
               owner_info[ownerAddress].count++;
@@ -164,7 +173,7 @@ export const selectedUserInfo = (account) => (dispatch, getState) => {
 };
 
 export const updateUserInfo =
-  (account, name, profileImg, profileUrl, coverImg, email, facebook, bio) => (dispatch, getState) => {
+  (account, name, profileImg, profileUrl, coverImg, email, facebook, bio, instagram, discord, twitter) => (dispatch, getState) => {
     try {
       const formData = new FormData();
       if(typeof(profileImg) === 'object') formData.append("profileImg", profileImg)
@@ -174,6 +183,9 @@ export const updateUserInfo =
       formData.append("email", email)
       formData.append("facebook", facebook)
       formData.append("bio", bio)
+      formData.append("instagram", instagram)
+      formData.append("discord", discord)
+      formData.append("twitter", twitter)
       
       axios({
         method: 'put',
@@ -192,7 +204,10 @@ export const updateUserInfo =
               coverImg,
               email,
               facebook,
-              bio
+              bio,
+              instagram,
+              discord,
+              twitter
             },
           });
           showNotification({
