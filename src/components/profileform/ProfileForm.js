@@ -4,6 +4,8 @@ import UploadImage from '../../assets/images/plus.png'
 import { Common } from '../../redux/common'
 import { updateUserInfo } from '../../redux/actions'
 import { showNotification } from '../../utils/helpers';
+import { FileUploader } from "react-drag-drop-files"
+import { profileImageTypes } from '../../config/constants'
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
@@ -42,18 +44,25 @@ const ProfileForm = () => {
     }
   }, [profileImg, name, profileUrl, account, coverImg, email, facebook, bio, instagram, discord, twitter])
 
-  const handleProfileChange = (e) => {
-    const file = e.target.files[0];
+  const handleProfileChange = (file) => {
     setUpdateProfileImg(file);
     setProfileImgUrl(URL.createObjectURL(file));
   };
 
-  const handleCoverChange = (e) => {
-    const file = e.target.files[0];
+  const handleCoverChange = (file) => {
     setUpdateCoverImg(file)
     setCoverImgUrl(URL.createObjectURL(file))
   }
 
+  const handleError = (err) => {
+    showNotification({
+      title: "Warning",
+      message: 'File types should be .jpeg/jpg or .png',
+      type: "danger",
+      insert: "top",
+      container: "top-right",
+    });
+  }
 
   const update = (e) => {
     e.preventDefault();
@@ -81,7 +90,17 @@ const ProfileForm = () => {
               <div className="picture-container">
                 <div className="picture">
                   <img src={profileImgUrl === "" ? UploadImage : profileImgUrl} className="picture-src" id="wizardPicturePreview" title="" />
-                  <input type="file" id="wizard-picture" className="" onChange={handleProfileChange} />
+                  <div className='file-uploader-wrapper'>
+                    <FileUploader
+                      handleChange={handleProfileChange}
+                      classes="file-uploader"
+                      name="file"
+                      multiple={false}
+                      label="Upload or drop a file right here"
+                      types={profileImageTypes}
+                      onTypeError={handleError}
+                    />
+                  </div>
                 </div>
                 <h6 className="">Choose Picture</h6>
 
@@ -93,8 +112,18 @@ const ProfileForm = () => {
               <label htmlFor="fileuploadnew" className='cover fileuploadlabel'>Upload Cover Photo</label>
               <div className="picture-container">
                 <div className="picture cover-image">
-                  <img src={coverImg === "" ? UploadImage : coverImgUrl} className="picture-src" id="wizardPicturePreview-new" title="" />
-                  <input type="file" id="wizard-picture-new" className="" onChange={handleCoverChange} />
+                  <img src={coverImgUrl === "" ? UploadImage : coverImgUrl} className="picture-src" id="wizardPicturePreview-new" title="" />
+                  <div className='file-uploader-wrapper'>
+                    <FileUploader
+                      handleChange={handleCoverChange}
+                      classes='file-uploader'
+                      name="file"
+                      multiple={false}
+                      label="Upload or drop a file right here"
+                      types={profileImageTypes}
+                      onTypeError={handleError}
+                    />
+                  </div>
                 </div>
                 <h6 className="">Choose Picture</h6>
 

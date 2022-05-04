@@ -190,7 +190,8 @@ h2 {
 .content.ct-wizard-red .picture:hover {
   border-color: #ff3b30;
 }
-.picture input[type="file"] {
+
+.file-uploader-wrapper {
   cursor: pointer;
   display: block;
   height: 100%;
@@ -199,6 +200,12 @@ h2 {
   position: absolute;
   top: 0;
   width: 100%;
+}
+
+.file-uploader {
+  height: inherit !important;
+  display: inline-block !important;
+  max-width: inherit !important;
 }
 
 .picture-src {
