@@ -561,6 +561,7 @@ export const nftTransfer =
 
 export const walletConnect = () => async (dispatch, getState) => {
   try {
+    alert("1");
     const providerOptions = {
       injected: {
         display: {
@@ -576,13 +577,12 @@ export const walletConnect = () => async (dispatch, getState) => {
         },
         package: WalletConnectProvider,
         options: {
-          rpc: {
-            56: process.env.REACT_APP_JSONRPC_MAIN_URL,
-            97: process.env.REACT_APP_JSONRPC_TEST_URL,
-          },
+          infuraId: process.env.NEXT_PUBLIC_INFURA_ID,
         },
       },
     };
+    
+    alert("2", providerOptions)
 
     web3Modal = new Web3Modal({
       cacheProvider: true,
@@ -596,11 +596,12 @@ export const walletConnect = () => async (dispatch, getState) => {
         hover: "rgb(16, 26, 32)",
       },
     });
-
+    alert("3", web3Modal);
     const instance = await web3Modal.connect();
+    alert("4", instance)
     const provider = new ethers.providers.Web3Provider(instance);
     const signer = provider.getSigner();
-
+    alert("5", signer)
     provider.on("disconnect", () => {
       dispatch(walletDisconnect());
     });
