@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from "react-redux";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 import UploadImage from '../../assets/images/plus.png'
 import { Common } from '../../redux/common'
 import { updateUserInfo } from '../../redux/actions'
@@ -22,6 +25,8 @@ const ProfileForm = () => {
   const [updateInstagram, setUpdateInstagram] = useState("")
   const [updateDiscord, setUpdateDiscord] = useState("")
   const [updateTwitter, setUpdateTwitter] = useState("")
+  const [profileLoading, setProfileLoading] = useState(true)
+  const [coverLoading, setCoverLoading] = useState(true)
 
   useEffect(() => {
     if (!account) {
@@ -89,7 +94,12 @@ const ProfileForm = () => {
               <label htmlFor="fileupload">Upload Profile Picture</label>
               <div className="picture-container">
                 <div className="picture">
-                  <img src={profileImgUrl === "" ? UploadImage : profileImgUrl} className="picture-src" id="wizardPicturePreview" title="" />
+                  <div style={{display: profileLoading ? "block" : "none"}}>
+                    <Skeleton height={320} highlightColor='#aaaaaa' borderRadius='1.25rem'/>
+                  </div>
+                  <div style={{display: profileLoading ? "none" : "block"}}>
+                    <img src={profileImgUrl === "" ? UploadImage : profileImgUrl} onLoad={() => setProfileLoading(false)} className="picture-src" id="wizardPicturePreview" title="" />
+                  </div>
                   <div className='file-uploader-wrapper'>
                     <FileUploader
                       handleChange={handleProfileChange}
@@ -112,7 +122,12 @@ const ProfileForm = () => {
               <label htmlFor="fileuploadnew" className='cover fileuploadlabel'>Upload Cover Photo</label>
               <div className="picture-container">
                 <div className="picture cover-image">
-                  <img src={coverImgUrl === "" ? UploadImage : coverImgUrl} className="picture-src" id="wizardPicturePreview-new" title="" />
+                  <div style={{display: coverLoading ? "block" : "none"}}>
+                    <Skeleton height={320} highlightColor='#aaaaaa' borderRadius='1.25rem'/>
+                  </div>
+                  <div style={{display: coverLoading ? "none" : "initial"}}>
+                    <img src={coverImgUrl === "" ? UploadImage : coverImgUrl} className="picture-src" onLoad={() => setCoverLoading(false) } id="wizardPicturePreview-new" title="" />
+                  </div>
                   <div className='file-uploader-wrapper'>
                     <FileUploader
                       handleChange={handleCoverChange}
