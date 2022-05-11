@@ -1774,7 +1774,7 @@ color: #000 !important;
 }
 
 .main-explore-image-container div{
-  display: flex !important;
+  display: flex;
     text-align: center !important;
     flex-direction: column;
 }
