@@ -179,7 +179,7 @@ const Home = () => {
             <div className="main-explore-image-container">
               <div
                 style={{
-                  display: "grid",
+                  display: "flex",
                   gridTemplateColumns: "auto auto auto auto",
                   gridGap: "20px",
                 }}
