@@ -1,5 +1,8 @@
 import React from 'react'
 import dateFormat from "dateformat"
+import Skeleton from "react-loading-skeleton";
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import AvatarImages from '../../assets/images/artist-avatar.jpg'
 import { getUTCTime } from '../../utils/helpers'
 
@@ -10,7 +13,7 @@ const Bidder = ({item}) => {
             <div className="main-bid-container">
                 <div className="bid-avatar-image">
                     <div className="avatarimage">
-                        <img src={item.bidder_info[0]?.profileImg ? item.bidder_info[0]?.profileImg : AvatarImages} alt="" style={{'width':'100px', 'maxHeight':'100px'}}/>
+                        <img src={item.bidder_info[0]?.profileImg ? item.bidder_info[0]?.profileImg : AvatarImages || <Skeleton highlightColor='#aaaaaa'/>} alt="" style={{'width':'100px', 'maxHeight':'100px'}}/>
                     </div>
                 </div>
                 <div className="bid-description">
