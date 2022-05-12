@@ -45,7 +45,7 @@ const ProfileHeader = ({ data }) => {
     <>
       <div className="container">
         <div className="cover-image-container">
-          <img src={data?.coverImage} alt="" />
+          <img src={data?.coverImage ? data?.coverImage : CoverImage} alt="" />
         </div>
         <div className="profile-avatar-image-container">
           <div className="profile-avatar">
