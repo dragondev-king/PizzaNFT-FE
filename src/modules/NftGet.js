@@ -88,6 +88,7 @@ function Nft({ tokenId, category, searchText = "" }) {
           to={{
             pathname: `/details/${tokenId}`,
           }}
+          style={{textDecoration:"none"}}
         >{
             contentType && (contentType.includes('audio') || contentType.includes('video')) ? (
               <>
