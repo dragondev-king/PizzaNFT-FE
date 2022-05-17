@@ -54,6 +54,9 @@ const Profile = () => {
   const [email, setEmail] = useState("")
   const [facebook, setFacebook] = useState("")
   const [bio, setBio] = useState("")
+  const [instagram, setInstagram] = useState('')
+  const [twitter, setTwitter] = useState('')
+  const [discord, setDiscord] = useState('')
 
   useEffect(() => {
     let midArr = [];
@@ -87,6 +90,9 @@ const Profile = () => {
             setEmail(res.data[0]?.email)
             setFacebook(res.data[0]?.facebook)
             setBio(res.data[0]?.bio)
+            setTwitter(res.data[0]?.twitter)
+            setInstagram(res.data[0]?.instagram)
+            setDiscord(res.data[0]?.discord)
           });
       } catch (err) { }
     }
@@ -112,12 +118,12 @@ const Profile = () => {
 
   return (
     <>
-      <ProfileBreadcrumb name="Profile" />
+      <ProfileBreadcrumb name="Profile" data={{email, discord, instagram, twitter, profileUrl, facebook}} />
       <ProfileHeader data={{ owner: params.account, coverImage, profileImg, ownername: ownerName, nft: { owner: params.account } }} />
       <div className="container">
         <div className="bio-container">
           <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+            {bio}
           </p>
         </div>
         {
