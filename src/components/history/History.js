@@ -1,5 +1,8 @@
 import React from 'react'
 import dateFormat from "dateformat"
+import Skeleton from "react-loading-skeleton";
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import AvatarImage from '../avatarimage/AvatarImage'
 import AvatarImages from '../../assets/images/artist-avatar.jpg'
 import { getUTCTime } from '../../utils/helpers'
@@ -12,7 +15,7 @@ const History = ({item}) => {
                 <div className="bid-avatar-image">
                     {/* <AvatarImage /> */}
                     <div className="avatarimage">
-                        <img src={item.history_info[0]?.profileImg ? item.history_info[0]?.profileImg : AvatarImages} alt="" style={{'width':'100px', 'maxHeight':'100px'}}/>
+                        <img src={item.history_info[0]?.profileImg ? item.history_info[0]?.profileImg : AvatarImages || <Skeleton highlightColor='#aaaaaa' />} alt="" style={{'width':'100px', 'maxHeight':'100px'}}/>
                     </div>
                 </div>
                 <div className="bid-description">

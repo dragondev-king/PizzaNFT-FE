@@ -561,7 +561,6 @@ export const nftTransfer =
 
 export const walletConnect = () => async (dispatch, getState) => {
   try {
-    alert("1");
     const providerOptions = {
       injected: {
         display: {
@@ -582,8 +581,6 @@ export const walletConnect = () => async (dispatch, getState) => {
       },
     };
     
-    alert("2", providerOptions)
-
     web3Modal = new Web3Modal({
       cacheProvider: true,
       providerOptions,
@@ -596,12 +593,9 @@ export const walletConnect = () => async (dispatch, getState) => {
         hover: "rgb(16, 26, 32)",
       },
     });
-    alert("3", web3Modal);
     const instance = await web3Modal.connect();
-    alert("4", instance)
     const provider = new ethers.providers.Web3Provider(instance);
     const signer = provider.getSigner();
-    alert("5", signer)
     provider.on("disconnect", () => {
       dispatch(walletDisconnect());
     });

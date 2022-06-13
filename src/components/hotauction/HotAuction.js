@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Countdown from "react-countdown";
 import ReactPlayer from "react-player";
+import Skeleton from "react-loading-skeleton";
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import { Common } from "../../redux/common";
 import AvatarImage from "../avatarimage/AvatarImage";
 
@@ -13,6 +16,7 @@ const HotAuction = ({
   downtime,
   isImage,
 }) => {
+  const [loading, setLoading] = useState(true)
   const renderer = ({ days, hours, minutes, seconds, completed }) => {
     if (completed) {
       return <span>Auction is Ended</span>;
@@ -30,7 +34,14 @@ const HotAuction = ({
     <div>
       <div className="auction-image exd-image">
         {isImage ? (
-          <img src={nft?.image} alt="" className="img-responsive" />
+          <>
+            <div style={{display: loading ? "none" : "block"}}>
+              <img src={nft?.image} alt="" className="img-responsive" onLoad={() => setLoading(false)}/>
+            </div>
+            <div style={{display: loading ? "block !important" : "none"}}>
+              <Skeleton height={220} highlightColor='#aaaaaa' borderRadius='1.25rem'/>
+            </div>
+          </>
         ) : (
           <div style={{height: "240px"}}>
             <ReactPlayer
@@ -59,15 +70,15 @@ const HotAuction = ({
         </div>
         <div className="details-container">
           <div className="name-details">
-            <h2>{nft?.name}</h2>
+            <h2>{nft?.name || <Skeleton highlightColor='#aaaaaa' />}</h2>
             {
               (Number(highestBid) > Number(buyprice))? (
-                <h3>Highest Bid: {Number(highestBid)} BNB</h3>
+                <h3>Highest Bid: {Number(highestBid) || <Skeleton highlightColor='#aaaaaa' />} BNB</h3>
               ) : (
-                <h3>Buy Price: {Number(buyprice)} BNB</h3>
+                <h3>Buy Price: {Number(buyprice) || <Skeleton highlightColor='#aaaaaa' />} BNB</h3>
               )
             }
-            <h3>{ownername ? ownername : "Unknown"}</h3>
+            <h3>{ownername ? ownername : "Unknown" || <Skeleton highlightColor='#aaaaaa' />}</h3>
           </div>
           <div className="artist-details">
             <div className="auctionartist">
