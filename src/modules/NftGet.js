@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { ethers } from "ethers";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
 import { NFT_ADDRESS, AUCTION_ADDRESS } from "../config/contract";
 import {
   AUCTIONcontractRead,
@@ -41,9 +44,7 @@ function Nft({ tokenId, category, searchText = "" }) {
   });
 
   // nft.loading is true during load.
-  if (loading) return <><div className="fa-3x">
-    <i className="fas fa-spinner fa-pulse"></i>
-  </div></>;
+  if (loading) return <Skeleton width={250} height={320} highlightColor='#aaaaaa' borderRadius='1rem'/>
   // nft.error is an Error instance in case of error.
   if (error || !nft) return <>Error</>;
 

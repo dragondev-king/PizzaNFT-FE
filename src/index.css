@@ -1774,7 +1774,7 @@ color: #000 !important;
 }
 
 .main-explore-image-container div{
-  display: flex !important;
+  display: flex;
     text-align: center !important;
     flex-direction: column;
 }
@@ -1940,6 +1940,7 @@ color: #000 !important;
     } */
   .nav-bar-items {
     display: block;
+    width: 60%;
   }
   .nav-container {
     display: flex;
